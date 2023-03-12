@@ -1,0 +1,55 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@namespace Mobile.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="~/" />
+    @*<link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />*@
+    <link href="css/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/icons-1.10.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="css/site.css" rel="stylesheet" />
+    <link href="Mobile.styles.css" rel="stylesheet" />
+    <component type="typeof(HeadOutlet)" render-mode="Server" />
+    <title>공동주택 관리전산</title>
+</head>
+<body>
+    @RenderBody()
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            An error has occurred. This application may no longer respond until reloaded.
+        </environment>
+        <environment include="Development">
+            처리되지 않은 예외가 발생했습니다.
+        </environment>
+        <a href="" class="reload">다시 로드</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script src="_framework/blazor.server.js"></script>
+    <script src="~/js/jquery/jquery.min.js"></script>
+    <script src="~/js/jquery/jquery-ui.min.js"></script>
+    <script src="~/css/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        window.getUserAgent = () => {
+            return navigator.userAgent;
+        };
+    </script>
+
+    <script>
+        //팝업 메세지 구현
+        window.exampleJsFunctions =
+        {
+            ShowMsg: function (message) {
+                window.alert(message);
+            }
+        };
+    </script>
+</body>
+</html>

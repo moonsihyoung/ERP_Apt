@@ -1,0 +1,212 @@
+﻿@page "/Community/Index_Sort"
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <h6><span class="bi-journal-text"> </span>&nbsp;커뮤니티 관리 목록</h6>
+                </td>
+                <td>
+                </td>
+                <td class="text-right">
+                    <button type="button" class="btn btn-outline-primary btn-sm" @onclick="btnInsertKind"> <span class="bi-tools"></span>&nbsp;종류등록</button> &nbsp;&nbsp;<button type="button" class="btn btn-outline-dark btn-sm" @onclick="btnInsertTicket"> <span class="bi-tools"></span>&nbsp;분류등록</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        @if (ann == null)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" />
+            </p>
+        }
+        else if (ann.Count == 0)
+        {
+            <p style="text-align:center">
+                입력된 정보가 없습니다. ............
+            </p>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-6">
+                    <table class="table table-sm" style="font-size: 0.9em">
+                        <thead>
+                            <tr style="background-color:whitesmoke;">
+                                <th style="text-align: center">
+                                    번호
+                                </th>
+                                <th style="text-align: center">
+                                    종류코드
+                                </th>
+                                <th style="text-align: center">
+                                    종류명
+                                </th>
+                                <th style="text-align: center">
+                                    입력일
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var st in ann)
+                            {
+                                <tr>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.Aid
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.Kind_Code
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.Kind_Name
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.PostDate.ToShortDateString()
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-6">
+                    <table class="table table-sm" style="font-size: 0.9em">
+                        <thead>
+                            <tr style="background-color:whitesmoke;">
+                                <th style="text-align: center">
+                                    번호
+                                </th>
+                                <th style="text-align: center">
+                                    종류코드
+                                </th>
+                                <th style="text-align: center">
+                                    종류명
+                                </th>
+                                <th style="text-align: center">
+                                    입력일
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var st in annA)
+                            {
+                                <tr>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.Aid
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.Ticket_Code
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.Ticket_Name
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.PostDate.ToShortDateString()
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        }
+    </div>
+    
+</div>
+
+@*..... 새로 등록 모달 폼*@
+@if (InsertViewsA == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseA">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">
+                                    번호
+                                </th>
+                            </tr>
+                        </thead>
+
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSaveA">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseA">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*..... 새로 등록 모달 폼*@
+@if (InsertViewsA == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseA">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr style="background-color: whitesmoke">
+                                <th style="text-align:center">
+                                    번호
+                                </th>
+                                <th style="text-align:center">
+                                    식별코드
+                                </th>
+                                <th style="text-align:center">
+                                    이용장소
+                                </th>
+                                <th style="text-align:center">
+                                    사용여부
+                                </th>
+                                <th style="text-align:center">
+                                    입력일
+                                </th>
+                                <th style="text-align:center">
+                                    선택
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var it in annA)
+                           {
+                               <tr>
+                                <td style="text-align: center; vertical-align:middle">
+                                    @it.
+                                </td>
+                            </tr>
+                           }
+                            
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSaveA">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseA">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

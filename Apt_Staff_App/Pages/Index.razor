@@ -1,0 +1,116 @@
+﻿@page "/"
+
+<div class="card">
+    <div class="card-header">
+        <span class="bi-alarm-fill" style="font-size: 1em"> &nbsp;미완료 민원 및 업무 정보 </span>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+
+                <table class="table table-sm table-hover" style="font-size: 0.8em">
+                    <thead>
+                        <tr style="border-bottom:groove; border-color:Highlight">
+                            <th colspan="4">
+                                &nbsp; &nbsp;   <span class="bi-alarm" style="font-size: 1.2em; font-weight: bold">&nbsp; 미완료 민원일지 정보</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ann.Count > 0)
+                        {
+                            @foreach (var st in ann)
+                            {
+                                <tr @onclick="() => ByAidAppeal(st.Num)">
+                                    <td style="width: 70%">
+                                        <span title="@st.apContent">@Dul.StringLibrary.CutString(st.apContent, 36)</span>
+                                    </td>
+                                    @*<td class="text-center">
+                                        @st.apReciever
+                                    </td>*@
+                                    <td class="text-center">
+                                        @if (st.innViw == "A")
+                                        {
+                                            <span style="color: red">미처리</span>
+                                        }
+                                        else if (st.innViw == "C")
+                                        {
+                                            <span style="color: green">진행중</span>
+                                        }
+
+                                    </td>
+                                    @*<td class="text-center">
+                                        @st.apYear<span>-</span>@st.apMonth<span>-</span>@st.apDay
+                                    </td>*@
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="2">
+                                    <span style="color: red; font-weight: bold">정보가 없습니다.</span>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="table table-sm table-hover" style="font-size: 0.8em">
+                    <thead>
+                        <tr style="border-bottom:groove; border-color:Highlight">
+                            <th colspan="4">
+                                &nbsp; &nbsp;  <span class="bi-alarm" style="font-size: 1.2em; font-weight: bold;">&nbsp; 미완료 업무일지 정보</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (bnn.Count > 0)
+                        {
+                            @foreach (var st in bnn)
+                            {
+                                <tr @onclick="() => ByAidWorks(st.Num)">
+                                    <td style="width: 70%">
+                                        <span title="@st.svContent">@Dul.StringLibrary.CutString(st.svContent, 36)</span>
+                                    </td>
+                                    @*<td class="text-center">
+                                        @st.svReceiver
+                                    </td>*@
+                                    <td class="text-center">
+                                        @if (st.Complete == "A")
+                                        {
+                                            <span style="color: red">미처리</span>
+                                        }
+                                        else if (st.Complete == "C")
+                                        {
+                                            <span style="color: green">진행중</span>
+                                        }
+
+                                    </td>
+                                    @*<td class="text-center">
+                                        @st.svYear<span>-</span>@st.svMonth<span>-</span>@st.svDay
+                                    </td>*@
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="2">
+                                    <span style="color: red; font-weight: bold">정보가 없습니다.</span>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+</div>

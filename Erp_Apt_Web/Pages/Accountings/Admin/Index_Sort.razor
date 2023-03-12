@@ -1,0 +1,188 @@
+﻿@page "/Accountings/Admin/Index_Sort"
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <h6><span class="bi-journal-text"> </span>&nbsp;계정 분류 정보 목록</h6>
+                </td>
+                <td>
+                </td>
+                <td class="text-right">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnBigInsert"> <span class="bi-tools"></span>&nbsp;분류 등록</button> 
+                    <button type="button" class="btn btn-outline-primary btn-sm" @onclick="btnAccountInsert"> <span class="bi-chevron-double-right"></span>&nbsp;계정과목 등록으로 이동</button> 
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        @if (ann == null)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" />
+            </p>
+        }
+        else if (ann.Count == 0)
+        {
+            <p style="text-align:center">
+                입력된 정보가 없습니다. ............
+            </p>
+        }
+        else
+        {
+            <table class="table table-sm" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color:whitesmoke;">
+                        <th style="text-align: center">
+                            식별코드
+                        </th>
+                        <th style="text-align: center">
+                            분류
+                        </th>
+                        <th style="text-align: center">
+                            상위분류
+                        </th>
+                        <th style="text-align: center">
+                            상위코드
+                        </th>
+                        <th style="text-align: center">
+                            분류명
+                        </th>
+                        
+                        <th style="text-align: center">
+                            분류설명
+                        </th>
+                        <th style="text-align: center">
+                            입력일
+                        </th>
+                        <th style="text-align: center">
+                            입력자 아이피
+                        </th>
+                        <th style="text-align: center">
+                            입력자
+                        </th>
+                        <th style="text-align: center">
+                            버튼
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                   @foreach (var st in ann)
+                   {
+                        <tr>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.Aid
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.Division
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @if (st.UpSort < 1)
+                                {
+                                    <span>없음</span>
+                                }
+                                else
+                                {
+                                    @accountSort_Lib.SortName(st.UpSort.ToString())
+                                }
+                                
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.UpSort
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.SortName
+                            </td>                            
+                            <td style="text-align: center; vertical-align: middle">
+                                <span title="@st.Details">@Dul.StringLibrary.CutString(st.Details, 26)</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.PostDate.ToShortDateString()
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.PostIp
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.User_Code
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                <input id="Button11" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByEdit(st)" value="수정" />
+                                    <input id="Button12" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemove(st)" value="삭제" />
+                            </td>
+                        </tr>
+                    }
+                    
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+
+@*..... 새로 등록 모달 폼*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <button type="button" class="btn btn-info btn-sm" @onclick="btnSortB">중분류</button>
+                                <button type="button" class="btn btn-info btn-sm" @onclick="btnSortA">대분류</button>
+                            </td>
+                        </tr>
+                        
+                        @if (Sort == "B")
+                        {
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>대분류</span></div>
+                                    <select id="intAid" class="custom-select" value="@intAid" @onchange="OnSort" style="font-size: 0.9em" required>
+                                        <option value="">=대분류선택=</option>
+
+                                        @foreach (var it in BigSort)
+                                        {
+                                            <option value="@it.Aid">@it.SortName</option>
+                                        }
+                                    </select>
+                                </div>
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span> &nbsp; 분류명</span></div>
+                                        <input id="SortName" name="SortName" style="font-size: 0.9em" @bind="bnn.SortName" class="form-control" type="text" placeholder="분류명 입력하는 곳" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <textarea id="Details" name="Details" class="form-control" rows="3" style="min-width: 100%" @bind="bnn.Details" required></textarea>
+                            </td>
+                        </tr>
+                        
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

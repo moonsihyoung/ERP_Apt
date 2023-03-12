@@ -1,0 +1,638 @@
+﻿@page "/Stocks"
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <h6><i class="bi bi-tools"></i> &nbsp;자재정보 관리</h6>
+                </td>
+                <td class="text-right">
+                    <input id="Button1" class="btn btn-outline-primary btn-sm" type="button" @onclick="btnNewViews" value="새로 입력" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <table style="width: 100%; margin-bottom: 5px">
+            <tr>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td style="width: 300px">
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;자재코드</span></div>
+                        <input id="strSearch" name="strSearch" style="font-size: 0.9em;" value="@strSearch" @onchange="OnSearch" class="form-control" type="text" />
+                        <div class="input-group-append">
+                            <input id="Button1" class="btn btn-primary btn-sm" style="font-size: 0.9em" type="button" value="검색" />
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <table class="table table-sm table-hover" style="font-size: 0.9em">
+            <thead>
+                <tr style="background-color: whitesmoke;">
+                    <th class="text-center">
+                        번호
+                    </th>
+                    <th class="text-center">
+                        식별코드
+                    </th>
+                    <th class="text-center">
+                        자재명
+                    </th>
+                    <th class="text-center">
+                        모델명
+                    </th>
+                    <th class="text-center">
+                        용량
+                    </th>
+
+                    <th class="text-center">
+                        잔고
+                    </th>
+                    <th class="text-center">
+                        단위
+                    </th>
+                    <th class="text-center">
+                        생산지
+                    </th>
+                    <th class="text-center">
+                        구분
+                    </th>
+                    <th class="text-center">
+                        분류
+                    </th>
+                    <th class="text-center">
+                        용도
+                    </th>
+                    <th class="text-center">
+                        입출고일
+                    </th>
+                    <th class="text-center">
+                        선택
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (ann == null)
+                {
+                    <tr>
+                        <td colspan="13">
+                            <p style="text-align:center">
+                                <img src="/images/loader.gif" height="50" />
+                            </p>
+                        </td>
+                    </tr>
+
+                }
+                else if (ann.Count == 0)
+                {
+                    <tr>
+                        <td colspan="13">
+                            <p style="text-align:center">
+                                <span style="font-size: 1.1em; color: red;">데이터가 없습니다.</span>
+                                @*<img src="/images/loader.gif" height="100" />*@
+                            </p>
+                        </td>
+                    </tr>
+
+                }
+                else
+                {
+                    @foreach (var st in ann)
+                    {
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByAid(st)">
+                                @st.Num
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByAid(st)">
+                                @st.St_Code
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByAid(st)">
+                                @st.St_Name
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByAid(st)">
+                                @st.St_Model
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByAid(st)">
+                                @st.St_Dosage
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByAid(st)">
+                                @Balance(st.St_Code)<span>@st.St_Unit</span>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByAid(st)">
+                                @st.St_Unit
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByAid(st)">
+                                @st.St_Place
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByAid(st)">
+                                @St_Group_(st.St_Group)
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByAid(st)">
+                                @st.St_Bloom
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByAid(st)">
+                                @Dul.StringLibrary.CutString(st.St_Using, 20)
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByAid(st)">
+                                @st.PostDate.ToShortDateString()
+                            </td>
+
+                            <td style="text-align: center; vertical-align: middle">
+                                @*<input id="Button1" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByAid(st)" value="상세" />*@
+                                <input id="Button1" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByEdit(st)" value="수정" />
+                                <input id="Button1" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemove(st)" value="삭제" />
+                            </td>
+                        </tr>
+                    }
+
+                }
+
+            </tbody>
+        </table>
+        <div class="col-md-12">
+            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+        </div>
+    </div>
+</div>
+
+@*새로운 자재 입력*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: darkgrey; color: white">
+                    <h6 class="modal-title"><span class="bi-tools"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <table class="table table-sm" style="margin-bottom: 5px">
+                        <tr>
+
+                            <td title="자재 코드는 자동으로 생성됩니다.">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;자재코드</span></div>
+                                    <input id="St_Code" name="St_Code" style="font-size: 0.9em;" @bind="bnn.St_Code" class="form-control" type="text" readonly="readonly" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group" title="소모자재는 소모품 중에 입출고 시 숫자를 헤아려야 하는 자재(예컨데, 전구, 염화칼슐(포대), 전등 등), 소모품은 소모품 중에 입출고 시에 숫자를 헤아릴 수 없는 소모품(두루마리 휴지, 작은 나사 등), 공기구는 각종 공구(연장) (예컨데, 스페너, 드라이버, 망치 등),  비품은 사무실에 비치된 책상등(예컨데, 책상, 문서장, 컴퓨터 등)">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;구분</span></div>
+                                    <select id="St_Group" class="custom-select" @bind="bnn.St_Group" style="font-size: 0.9em">
+                                        <option value="">=구분 선택=</option>
+                                        <option value="st_Code_2">소모자재</option>
+                                        <option value="st_Code_0">소모품</option>
+                                        <option value="st_Code_1">공기구</option>
+                                        <option value="st_Code_3">비품</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td title="모델명을 입력하여야 합니다.">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;모델명</span></div>
+                                    <input id="St_Model" name="St_Model" style="font-size: 0.9em;" @bind="bnn.St_Model" class="form-control" type="text" />
+                                </div>
+                            </td>
+                            <td title="제품명을 입력하는 곳입니다.">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;제품명</span></div>
+                                    <input id="St_Name" name="St_Name" style="font-size: 0.9em;" @bind="bnn.St_Name" class="form-control" type="text" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;분 류</span></div>
+                                    <select id="St_Section" class="custom-select" style="font-size: 0.9em" @bind="bnn.St_Section" required>
+                                        <option value="">=분류 선택=</option>
+                                        @foreach (var it in bloom_A)
+                                        {
+                                            <option value="@it.B_N_A_Name">@it.B_N_A_Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;단 위</span></div>
+                                    <select id="St_Unit" class="custom-select" style="font-size: 0.9em" @bind="bnn.St_Unit" required>
+                                        <option value="">=단위 선택=</option>
+                                        <option value="박스">박스</option>
+                                        <option value="개">개</option>
+                                        <option value="파렛트">파렛트</option>
+                                        <option value="장">장</option>
+                                        <option value="묶음">묶음</option>
+                                        <option value="미터">미터</option>
+                                        <option value="센티">센티</option>
+                                        <option value="밀리">밀리</option>
+                                        <option value="평방미터">평방미터</option>
+                                        <option value="인치">인치</option>
+                                        <option value="볼트">볼트</option>
+                                        <option value="와트">와트</option>
+                                        <option value="포">포</option>
+                                        <option value="톤">톤</option>
+                                        <option value="킬로그램">킬로그램</option>
+                                        <option value="킬로미티">길로미터</option>
+                                        <option value="대">대</option>
+                                        <option value="통">통</option>
+                                        <option value="기타">기타</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style="vertical-align: middle" title="자재의 규격을 입력하는 곳">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;규 격</span></div>
+                                    <input id="St_Dosage" name="St_Dosage" style="font-size: 0.9em;" @bind="bnn.St_Dosage" class="form-control" type="text" />
+                                </div>
+                            </td>
+
+
+                            <td style="vertical-align: middle">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;원산지</span></div>
+                                    <input id="St_Place" name="St_Place" style="font-size: 0.9em;" @bind="bnn.St_Place" class="form-control" type="text" />
+                                </div>
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td style="vertical-align: middle" colspan="2">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;메뉴얼</span></div>
+                                    <textarea id="St_Manual" name="St_Manual" title="최대 4,000자 이내 입력 가능" placeholder="자재 이용 메뉴얼 입력하는 곳" rows="3" style="font-size: 0.9em" @bind="bnn.St_Manual" class="form-control" type="text" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align: middle" colspan="2">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;설&nbsp;&nbsp;명</span></div>
+                                    <textarea id="St_Using" name="St_Using" title="최대 4,000자 이내 입력 가능" placeholder="사용 설명, 용도 설명 등을 입력하는 곳" rows="3" style="font-size: 0.9em" @bind="bnn.St_Using" class="form-control" type="text" />
+                                </div>
+                            </td>
+                        </tr>
+                        @*<tr>
+                                <td colspan="2">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;파일첨부</span></div>
+                                        <InputFile OnChange="OnFileChage" class="custom-select" style="font-size: 0.9em" multiple></InputFile>
+                                    </div>
+                                </td>
+                            </tr>*@
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}
+
+@*자재정보 상세*@
+@if (Views == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: darkgrey; color: white">
+                    <h6 class="modal-title"><span class="bi-tools"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseA">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-6" style="height:400px; overflow-y:auto">
+                            <table class="table table-sm" style="margin-bottom: 5px">
+                                <tr>
+                                    <td title="제품명을 입력하는 곳입니다.">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;제품명</span></div>
+                                            <input id="St_Name" name="St_Name" style="font-size: 0.9em;" value="@bnn.St_Name" class="form-control" type="text" readonly="readonly" />
+                                        </div>
+                                    </td>
+                                    @*<td>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;자재코드</span></div>
+                                                <input id="St_Code" name="St_Code" style="font-size: 0.9em;" value="@bnn.St_Code" class="form-control" type="text" />
+                                            </div>
+                                        </td>*@
+                                    <td>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;구분명</span></div>
+                                            <input id="St_Group" name="St_Group" style="font-size: 0.9em;" value="@St_Group_(bnn.St_Group)" class="form-control" type="text" readonly="readonly" />
+
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;규격</span></div>
+                                            <input id="St_Model" name="St_Model" style="font-size: 0.9em;" value="@bnn.St_Dosage" class="form-control" type="text" readonly="readonly" />
+                                        </div>
+                                    </td>
+
+                                    <td title="모델명을 입력하여야 합니다.">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;모델명</span></div>
+                                            <input id="St_Model" name="St_Model" style="font-size: 0.9em;" value="@bnn.St_Model" class="form-control" type="text" readonly="readonly" />
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                @*<tr>
+                                        <td>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;단위</span></div>
+                                                <input id="St_Name" name="St_Name" style="font-size: 0.9em;" value="@bnn.St_Unit" class="form-control" type="text" />
+                                            </div>
+                                        </td>
+
+                                    </tr>*@
+
+                                <tr>
+                                    <td>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;전년 이월 잔고</span></div>
+                                            <input id="St_Name" name="St_Name" style="font-size: 0.9em; text-align: right" value="@BalanceAgo(bnn.St_Code)" class="form-control" type="text" readonly="readonly" />
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em">@bnn.St_Unit</span></div>
+                                        </div>
+                                    </td>
+                                    <td title="모델명을 입력하여야 합니다.">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;현재 잔고</span></div>
+                                            <input id="St_Model" name="St_Model" style="font-size: 0.9em; text-align: right" value="@BalanceNow(bnn.St_Code)" class="form-control" type="text" readonly="readonly" />
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em">@bnn.St_Unit</span></div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;전년 입고</span></div>
+                                            <input id="St_Name" name="St_Name" style="font-size: 0.9em; text-align: right" value="@OutAgoSum(bnn.St_Code)" class="form-control" type="text" readonly="readonly" />
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em">@bnn.St_Unit</span></div>
+                                        </div>
+                                    </td>
+                                    <td title="모델명을 입력하여야 합니다.">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;당해 입고</span></div>
+                                            <input id="St_Model" name="St_Model" style="font-size: 0.9em; text-align: right" value="@OutNowSum(bnn.St_Code)" class="form-control" type="text" readonly="readonly" />
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em">@bnn.St_Unit</span></div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;전년 출고</span></div>
+                                            <input id="St_Name" name="St_Name" style="font-size: 0.9em; text-align: right" value="@IntAgoSum(bnn.St_Code)" class="form-control" type="text" readonly="readonly" />
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em">@bnn.St_Unit</span></div>
+                                        </div>
+                                    </td>
+                                    <td title="모델명을 입력하여야 합니다.">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;당해 출고</span></div>
+                                            <input id="St_Model" name="St_Model" style="font-size: 0.9em; text-align: right" value="@IntNowSum(bnn.St_Code)" class="form-control" type="text" readonly="readonly" />
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em">@bnn.St_Unit</span></div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;전년 구입비</span></div>
+                                            <input id="St_Name" name="St_Name" style="font-size: 0.9em; text-align: right" value="@WhCostAgo(bnn.St_Code)" class="form-control" type="text" readonly="readonly" />
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em">원</span></div>
+                                        </div>
+                                    </td>
+                                    <td title="모델명을 입력하여야 합니다.">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;당해 구입비</span></div>
+                                            <input id="St_Model" name="St_Model" style="font-size: 0.9em; text-align:right" value="@WhCostNow(bnn.St_Code)" class="form-control" type="text" readonly="readonly" />
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em">원</span></div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="vertical-align: middle" colspan="2">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;설&nbsp;&nbsp;명</span></div>
+                                            <textarea id="St_Using" name="St_Using" title="최대 4,000자 이내 입력 가능" placeholder="사용 설명, 용도 설명 등을 입력하는 곳" rows="2" style="font-size: 0.9em" value="@bnn.St_Using" class="form-control" type="text" readonly="readonly" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-6" style="height:400px; overflow-y:auto">
+                            <table class="table table-sm">
+                                @if (Files_Count > 0)
+                                {
+                                    @foreach (var item in Files_Entity)
+                                    {
+                                        @if (OnExtension(item.Sw_FileName) == ".pdf" || Dul.BoardLibrary.IsPhoto(item.Sw_FileName))
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @if (OnExtension(item.Sw_FileName) == ".pdf")
+                                                    {
+                                                        <div style="height: 400px; overflow-y:auto">
+                                                            <embed src="/Sw_Files/@item.Sw_FileName" type="application/pdf" style="width: 100%;" />
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        @if (Dul.BoardLibrary.IsPhoto(item.Sw_FileName))
+                                                        {
+                                                            <div style="height: 400px; overflow-y:auto">
+                                                                <img src="/Sw_Files/@item.Sw_FileName" style="width: 100%;" class="img-thumbnail" />
+                                                            </div>
+                                                        }
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+
+                                }
+                                @if (Files_Count > 0)
+                                {
+                                    <tr>
+                                        <td>
+                                            @foreach (var item in Files_Entity)
+                                            {
+                                                <span title="@item.Sw_FileName">@Dul.StringLibrary.CutString(item.Sw_FileName, 16)</span> <button id="btnFileDelete" title="사진을 삭제하려면 이곳을 클릭해 주세요" class="btn btn-link" @onclick="() => FilesRemove(item)"><span style="font-size: 1em; font-weight: bold; color: red" class="bi-x-circle-fill"></span></button><span> &nbsp; &nbsp;</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+
+                        <div class="col-12" style="overflow-y: auto; height: 200px">
+
+                            <table class="table table-sm table-hover" style="font-size: 0.9em">
+                                <thead>
+                                    <tr style="background-color: whitesmoke">
+                                        <th class="text-center">
+                                            코드
+                                        </th>
+                                        <th class="text-center">
+                                            입고
+                                        </th>
+                                        <th class="text-center">
+                                            출고
+                                        </th>
+                                        <th class="text-center">
+                                            단위
+                                        </th>
+                                        <th class="text-center">
+                                            잔고
+                                        </th>
+                                        <th class="text-center">
+                                            비용
+                                        </th>
+                                        <th class="text-center">
+                                            보관장소
+                                        </th>
+                                        <th class="text-center">
+                                            입출고일
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var st in enn)
+                                    {
+                                        <tr>
+                                            <td style="text-align:center; vertical-align:middle">
+                                                @st.St_Code
+                                            </td>
+                                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByUrl(st.Parents)">
+                                                @if (st.Wh_Section == "A")
+                                                {
+                                                    @string.Format("{0: ###,###}", st.Wh_Quantity)
+                                                }
+                                                else
+                                                {
+                                                    <span>0</span>
+                                                }
+                                            </td>
+                                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByUrl(st.Parents)">
+                                                @if (st.Wh_Section == "B")
+                                                {
+                                                    @string.Format("{0: ###,###}", st.Wh_Quantity)
+                                                }
+                                                else
+                                                {
+                                                    <span>0</span>
+                                                }
+                                            </td>
+                                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByUrl(st.Parents)">
+                                                @st.Wh_Unit
+                                            </td>
+                                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByUrl(st.Parents)">
+                                                @string.Format("{0: ###,###}", st.Wh_Balance)
+                                            </td>
+                                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByUrl(st.Parents)">
+                                                @if (st.Wh_Cost > 0)
+                                                {
+                                                    @string.Format("{0: ###,###}", st.Wh_Cost)
+                                                }
+                                                else
+                                                {
+                                                    <span>0</span>
+                                                }
+                                            </td>
+                                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByUrl(st.Parents)">
+                                                @st.Wh_Place
+                                            </td>
+                                            <td style="text-align:center; vertical-align:middle" @onclick="() => ByUrl(st.Parents)">
+                                                @st.PostDate.ToShortDateString()
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                            <div class="col-md-12">
+                                <DulPager.DulPagerComponent Model="pager1" PageIndexChanged="PageIndexChanged1"></DulPager.DulPagerComponent>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnFileUpOpen">사진 등록</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseA" title="현재 팝업을 닫으려면 이곳을 클릭해 주세요."><span class="bi bi-file-x"></span>&nbsp;닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}
+
+@*파일 첨부 올리기*@
+@if (strFileUpOpen == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><span class="bi-file-code"></span> 첨부파일 입력</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+
+                    <div style="margin-top: 10px">
+
+                        <p>
+                            <InputFile OnChange="LoadFiles" class="custom-file" style="font-size: 0.9em" multiple></InputFile>
+                        </p>
+                        @if (isLoading)
+                        {
+                            <p style="text-align: center">
+                                <img src="/images/loader.gif" height="40" />
+                            </p>
+                            <p>Progress: @string.Format("{0:P0}", progressPercent)</p>
+                        }
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="FilesClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

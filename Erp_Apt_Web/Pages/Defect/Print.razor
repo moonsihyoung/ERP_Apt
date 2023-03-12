@@ -1,0 +1,56 @@
+﻿@page "/Defect/Print/{Aid:int}/{Name}/{AptCode}"
+@layout EmptyLayout
+
+<br /> <br /><br />
+<div class="card">
+    <div class="card-header">
+        <table style="width: 100%; font-size: 1.2em">
+            <tr>
+                <td><span class="bi-printer-fill"> &nbsp; @AptName 하자 신청 정보</span> </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <table class="table" style="font-size:1em">
+            <tr>
+                <td>
+                    <span style="font-weight:bold">일련번호 : </span> df_@ann.Aid
+                </td>
+                <td>
+                    <span style="font-weight:bold">대분류 : </span> @ann.Bloom_Name_A
+                </td>
+                <td>
+                    <span style="font-weight:bold">중분류 : </span> @ann.Bloom_Name_B
+                </td>
+                <td>
+                    <span style="font-weight:bold">소분류 : </span>  @ann.Bloom_Name_C
+                </td>
+                <td>
+                    <span style="font-weight:bold">장소 : </span>  @ann.Position
+                </td>
+                @*<td>
+                    <span style="font-weight:bold">담당자 : </span>  @UserName
+                </td>*@
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <span class="bi-printer-fill" style="font-weight: bold"> 하자 내용 : </span>
+                    @ann.dfContent
+                </td>
+            </tr>
+
+            @foreach (var st in bnn)
+            {
+                <tr>
+                    <td colspan="5">
+                        <div class="text-center">
+                            <img src="/UpFiles/Defect/@st.Sw_FileName" alt="" class="img-fluid" width="850" />
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+

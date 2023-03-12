@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "로그인";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>공동주택 관리전산</title>
+</head>
+<body>
+    @if (TempData["message"] != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                alert("@TempData["message"]");
+            };
+        </script>
+
+    }
+    <div>
+        @* <div class="container">*@
+        <div class="card">
+            <div class="card-header">
+              <img src="~/images/sub/key_login.gif" height="25" /> <span class="text-danger" style="font-weight:bold"> 로그인</span>
+            </div>
+            <div class="card-body">
+                <form action="/Home/Index" method="post">
+                    <div class="input-group">
+                        <div class="input-group-append">
+
+                            <span class="input-group-text"><i class="bi bi-person-fill"></i>&nbsp; 모바일</span>
+                        </div>
+                        <input id="Mobile" name="Mobile" type="text" placeholder="핸드폰 번호" style="font-size: 1em" class="form-control" />
+                    </div>
+                    <br />
+                    <div class="input-group">
+                        <div class="input-group-append">
+                            <span class="input-group-text">&nbsp;<i class="bi bi-eye-slash-fill"></i>&nbsp; 암 &nbsp; 호</span>
+                        </div>
+                        <input id="sw_Pass" name="sw_Pass" type="password" style="font-size: 1em" class="form-control" />
+                    </div>
+                    <br />
+                    <input type="submit" class="btn btn-success btn-block" value="로그인" />
+                </form>
+                
+            </div>
+
+
+        </div>
+    </div>
+    @* </div>*@
+
+
+</body>
+</html>

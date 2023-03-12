@@ -1,0 +1,48 @@
+﻿@page "/Draft/Print/{Aid:int}/{Name}";
+
+<div class="card">
+    <div class="card-header">
+        <table style="width: 100%; font-size: 1.2em">
+            <tr>
+                <td><span class="bi-printer-fill"> &nbsp; 하자 신청 정보</span> </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <table class="table table-sm" style="font-size:0.9em">
+            <tr>
+                <td>
+                    @ann.Bloom_Name_A
+                </td>
+                <td>
+                    @ann.Bloom_Name_B
+                </td>
+                <td>
+                    @ann.Bloom_Name_C
+                </td>
+                <td>
+                    @ann.Position
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <span class="bi-printer-fill" style="font-weight: bold"> 하자 내용 : </span>
+                    @ann.dfContent
+                </td>
+            </tr>
+
+            @foreach (var st in bnn)
+            {
+                <tr>
+                    <td colspan="4">
+                        <div class="text-center">
+                            <img src="/UpFiles/Defect/@st.Sw_FileName" alt="" class="img-thumbnail" width="900" />
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+

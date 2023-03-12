@@ -1,0 +1,1052 @@
+﻿@page "/Admin/CostDebit/Index_Usage"
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <h6><span class="bi-journal-text"> </span>&nbsp;공용부 사용량 정보 목록</h6>
+                </td>
+                <td>
+                </td>
+                <td class="text-right">
+
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnOpenA"> <span class="bi-tools"></span>&nbsp;사용량 등록</button>&nbsp;&nbsp;
+
+                    <button type="button" class="btn btn-outline-primary btn-sm" @onclick="btnOpenB"> <span class="bi-tools"></span>&nbsp;분류검색</button>
+
+                </td>
+
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+
+        <table class="table table-hover" style="font-size:0.9em">
+            <thead>
+                <tr>
+                    <th style="text-align: center; vertical-align:middle">해당월</th>
+                    <th style="text-align: center; vertical-align:middle">전기계약방식</th>
+                    <th style="text-align: center; vertical-align:middle">전기부과방식</th>
+                    <th style="text-align: center; vertical-align:middle">전기전체사용량</th>
+                    <th style="text-align: center; vertical-align:middle">전기공용사용량</th>
+                    <th style="text-align: center; vertical-align:middle">수도전체사용량</th>
+                    <th style="text-align: center; vertical-align:middle">난방방식</th>
+                    <th style="text-align: center; vertical-align:middle">난방전체사용량</th>
+                    <th style="text-align: center; vertical-align:middle">급탕전체사용량</th>
+                    <th style="text-align: center; vertical-align:middle">가스사용량</th>
+                    <th style="text-align: center; vertical-align:middle">버튼</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ann.Count == 0)
+                {
+                    <tr>
+                        <td colspan="11">
+                            <p style="text-align:center">
+                                입력된 정보가 없습니다. ............
+                            </p>
+                        </td>
+                    </tr>
+                }
+                else if (ann == null)
+                {
+                    <tr>
+                        <td colspan="11">
+                            <p style="text-align:center">
+                                <img src="/images/loader.gif" height="100" />
+                            </p>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var st in ann)
+                    {
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle">
+                                @st.intYear<span>년</span> @st.intMonth<span>월</span>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @st.ElectricContractMethod
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @st.ElectricInpose
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @if (st.ElectricAllUsage > 0)
+                                {
+                                    @string.Format("{0: ###,###.##}", st.ElectricAllUsage)
+                                }
+                                else
+                                {
+                                    <span>0</span>
+                                }
+                                <span>KWh</span>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @if (st.ElectricComUsage > 0)
+                                {
+                                    @string.Format("{0: ###,###.##}", st.ElectricComUsage)
+                                }
+                                else
+                                {
+                                    <span>0</span>
+                                }
+                                <span>KWh</span>
+                            </td>
+
+
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @if (st.WaterAllUsage > 0)
+                                {
+                                    @string.Format("{0: ###,###.##}", st.WaterAllUsage)
+                                }
+                                else
+                                {
+                                    <span>0</span>
+                                }
+                                <span>톤</span>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @st.codeHeatNm
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @if (st.HeatingPerUsage > 0)
+                                {
+                                    @string.Format("{0: ###,###.##}", st.HeatingPerUsage)
+                                }
+                                else
+                                {
+                                    <span>0</span>
+                                }
+                                <span>MWh</span>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @st.HotWaterPerUsage
+
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @st.GasUsage
+                                <span>MJ</span>
+                            </td>
+                            <td class="text-center" style="vertical-align:middle">
+                                <input id="btnSelect" type="button" value="수정" class="btn btn-link btn-sm" @onclick="(() => btnEdit(st))" />
+                                <input id="btnSelect" type="button" value="삭제" class="btn btn-link btn-sm" @onclick="(() => btnRemove(st.Aid))" />
+                            </td>
+                        </tr>
+                    }
+
+                    <tr>
+                        <td colspan="11">
+                            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+                        </td>
+                    </tr>
+
+                }
+
+            </tbody>
+        </table>
+
+    </div>
+    <div class="card-footer" style="text-align: right">
+        <span class="text-primary" style="font-size: 1em; font-weight: bold">
+            신원티엠씨(TMC)
+        </span>
+    </div>
+</div>
+
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h5 class="modal-title"><span class="bi-thermometer-sun"></span>&nbsp;@strTitle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div style="height: 600px; overflow-y:auto">
+                        <table class="table">
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-calendar-check"></span> &nbsp; 년도</span></div>
+                                        <select id="svPost" class="custom-select" style="font-size: 0.9em; text-align:center" @bind="bnn.intYear" required>
+                                            <option value="">=년도선택=</option>
+                                            @for (int i = 2021; i < 2050; i++)
+                                            {
+                                                <option value="@i" title="년도 선택">@i<span>년</span></option>
+                                            }
+
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-calendar-check"></span> &nbsp; 해당월</span></div>
+                                        <select id="svPost" class="custom-select" style="font-size: 0.9em; text-align:center" value="@bnn.intMonth" @onchange="onMonthAsync" required>
+                                            <option value="">=월선택=</option>
+                                            @for (int i = 1; i < 13; i++)
+                                            {
+                                                <option value="@i" title="월 선택"> @i<span>월</span></option>
+                                            }
+
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span>&nbsp; 전기계약방식</span></div>
+                                        <select id="ecm" class="custom-select" style="font-size: 0.9em" @bind="bnn.ElectricContractMethod" required>
+                                            <option value="">=계약방식선택=</option>
+                                            <option value="종합계약">종합계약</option>
+                                            <option value="단일계약">단일계약</option>
+                                            <option value="기타">기타</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span>&nbsp; 전기부과방식</span></div>
+                                        <select id="ecm" class="custom-select" style="font-size: 0.9em" @bind="bnn.ElectricInpose" required>
+                                            <option value="">=부과방식선택=</option>
+                                            <option value="주택용저압">주택용저압</option>
+                                            <option value="주택용고압">주택용고압</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 산업용 전기</span></div>
+                                        <input id="ElectricIndustry" style="font-size: 0.9em; text-align:right" name="ElectricIndustry" @bind="bnn.ElectricIndustry" class="form-control" type="number" placeholder="산업용 전기료 사용량 입력" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 산업용 전기료</span></div>
+                                        <input id="ElectricIndustryFee" style="font-size: 0.9em; text-align:right" name="ElectricIndustryFee" @bind="bnn.ElectricIndustryFee" class="form-control" type="number" placeholder="산업용 전기료 사용량 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 가로등 전기</span></div>
+                                        <input id="ElectricStreetLamp" style="font-size: 0.9em; text-align:right" name="ElectricStreetLamp" @bind="bnn.ElectricStreetLamp" class="form-control" type="number" placeholder="가로등 사용량 입력" />
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 가로등 전기료</span></div>
+                                        <input id="ElectricStreetLampFee" style="font-size: 0.9em; text-align:right" name="ElectricStreetLampFee" @bind="bnn.ElectricStreetLampFee" class="form-control" type="number" placeholder="가로등 사용료 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 전기 전체</span></div>
+                                        <input id="ElectricAllUsage" style="font-size: 0.9em; text-align:right" name="ElectricAllUsage" @bind="bnn.ElectricAllUsage" class="form-control" type="number" placeholder="전기 전체 사용량 입력" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 전기료 전체</span></div>
+                                        <input id="ElectricAllFee" style="font-size: 0.9em; text-align:right" name="ElectricAllFee" @bind="bnn.ElectricAllFee" class="form-control" type="number" placeholder="전기 전체 사용료 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 전기 세대</span></div>
+                                        <input id="ElectricPerUsage" style="font-size: 0.9em; text-align:right" name="ElectricPerUsage" value="@bnn.ElectricPerUsage" @onchange="onUsage" class="form-control" type="number" placeholder="전기 세대 사용량 입력" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 전기료 세대</span></div>
+                                        <input id="ElectricPerFee" style="font-size: 0.9em; text-align:right" name="ElectricPerFee" value="@bnn.ElectricPerFee" @onchange="onUsageFee" class="form-control" type="number" placeholder="전기 세대 사용료 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+                            @*여기까지 작업*@
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 전기 공용</span></div>
+                                        <input id="ElectricComUsage" style="font-size: 0.9em; text-align:right" name="ElectricComUsage" @bind="bnn.ElectricComUsage" class="form-control" type="number" placeholder="전기 공용 사용량 입력" readonly="readonly" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 전기료 공용</span></div>
+                                        <input id="ElectricComFee" style="font-size: 0.9em; text-align:right" name="ElectricComFee" @bind="bnn.ElectricComFee" class="form-control" type="number" placeholder="전기 공용 사용료 입력" readonly="readonly" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 수도 전체</span></div>
+                                        <input id="WaterAllUsage" style="font-size: 0.9em; text-align:right" name="WaterAllUsage" @bind="bnn.WaterAllUsage" class="form-control" type="number" placeholder="수도 전체 사용량 입력" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 수도료 전체</span></div>
+                                        <input id="WaterAllFee" style="font-size: 0.9em; text-align:right" name="WaterAllFee" @bind="bnn.WaterAllFee" class="form-control" type="number" placeholder="수도 전체 사용료 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 수도 세대</span></div>
+                                        <input id="WaterComUsage" style="font-size: 0.9em; text-align:right" name="WaterComUsage" value="@bnn.WaterComUsage" @onchange="onWatering" class="form-control" type="number" placeholder="수도 세대 사용량 입력" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 수도료 세대</span></div>
+                                        <input id="WaterComFee" style="font-size: 0.9em; text-align:right" name="WaterComFee" value="@bnn.WaterComFee" @onchange="onWateringFee" class="form-control" type="number" placeholder="수도 세대 사용료 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 수도 공용</span></div>
+                                        <input id="WaterPerUsage" style="font-size: 0.9em; text-align:right" name="WaterPerUsage" @bind="bnn.WaterPerUsage" class="form-control" type="number" placeholder="수도 공용 사용량 입력" readonly="readonly" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 수도료 공용</span></div>
+                                        <input id="WaterPerFee" style="font-size: 0.9em; text-align:right" name="WaterPerFee" @bind="bnn.WaterPerFee" class="form-control" type="number" placeholder="수도 공용 사용료 입력" readonly="readonly" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 급탕 전체</span></div>
+                                        <input id="HotWaterAllUsage" style="font-size: 0.9em; text-align:right" name="HotWaterAllUsage" @bind="bnn.HotWaterAllUsage" class="form-control" type="number" placeholder="급탕 전체 사용량 입력" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 급탕료 전체</span></div>
+                                        <input id="HotWaterAllFee" style="font-size: 0.9em; text-align:right" name="HotWaterAllFee" @bind="bnn.HotWaterAllFee" class="form-control" type="number" placeholder="급탕 전체 사용료 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 급탕 세대</span></div>
+                                        <input id="HotWaterPerUsage" style="font-size: 0.9em; text-align:right" name="HotWaterPerUsage" value="@bnn.HotWaterPerUsage" class="form-control" type="number" @onchange="onHotWaterUsage" placeholder="급탕 세대 사용량 입력" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 급탕료 세대</span></div>
+                                        <input id="HotWaterPerFee" style="font-size: 0.9em; text-align:right" name="HotWaterPerFee" value="@bnn.HotWaterPerFee" class="form-control" type="number" @onchange="onHotWaterUsageFee" placeholder="급탕 세대 사용료 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 급탕 공용</span></div>
+                                        <input id="HotWaterAllUsage" style="font-size: 0.9em; text-align:right" name="HotWaterAllUsage" @bind="bnn.HotWaterAllUsage" class="form-control" type="number" readonly="readonly" placeholder="급탕 공용 사용량 입력" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 급탕료 공용</span></div>
+                                        <input id="HotWaterAllFee" style="font-size: 0.9em; text-align:right" name="HotWaterAllFee" @bind="bnn.HotWaterAllFee" class="form-control" type="number" readonly="readonly" placeholder="급탕 공용 사용료 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span>&nbsp; 난방방식</span></div>
+                                        <select id="codeHeatNm" class="custom-select" style="font-size: 0.9em" @bind="bnn.codeHeatNm" required>
+                                            <option value="">=난방방식선택=</option>
+                                            <option value="개별난방">개별난방</option>
+                                            <option value="중앙난방">중앙난방</option>
+                                            <option value="지역난방">지역난방</option>
+                                            <option value="개별난방+기타">개별난방+기타</option>
+                                            <option value="기타">기타</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 입력기준일</span></div>
+                                        <input id="HeatingAllUsage" style="font-size: 0.9em; text-align:right" name="HeatingAllUsage" value="@bnn.UseDate" class="form-control" type="datetime" readonly="readonly" placeholder="입력기준일 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 난방 전체</span></div>
+                                        <input id="HeatingAllUsage" style="font-size: 0.9em; text-align:right" name="HeatingAllUsage" @bind="bnn.HeatingAllUsage" class="form-control" type="number" placeholder="난방 전체 사용량 입력" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 난방료 전체</span></div>
+                                        <input id="HeatingAllFee" style="font-size: 0.9em; text-align:right" name="HeatingAllFee" @bind="bnn.HeatingAllFee" class="form-control" type="number" placeholder="난방 전체 사용료 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 난방 세대</span></div>
+                                        <input id="HeatingPerUsage" style="font-size: 0.9em; text-align:right" name="HeatingPerUsage" value="@bnn.HeatingPerUsage" @onchange="onHeatingUsage" class="form-control" type="number" placeholder="난방 세대 사용량 입력" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 난방료 세대</span></div>
+                                        <input id="HotWaterPerFee" style="font-size: 0.9em; text-align:right" name="HotWaterPerFee" value="@bnn.HeatingPerFee" @onchange="onHeatingUsageFee" class="form-control" type="number" placeholder="난방 세대 사용료 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 난방 공용</span></div>
+                                        <input id="HeatingAllUsage" style="font-size: 0.9em; text-align:right" name="HeatingAllUsage" @bind="bnn.HeatingComUsage" class="form-control" type="number" readonly="readonly" placeholder="난방 공용 사용량 입력" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 난방료 공용</span></div>
+                                        <input id="HeatingAllFee" style="font-size: 0.9em; text-align:right" name="HeatingAllFee" @bind="bnn.HeatingComFee" class="form-control" type="number" readonly="readonly" placeholder="난방 공용 사용료 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 가스 사용량</span></div>
+                                        <input id="GasUsage" style="font-size: 0.9em; text-align:right" name="GasUsage" @bind="bnn.GasUsage" class="form-control" type="number" placeholder="가스 사용량 입력" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 가스 사용료</span></div>
+                                        <input id="GasFee" style="font-size: 0.9em; text-align:right" name="GasFee" @bind="bnn.GasFee" class="form-control" type="number" placeholder="가스 사용료 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer" style="background-color:cornsilk">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (Views == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h5 class="modal-title"><span class="bi-thermometer-sun"></span>&nbsp;@strTitle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseA">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div style="height: 600px; overflow-y:auto">
+                        <table class="table table-hover" style="font-size: 0.9em">
+
+                            <tr>
+                                <td>
+                                    전기계약방식 : @bnn.ElectricContractMethod
+                                </td>
+                                <td>
+                                    전기부과방식 : @bnn.ElectricInpose
+                                </td>
+                                <td>
+                                    난방방식 : @bnn.codeHeatNm
+                                </td>
+                                <td>
+                                    해당월 : @bnn.intYear<span>년 </span> @bnn.intMonth<span>월</span>;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    전기 전체 사용량 :
+                                    @if (bnn.ElectricAllUsage > 0)
+                                    {
+                                        @bnn.ElectricAllUsage
+                                    }
+
+                                </td>
+                                <td>
+                                    전기 전체 사용료 :
+                                    @if (bnn.ElectricAllUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.ElectricAllUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                </td>
+                                <td>
+                                    전기 세대 사용량:
+                                    @if (bnn.ElectricPerUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.ElectricPerUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>KWh</span>
+                                </td>
+                                <td>
+                                    전세 세대 사용료 :
+                                    @if (bnn.ElectricPerFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.ElectricPerFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td @onclick="(() => DetailListViewA(bnn))">
+                                    <img src="/images/btn_add1.gif" />  전기 공동 사용량 :
+                                    @if (bnn.ElectricComUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.ElectricComUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>KWh</span>
+                                </td>
+                                <td @onclick="(() => DetailListViewA(bnn))">
+                                    전기 공동 사용료 :
+                                    @if (bnn.ElectricComFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.ElectricComFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                </td>
+                                <td>
+                                    수도 전체 사용량:
+                                    @if (bnn.WaterAllUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.WaterAllUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>톤</span>
+                                </td>
+                                <td>
+                                    수도 전체 사용료 :
+                                    @if (bnn.WaterAllFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.WaterAllFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                </td>
+                            </tr>
+
+                            @if (Electric_Views == "B")
+                            {
+                                if (vnnA.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="2">
+                                            <span style="color:red; font-size: 0.9em">입력된 정보가 없습니다.</span>
+                                        </td>
+                                        <td colspan="2"> </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var st in vnnA)
+                                    {
+                                        <tr>
+                                            <td colspan="2">
+                                                <span class="bi-pin text-danger" style="font-weight:bold"> </span>&nbsp; @st.UseName <span class="bi-chevron-double-right"> </span> &nbsp; 사용량 : @st.Usage<span>KWh</span> &nbsp; 사용료 : @string.Format("{0: ###,###.##}", st.CostSum)<span>원</span>
+                                            </td>
+                                            <td colspan="2"> </td>
+                                        </tr>
+                                    }
+                                }
+
+                            }
+
+
+                            <tr>
+                                <td>
+                                    수도 세대 사용량 :
+                                    @if (bnn.WaterPerUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.WaterPerUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>톤</span>
+                                </td>
+                                <td>
+                                    수도 세대 사용료 :
+                                    @if (bnn.WaterPerFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.WaterPerFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                </td>
+                                <td @onclick="(() => DetailListViewB(bnn))">
+                                    <img src="/images/btn_add1.gif" />
+                                    수도 공용 사용량:
+                                    @if (bnn.WaterComUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.WaterComUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>톤</span>
+                                </td>
+                                <td @onclick="(() => DetailListViewB(bnn))">
+                                    수도 공용 사용료 :
+                                    @if (bnn.WaterComFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.WaterComFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                </td>
+                            </tr>
+
+                            @if (Water_Views == "B")
+                            {
+                                if (vnnB.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="2"> </td>
+                                        <td colspan="2">
+                                            <span style="color:red; font-size: 0.9em">입력된 정보가 없습니다.</span>
+                                        </td>
+
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var st in vnnB)
+                                    {
+                                        <tr>
+                                            <td colspan="2"> </td>
+                                            <td colspan="2">
+                                                <span class="bi-pin text-danger" style="font-weight:bold"> </span>&nbsp; @st.UseName <span class="bi-chevron-double-right"> </span> &nbsp; 사용량 : @st.Usage<span>톤</span> &nbsp; 사용료 : @string.Format("{0: ###,###.##}", st.CostSum)<span>원</span>
+                                            </td>
+
+                                        </tr>
+                                    }
+                                }
+
+                            }
+
+                            <tr>
+                                <td>
+                                    급탕 전체 사용량 :
+                                    @if (bnn.HotWaterAllUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.HotWaterAllUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                </td>
+                                <td>
+                                    급탕 전체 사용료 :
+                                    @if (bnn.HotWaterAllFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.HotWaterAllFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                </td>
+                                <td>
+                                    급탕 세대 사용량:
+                                    @if (bnn.HotWaterPerUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.HotWaterPerUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                </td>
+                                <td>
+                                    급탕 세대 사용료 :
+                                    @if (bnn.HotWaterPerFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.HotWaterPerFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td @onclick="(() => DetailListViewC(bnn))">
+                                    <img src="/images/btn_add1.gif" />
+                                    급탕 공동 사용량 :
+                                    @if (bnn.HotWaterComUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.HotWaterComUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                </td>
+                                <td>
+                                    급탕 공용 사용료 :
+                                    @if (bnn.HotWaterComFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.HotWaterComFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                </td>
+                                <td>
+                                    난방 전체 사용량:
+                                    @if (bnn.HeatingAllUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.HeatingAllUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                </td>
+                                <td>
+                                    난방 전체 사용료 :
+                                    @if (bnn.HeatingAllFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.HeatingAllFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                </td>
+                            </tr>
+
+                            @if (Hoting_Views == "B")
+                            {
+                                if (vnnC.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="2">
+                                            <span style="color:red; font-size: 0.9em">입력된 정보가 없습니다.</span>
+                                        </td>
+                                        <td colspan="2"> </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var st in vnnC)
+                                    {
+                                        <tr>
+
+                                            <td colspan="2">
+                                                <span class="bi-pin text-danger" style="font-weight:bold"> </span>&nbsp; @st.UseName <span class="bi-chevron-double-right"> </span> &nbsp; 사용량 : @st.Usage &nbsp; 사용료 : @string.Format("{0: ###,###.##}", st.CostSum)<span>원</span>
+                                            </td>
+                                            <td colspan="2"> </td>
+                                        </tr>
+                                    }
+                                }
+
+                            }
+
+                            <tr>
+                                <td>
+                                    난방 세대 사용량 :
+                                    @if (bnn.HeatingPerUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.HeatingPerUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                </td>
+                                <td>
+                                    난방 세대 사용료 :
+                                    @if (bnn.HeatingPerFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.HeatingPerFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                </td>
+                                <td @onclick="(() => DetailListViewD(bnn))">
+                                    <img src="/images/btn_add1.gif" />
+                                    난방 공용 사용량:
+                                    @if (bnn.HotWaterComUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.HotWaterComUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                </td>
+                                <td>
+                                    난방 공용 사용료 :
+                                    @if (bnn.HeatingPerFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.HeatingPerFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                </td>
+                            </tr>
+
+                            @if (Heating_View == "B")
+                            {
+                                if (vnnD.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="2"> </td>
+                                        <td colspan="2">
+                                            <span style="color:red; font-size: 0.9em">입력된 정보가 없습니다.</span>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var st in vnnD)
+                                    {
+                                        <tr>
+                                            <td colspan="2"> </td>
+                                            <td colspan="2">
+                                                <span class="bi-pin text-danger" style="font-weight:bold"> </span>&nbsp; @st.UseName <span class="bi-chevron-double-right"> </span> &nbsp; 사용량 : @st.Usage &nbsp; 사용료 : @string.Format("{0: ###,###.##}", st.CostSum)<span>원</span>
+                                            </td>
+
+                                        </tr>
+                                    }
+                                }
+
+                            }
+
+
+                            <tr>
+                                <td>
+                                    가스 사용량:
+                                    @if (bnn.GasUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.GasUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>MJ</span>
+                                </td>
+                                <td>
+                                    가스 사용료 :
+                                    @if (bnn.GasFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.GasFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                </td>
+                                <td>
+                                    입력자 : @bnn.UserCode
+                                </td>
+                                <td>
+                                    입력일 : @bnn.PostDate.ToShortDateString()
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer" style="background-color:darkseagreen">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnOpen">상세입력</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseA">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*상세 입력*@
+@if (InsertDetails == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-thermometer-sun"></span>&nbsp;@strTitleA</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseB">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <table class="table">
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-calendar-check"></span>&nbsp;사용료</span></div>
+                                        <select id="Division" class="custom-select" style="font-size: 0.9em; text-align:center" @bind="vnn.Division" required>
+                                            <option value="">=구분선택=</option>
+                                            <option value="전기료">전기료</option>
+                                            <option value="수도료">수도료</option>
+                                            <option value="난방료">난방료</option>
+                                            <option value="급탕료">급탕료</option>
+                                            <option value="가스료">가스료</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp;세부명</span></div>
+                                        <input id="UseName" style="font-size: 0.9em; text-align:right" name="UseName" @bind="vnn.UseName" class="form-control" type="text" placeholder="세부 구분 입력하는 곳" />
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 사용량</span></div>
+                                        <input id="Usage" style="font-size: 0.9em; text-align:right" name="Usage" @bind="vnn.Usage" class="form-control" type="number" placeholder="사용량 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 사용료</span></div>
+                                        <input id="CostSum" style="font-size: 0.9em; text-align:right" name="CostSum" @bind="vnn.CostSum" class="form-control" type="number" placeholder="사용료 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-graph-down"></span>&nbsp; 기타</span></div>
+                                        <input id="Etc" style="font-size: 0.9em; text-align:right" name="Etc" @bind="vnn.Etc" class="form-control" type="text" placeholder="기타 입력" />
+                                    </div>
+                                </td>                                
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">                                        
+                                        <textarea id="svContent" rows="3" @bind="vnn.Details" class="form-control" placeholder="이곳에 상세 내용을 입력해 주세요." style="min-width: 100%; font-size: 0.9em"></textarea>
+                                        @*<input id="Details" style="font-size: 0.9em; text-align:right" name="Details" @bind="vnn.Details" class="form-control" type="text" placeholder="상세 설명 입력" />*@
+                                    </div>
+                                </td>
+                            </tr>                            
+
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer" style="background-color:cornsilk">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSaveB">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseB">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

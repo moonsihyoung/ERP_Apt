@@ -1,0 +1,1353 @@
+﻿@page "/Admin/CostDebit/Index_Cost"
+
+@*관리비 정보 목록*@
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <h6><span class="bi-journal-text"> </span>&nbsp;관리비 정보 목록</h6>
+                </td>
+                <td>
+                </td>
+                <td class="text-right">
+
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnOpenA"> <span class="bi-door-open"></span>&nbsp;처음으로</button>&nbsp;&nbsp;
+
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnOpenB"> <span class="bi-search"></span>&nbsp;검색</button>
+
+                </td>
+
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+
+        <table class="table" style="font-size:0.9em">
+            <thead>
+                <tr>
+                    <th style="text-align: center; vertical-align:middle">해당월</th>
+                    <th style="text-align: center; vertical-align:middle">동호</th>
+                    <th style="text-align: center; vertical-align:middle">이름</th>
+                    <th style="text-align: center; vertical-align:middle">면적</th>
+                    <th style="text-align: center; vertical-align:middle">관리비 합계</th>
+                    <th style="text-align: center; vertical-align:middle">사용료 합계</th>
+                    <th style="text-align: center; vertical-align:middle">미납액</th>
+                    <th style="text-align: center; vertical-align:middle">시설 이용료</th>
+                    <th style="text-align: center; vertical-align:middle">관리비 차감</th>
+                    <th style="text-align: center; vertical-align:middle">납기내 합계</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @if (ann.Count == 0)
+                {
+                    <tr>
+                        <td colspan="10">
+                            <p style="text-align:center">
+                                입력된 정보가 없습니다. ............
+                            </p>
+                        </td>
+                    </tr>
+                }
+                else if (ann == null)
+                {
+                    <tr>
+                        <td colspan="10">
+                            <p style="text-align:center">
+                                <img src="/images/loader.gif" height="100" />
+                            </p>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var st in ann)
+                    {
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle">
+                                @strMonth(st.Month)
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @st.dong<span>-</span>@st.ho
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @st.Name
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @if (st.supplyArea > 0)
+                                {
+                                    @strArea(st.supplyArea)
+                                }
+                                else
+                                {
+                                    <span>0</span>
+                                }
+                                <span>㎡</span>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @if (st.maintenanceFeeSum > 0)
+                                {
+                                    @string.Format("{0: ###,###.##}", st.maintenanceFeeSum)
+                                }
+                                else
+                                {
+                                    <span>0</span>
+                                }
+
+                                <span>원</span>
+                            </td>
+
+
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @if (st.useFeeSum > 0)
+                                {
+                                    @string.Format("{0: ###,###.##}", st.useFeeSum)
+                                }
+                                else
+                                {
+                                    <span>0</span>
+                                }
+                                <span>원</span>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @if (st.unpaidSum > 0)
+                                {
+                                    @string.Format("{0: ###,###.##}", st.unpaidSum)
+                                }
+                                else
+                                {
+                                    <span>0</span>
+                                }
+                                <span>원</span>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @if (st.facilityCdue > 0)
+                                {
+                                    @string.Format("{0: ###,###.##}", st.facilityCdue)
+                                }
+                                else
+                                {
+                                    <span>0</span>
+                                }
+                                <span>원</span>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @if ((st.workSdeduction + st.costMdeduction) > 0)
+                                {
+                                    @string.Format("{0: ###,###.##}", (st.workSdeduction + st.costMdeduction))
+                                }
+                                else
+                                {
+                                    <span>0</span>
+                                }
+                                <span>원</span>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @if (st.extendDue > 0)
+                                {
+                                    @string.Format("{0: ###,###.##}", st.extendDue)
+                                }
+                                else
+                                {
+                                    <span>0</span>
+                                }
+                                <span>원</span>
+                            </td>
+
+                        </tr>
+                    }
+                    <tr>
+                        <td colspan="10">
+                            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+    </div>
+    <div class="card-footer" style="text-align: right">
+        <span class="text-primary" style="font-size: 1em; font-weight: bold">
+            신원티엠씨(TMC)
+        </span>
+    </div>
+</div>
+
+@*상세보기 모달*@
+@if (Views == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-view-list"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="scroll-behavior:auto">
+                    <div style="overflow-y: auto; height: 600px">
+                        <table class="table table-sm" style="font-size: 0.9em">
+                            <tr>
+                                <th style="text-align:left; vertical-align:middle">
+                                    <img src="/images/btn_add1.gif" /> 관리비 합계
+                                </th>
+                                <th colspan="3">
+                                    @if (bnn.maintenanceFeeSum > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.maintenanceFeeSum)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.maintenanceFeeSum > cnn.maintenanceFeeSum)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.maintenanceFeeSum)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.maintenanceFeeSum)
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:center; width: 15%">
+                                    일반관리비
+                                </th>
+                                <td style="width: 35%; vertical-align:middle">
+
+                                    @if (bnn.generalDue > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.generalDue)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.maintenanceFeeSum > cnn.maintenanceFeeSum)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.maintenanceFeeSum)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.maintenanceFeeSum)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    경비비
+                                </th>
+                                <td style="vertical-align: middle">
+                                    @if (bnn.securityDue > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.securityDue)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.securityDue > cnn.securityDue)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.securityDue)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.securityDue)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    청소비
+                                </th>
+                                <td style="width: 35%; vertical-align: middle">
+
+                                    @if (bnn.cleaningDue > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.cleaningDue)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.cleaningDue > cnn.cleaningDue)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.cleaningDue)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.cleaningDue)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    소독비
+                                </th>
+                                <td style="vertical-align: middle">
+                                    @if (bnn.disinfectionDue > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.disinfectionDue)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.disinfectionDue > cnn.disinfectionDue)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.disinfectionDue)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.disinfectionDue)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    수선유지비
+                                </th>
+                                <td style="width: 35%; vertical-align: middle">
+
+                                    @if (bnn.repairDue > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.repairDue)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.repairDue > cnn.repairDue)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.repairDue)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.repairDue)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    위탁수수료
+                                </th>
+                                <td style="vertical-align: middle">
+                                    @if (bnn.trustDue > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.trustDue)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.trustDue > cnn.trustDue)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.trustDue)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.trustDue)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    보험료
+                                </th>
+                                <td style="width: 35%; vertical-align: middle">
+
+                                    @if (bnn.premiumDue > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.premiumDue)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.premiumDue > cnn.premiumDue)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.premiumDue)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.premiumDue)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    승강기유지비
+                                </th>
+                                <td style="vertical-align: middle">
+                                    @if (bnn.elevatorExpenseDue > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.elevatorExpenseDue)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.elevatorExpenseDue > cnn.elevatorExpenseDue)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.elevatorExpenseDue)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.elevatorExpenseDue)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    장기수선충당금
+                                </th>
+                                <td style="width: 35%; vertical-align: middle">
+
+                                    @if (bnn.longRepairDue > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.longRepairDue)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.longRepairDue > cnn.longRepairDue)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.longRepairDue)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.longRepairDue)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+
+                                </th>
+                                <td style="vertical-align: middle">
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th style="text-align:left; vertical-align:middle">
+                                    <img src="/images/btn_add1.gif" /> 사용료 합계
+                                </th>
+                                <th colspan="3">
+                                    @if (bnn.useFeeSum > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.useFeeSum)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.useFeeSum > cnn.useFeeSum)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.useFeeSum)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.useFeeSum)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:center; width: 15%">
+                                    대표회의운영비
+                                </th>
+                                <td style="width: 35%; vertical-align:middle">
+
+                                    @if (bnn.delegateCdue > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.delegateCdue)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.delegateCdue > cnn.delegateCdue)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.delegateCdue)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.delegateCdue)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    선거관리운영비
+                                </th>
+                                <td style="vertical-align: middle">
+                                    @if (bnn.electionMdue > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.electionMdue)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.electionMdue > cnn.electionMdue)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.electionMdue)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.electionMdue)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    세대전기사용량
+                                </th>
+                                <td style="width: 35%; vertical-align: middle">
+
+                                    @if (bnn.electricUse > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.electricUse)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>KWH</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.cleaningDue > cnn.electricUse)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.electricUse)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.electricUse)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>KWH</span>)
+                                </td>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    세대 전기료
+                                </th>
+                                <td style="vertical-align: middle">
+                                    @if (bnn.electricPcharges > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.electricPcharges)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.electricPcharges > cnn.electricPcharges)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.electricPcharges)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.electricPcharges)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    공동 전기료
+                                </th>
+                                <td style="width: 35%; vertical-align: middle">
+
+                                    @if (bnn.electricCcharges > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.electricCcharges)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.electricCcharges > cnn.electricCcharges)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.electricCcharges)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.electricCcharges)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    승강기 전기료
+                                </th>
+                                <td style="vertical-align: middle">
+                                    @if (bnn.elevatorEcharges > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.elevatorEcharges)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.elevatorEcharges > cnn.elevatorEcharges)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.elevatorEcharges)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.elevatorEcharges)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    TV수신료
+                                </th>
+                                <td style="width: 35%; vertical-align: middle">
+
+                                    @if (bnn.tvFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.tvFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.tvFee > cnn.tvFee)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.tvFee)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.tvFee)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    전기 충전료
+                                </th>
+                                <td style="vertical-align: middle">
+                                    @if (bnn.electricChargeDue > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.electricChargeDue)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.electricChargeDue > cnn.electricChargeDue)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.electricChargeDue)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.electricChargeDue)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    세대수도사용량
+                                </th>
+                                <td style="width: 35%; vertical-align: middle">
+
+                                    @if (bnn.waterUse > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.waterUse)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>톤</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.waterUse > cnn.waterUse)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.waterUse)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.waterUse)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>톤</span>)
+                                </td>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    세대 수도료
+                                </th>
+                                <td style="vertical-align: middle">
+                                    @if (bnn.waterPrates > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.waterPrates)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.waterPrates > cnn.waterPrates)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.waterPrates)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.waterPrates)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    공동 수도료
+                                </th>
+                                <td style="width: 35%; vertical-align: middle">
+
+                                    @if (bnn.waterCrates > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.waterCrates)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.waterCrates > cnn.waterCrates)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.waterCrates)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.waterCrates)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    주차비부과금
+                                </th>
+                                <td style="vertical-align: middle">
+                                    @if (bnn.parkingDue > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.parkingDue)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.parkingDue > cnn.parkingDue)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.parkingDue)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.parkingDue)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th style="text-align:left; vertical-align:middle" colspan="4" @onclick="onPlus">
+
+
+                                    <img src="/images/btn_add1.gif" /> 주민공동시설 이용료 &nbsp; &nbsp; &nbsp;
+
+                                    @if (bnn.facilityCdue > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.facilityCdue)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.facilityCdue > cnn.facilityCdue)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.facilityCdue)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.facilityCdue)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </th>
+                            </tr>
+
+                            @if (strPlus == "A")
+                            {
+                                @if (lst.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="4">
+                                            <span style="color: red">사용 내역 없음</span>
+                                        </td>
+                                    </tr>
+
+                                }
+                                else
+                                {
+                                    @foreach (var st in lst)
+                                    {
+                                        <tr>
+                                            <td colspan="4">
+                                                <span class="bi-pause"></span> @st.UsingKindName -> @st.Ticket : @string.Format("{0: ###,###.##}", st.UseCost)<span>원</span> (@st.UserName)
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+
+
+                            <tr>
+                                <th style="text-align:left; vertical-align:middle" colspan="4">
+
+
+                                    <img src="/images/btn_add1.gif" /> 관리비 차감 합계 &nbsp; &nbsp; &nbsp;
+
+                                    @if (bnn.costMdeduction > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.costMdeduction)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.costMdeduction > cnn.costMdeduction)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.costMdeduction)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.costMdeduction)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                    </th>
+                                </tr>
+                            <tr>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    관리비 차감
+                                </th>
+                                <td style="width: 35%; vertical-align: middle">
+
+                                    @if (bnn.costMdeduction > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.costMdeduction)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.costMdeduction > cnn.costMdeduction)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.costMdeduction)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.costMdeduction)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                                <th style="text-align: center; width: 15%; vertical-align: middle">
+                                    일자리안정차감
+                                </th>
+                                <td style="vertical-align: middle">
+                                    @if (bnn.workSdeduction > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.workSdeduction)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.workSdeduction > cnn.workSdeduction)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", cnn.workSdeduction)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", cnn.costMdeduction)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>)
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer" style="background-color:floralwhite">
+                    @*<button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button>*@ &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+
+@*검색하기 모달*@
+@if (strSearch == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-view-list"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="scroll-behavior:auto">
+                    <div>
+                        <table class="table table-sm" style="font-size: 0.9em">
+                            
+
+                            <tr>
+                                <td style="text-align: center; vertical-align: middle">
+                                    <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span>동</span></div>
+                                    <select id="txtPrivateB" class="custom-select" value="@strDong" style="font-size: 0.9em" @onchange="OnDong" required>
+                                        <option value="">=동선택=</option>
+                                        @foreach (var it in dnn)
+                                        {
+                                            <option value="@it.Dong">@it.Dong<span>동</span></option>
+                                        }
+                                    </select>
+                                </div>
+                                </td>   
+                                </tr>
+                                    <tr>
+                                <td style="text-align: center; vertical-align: middle">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span> 호</span></div>
+                                        <select id="txtPrivateB" class="custom-select" value="@strHo" style="font-size: 0.9em" @onchange="OnHo" required>
+                                            <option value="">=호선택=</option>
+                                            @foreach (var it in fnn)
+                                            {
+                                                <option value="@it.Ho">@it.Ho<span>호</span></option>
+                                            }
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            
+
+                            
+                        </table>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer" style="background-color:floralwhite">
+                    @*<button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button>*@ &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseS">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

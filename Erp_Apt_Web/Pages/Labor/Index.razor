@@ -1,0 +1,1579 @@
+﻿@page "/Labor"
+
+@if (Views == "a")
+{
+    <div class="card">
+        <div class="card-header">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <h5><i class="bi bi-pen-fill"></i> 근로계약서 작성</h5>
+                    </td>
+
+                    <td>
+                    </td>
+                    <td width="20%">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 이름검색</span>
+                            </div>
+                            <input id="User_Code" type="text" @bind="UserName" class="form-control text-center" autocomplete="off" />
+                            <div class="input-group-prepend">
+                                <button class="btn btn-primary" type="button" @onclick="onNamed" id="button-addon2">검색</button>
+                            </div>
+                        </div>
+                    </td>
+                    <td width="10%">
+                        <select id="ddlSortB" class="custom-select" value="@ann.UserName" style="font-size: 0.9em; line-height: 2.2" @onchange="onName_s">
+
+                            <option>=이름선택=</option>
+                            @foreach (var item in rnn)
+                            {
+                                <option value="@item.User_ID">@item.User_Name</option>
+                            }
+
+                        </select>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+        <div class="card-body" style="font-size: 1em">
+
+            <div>
+                <div style="margin-bottom: 20px">
+                    주식회사
+                    <select id="Select1" value="@strCor_Code" class="custom-select-sm" @onchange="onCor_Code">
+                        <option style="line-height: 50px" value="">::업체선택::</option>
+                        <option style="line-height: 50px" value="sw5">(주)신원티엠씨</option>
+                        <option style="line-height: 50px" value="sw5a">남광개발(주)</option>
+                        <option style="line-height: 50px" value="sw5b">(주)지엔텍</option>
+                        <option style="line-height: 50px" value="sw5c">삼일환경</option>
+                    </select>
+                    와(과) 근로자 <span style="color:darkslategray; font-weight:bold">@ann.UserName</span> 은 상호 신의와 성실로써 다음과 같이 근로계약을 체결한다.
+                </div>
+
+                <div>
+                    1. 근로계약기간 :   본 계약은 시작일
+                    <input id="Text1" type="date" class="text-center" @bind="@ann.LaborStartDate" placeholder="2021-02-01 형식으로 입력" required />
+                    일부터 종료일
+                    <input id="Text2" type="date" class="text-center" @bind="@ann.LaborEndDate" placeholder="2021-02-01 형식으로 입력" required />
+                    일까지로 한다.       촉탁여부 :
+                    <select id="Select1" @onchange="onPartTime" class="custom-select-sm">
+                         <option value="">::촉탁여부 선택::</option>
+                        <option value="불촉탁">불촉탁</option>
+                        <option value="촉탁">촉탁</option>
+                    </select>
+                    <p style="line-height: 2.2; padding-left: 10px">
+
+                        (1) 본 계약 만료 후 당사자 간에 별도의 의사표시가 없다면 양 당사자 간에 근로계약 갱신에 대한 합의가 있는 것으로 인정하여 계약연도의 12월 31일까지(기간 내에 수요처와의 용역계약 만료 시에는 용역 만료일 까지) 연장한다.<br />
+                        (2) 전항(1)의 계약기간 만료일 전에 당사자 중 일방이 사전에 서면(또는 통신)으로 근로계약의 종료를 통보할 경우에 본 근로계약은 종료되고 수요처와의 용역계약의 연장을 이유로 자동 갱신되지 않는다.<br />
+                        (3) 사용자는 위 근로계약 기간 동안에 근로자의 근무성적 및 건강, 소비자의 평가 등을 종합하여 일정 기준에 미달할 시에는 전항(2)에 따른 만료 통보를 할 수 있으며 근로자는 계약갱신 기대권을 주장하지 않는다.<br />
+                        (4) 근무지 수요기관과의 용역계약 만료(중도 해지 포함)된 경우에는 용역계약 만료일에 자동으로 본 근로계약은 종료된다. 단, 수요기간과의 용역계약이 연장 또는 재선정 되어 계속하여 업무를 수행할 경우에도 본 조항은 유효하며 당사자 간에 용역 개시일을 시작일로 하는 새로운 근로계약을 서면으로 작성하여야 한다.<br />
+                        ● 상기 근로자는 위 계약 조건에 대하여 충분한 설명을 들었고, 이를 완전히 이해하고 자의로 동의하며 위 조항으로 인한 근로계약 만료 시 계약갱신 기대권을 주장하지 않겠습니다. &nbsp;&nbsp; &nbsp;&nbsp; (근로자 확인 : <input id="Checkbox1" value="@ann.Read_Approval" checked="checked" type="checkbox" />)
+                    </p>
+                </div>
+            </div>
+
+
+
+            <div style="margin-top: 20px">
+                2. 근로시간 : <span style="color: red"> 아래 근로시간과 시(시간) 단위로 입력할 수 있으며, 분단위로는 입력할 수 없습니다. </span>
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%">
+                        <tr>
+                            <td style="width: 15%; padding-left: 2px; padding-right: 2px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-clipboard-check"></i>&nbsp;선택</span>
+                                    </div>
+                                    <select id="Select1" value="@ann.WorktimeSort" class="custom-select" @onchange="onWorktimeSort">
+                                        <option value="">::근로시간::</option>
+                                        <option value="매일(월~금)">매일(월~금)</option>
+                                        <option value="격일">격일</option>
+                                        <option value="3교대">3교대</option>
+                                        <option value="기타">기타</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td style="width: 15%; padding-left: 2px; padding-right: 2px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp;근 &nbsp; 로</span>
+                                    </div>
+                                    <input id="Worktime" name="Worktime" type="number" value="@ann.Worktime" @onchange="onWorktime" class="form-control text-right" autocomplete="off" />
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">시간</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="width: 15%; padding-left: 2px; padding-right: 2px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 토요일</span>
+                                    </div>
+                                    <input id="WorktimeWeekend" name="WorktimeWeekend" type="number" value="@ann.WorktimeWeekend" @onchange="onWorktimeWeekend" class="form-control text-right" autocomplete="off" />
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">시간</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="width: 15%; padding-left: 2px; padding-right: 2px; vertical-align:middle; text-align:center">
+                                월간 :  @WorkMonthTime 시간
+                            </td>
+                            <td style="width: 40%;padding-left: 2px;">
+                                <input id="WorkTimeEtc" name="WorkTimeEtc" valu="ann.WorkTimeEtc" type="text" placeholder="근로시간에 기타 사항을 입력하는 곳" class="form-control" autocomplete="on" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table style="width: 100%">
+                        <tr>
+                            <td class="text-right" style="width: 10%; padding-left: 2px; padding-right: 2px">
+                                근로 시작 시간 :
+                            </td>
+                            <td style="width: 15%; padding-left: 2px; padding-right: 2px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp;시간</span>
+                                    </div>
+                                    <input id="StartWorkTime" name="StartWorkTime" type="text" @bind="ann.StartWorkTime" class="form-control text-right" />
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">시부터</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-right" style="width: 10%; padding-left: 2px; padding-right: 2px">
+                                근로 종료 시간 :
+                            </td>
+                            <td style="width: 15%; padding-left: 2px; padding-right: 2px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp;시간</span>
+                                    </div>
+                                    <input id="EndWorkTime" name="EndWorkTime" type="text" @bind="ann.EndWorkTime" class="form-control text-right" />
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">시부터</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="vertical-align:middle; padding-left: 10px">
+
+                                근로 시작 시간과 종료시간을 반드시 입력하여야 합니다. <br />
+                                시간은 시 단위로 입력하여야 하며, 분단위로는 입력되지 않습니다.
+
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                3. 휴게시간
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%">
+                        <tr>
+                            <td width="14%" style="vertical-align:middle;">
+                                근로형태 : @BreaktimeDivision
+                            </td>
+                            <td width="18%" style="vertical-align:middle; padding-left: 2px; padding-right: 2px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp;주간휴게</span>
+                                    </div>
+                                    <input id="BreaktimeDaytime" name="BreaktimeDaytime" type="number" value="@ann.BreaktimeDaytime" @onchange="onBreaktimeDaytime" class="form-control text-right" />
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">시간</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td width="18%" style="vertical-align:middle; padding-left: 2px; padding-right: 2px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 야간휴게</span>
+                                    </div>
+                                    <input id="BreaktimeNight" name="BreaktimeNight" type="number" value="@ann.BreaktimeNight" @onchange="onBreaktimeNight" class="form-control text-right" />
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">시간</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td width="50%" style="vertical-align:middle; padding-left: 2px; padding-right: 2px">
+                                <input id="BreakTimeEtc" name="BreakTimeEtc" type="text" @bind="ann.BreakTimeEtc" placeholder="이곳에 20시부터 02시까지와 같이 구체적으로 입력해 주세요" class="form-control" autocomplete="on" />
+                            </td>
+
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="row" style="margin-top: 10px; padding-left: 20px">
+                    <p style="line-height: 2.2">
+                        ● 휴게시간은 근로자가 관리감독자의 통제를 받지 않고 자유롭게 이용할 수 있으나 그 준수의무는 근로자에게 있다. <br />
+                        만약 수요처의 부당한 지시 등으로 자유로운 휴게시간이 보장되지 않을 경우 근로자는 즉시 사용자에게 보고하여야 이를 준수하도록 조치 받아야 하며 보고하지 않은 사항에 대하여 사용자의 책임을 물을 수 없다.
+                    </p>
+                </div>
+            </div>
+
+
+            <div style="margin-top: 20px">
+                4. 임금 내역 :  (임금은 최저임금법에 따른 최저임금 이하로 계약할 수 없음.)  &nbsp;&nbsp;&nbsp;&nbsp; 법정 야간 수당은? : <span style="font-weight:bold; color: red"> @MonthNightPay</span>원 이상이어야 함.
+
+                <div class="row" style="margin-top: 10px">
+                    <div class="col-3">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 기본급</span>
+                            </div>
+                            <input id="BasicsPay" type="number" @onchange="onBasicePay" value="@ann.BasicsPay" class="form-control text-right" required />
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">원</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col3">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 직책수당</span>
+                            </div>
+                            <input id="Pay_B" name="Pay_B" type="number" @onchange="onPay_B" value="@ann.Pay_B" class="form-control text-right" />
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">원</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 자격수당</span>
+                            </div>
+                            <input id="Pay_D" name="Pay_D" type="number" @onchange="onPay_D" value="@ann.Pay_D" class="form-control text-right" />
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">원</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 기타수당</span>
+                            </div>
+                            <input id="Pay_C" name="Pay_C" @onchange="onPay_C" value="@ann.Pay_C" type="number" class="form-control text-right" />
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">원</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 10px">
+
+                    <div class="col-3">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 야간수당</span>
+                            </div>
+                            <input id="Pay_A" name="Pay_A" type="number" @onchange="onPay_A" value="@ann.Pay_A" class="form-control text-right" />
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">원</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-6">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 기타사항</span>
+                            </div>
+                            <input id="Pay_Etc" name="Pay_Etc" @bind="ann.Pay_Etc" placeholder="'기타수당'에 대한 상세내역을 메모는 하는 곳" type="text" class="form-control" autocomplete="on" />
+
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        합계 : &nbsp; @Sum_Pay 원
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%">
+                        <tr>
+                            <td style="width:10%; vertical-align:middle">
+                                5. 근무할 장소 :
+                            </td>
+                            <td>
+                                <input id="WorkPlace" name="WorkPlace" type="text" @bind="ann.WorkPlace" placeholder="근무할 장소를 별도로 지정하여야 하는 경우에 입력하세요." class="form-control" autocomplete="on" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding-left: 10px">
+                                <p style="line-height: 2.2">
+                                    단, 사용자(회사)의 필요에 의한 근무지 및 보직 변경에 대하여 근로자는 특별한 사유 없이 이를 거부할 수 없다.
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%">
+                        <tr>
+                            <td style="width:10%; vertical-align:middle">
+                                6. 업무 내용 :
+                            </td>
+                            <td>
+                                <input id="WorkDetail" name="WorkDetail" type="text" @bind="ann.WorkDetail" placeholder="업무 내용은 반드시 필요한 경우에만 입력하여야 합니다. 잘못 업무 내용을 입력할 경우 법적 분쟁이 될 수 있습니다." class="form-control" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding-left: 10px">
+                                <p style="line-height: 2.2">
+                                    기본 업무 이외에 긴급 또는 간헐적으로 발생하거나 근로자가 자발적으로 처리한 서비스의 경우에는 본 업무의 연장으로 본다. 다만 수요처의 부당한 지시가 있을 경우에는 반드시 사용자에게 보고하여 이를 시정하도록 조치하여야 하고 사용자에게 보고하지 않은 사항에 대하여는 향후 사용자에게 일체의 이의를 제기하지 않는다.
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%">
+                        <tr>
+
+                            <td style="padding-left: 10px">
+                                7. 기  타 : 기타  정해지지 않은 사항에 대해서는 근로기준법 등 노동관계 법령과 회사의 취업규칙에 따른다.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 15px">
+                                <p style="line-height: 2.2">
+                                    (1) 산업안전 : 사용자는 근로자의 고의나 과실, 업무 이외의 원인 등으로 인한 재해에 대하여서는 책임을 지지 않는다.<br />
+                                    (2) 징    계 : 주의, 경고 이상의 징계는 인사위원회의 의결로 결정한다.<br />
+                                    (3) 휴    가 : 연차휴가는 근로기준법 제60조에 정한 바에 따라 부여하되, 취업규칙에 따른 유급휴가 이외의 모든 휴가는 연차를 사용하여 실시한다.<br />
+                                    (4) 퇴    직 : 근로자는 퇴직하고자 할 경우 퇴직희망일 7일전까지 퇴직원을 제출하여야 하며, 사용자에게 통보하지
+                                    않고 계속하여 5일 이상 무단 결근 시에는 퇴직의 의사가 있는 것으로 인정하여 자동으로 본 계약을 종료한다.<br />
+                                    (5) 정    년 : 본 사업장의 근무정년은 만
+                                    <input id="Text1" type="number" @bind="ann.RetirementAge" required style="width: 60px; height: 25px; text-align: center" />
+                                    세에 도달한 날로 한다.<br />
+                                    (6) 촉    탁(촉탁근로자에 한함) : 촉탁으로 계약한 자는 본 계약의 만료 이후에는 계속하여 기한연장을 주장할 수 없다.
+                                    위 근로계약 기간 동안에 근로자의 건강에 이상이 있다고 판단할 경우에는 본 촉탁근로계약은 즉시 종료할 수 있다.<br />
+                                    (7) 법정퇴직급여는 "을"의 계속근로연수가 1년 이상인 때에만 지급한다.<br />
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 10px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 기타 사항</span>
+                                    </div>
+                                    <input id="Contract_Etc" name="Contract_Etc" type="text" @bind="ann.Contract_Etc" class="form-control" placeholder="기타 특약 사항 등 추가하여 입력하여야 하는 경우에 입력하는 곳" autocomplete="on" />
+                                    @*<div class="input-group-prepend">
+                                            <span class="input-group-text">시간</span>
+                                        </div>*@
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%">
+                        <tr>
+
+                            <td style="padding-left: 10px; vertical-align:middle" height="30">
+                                <h5>근로계약 확인 사항</h5>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 15px; vertical-align:middle" height="30">
+                                <p style="line-height: 2.2">
+                                    ● 본인의 근로형태는 근로기준법 제63조제3호에 따른 감시·단속적 근로임을 확인하고 근로기준법 제50조(근로시간 제53조(연장근로의 제한), 제54조(휴게), 제55조(휴일), 제56조(연장 및 휴일근로), 제59조(근로시간 및 휴게시간의 특례)등의 규정 적용이 제외됨을 알고 이에 동의하십니까? 예 <input id="Checkbox1" type="checkbox" checked="checked" /><br />
+                                    ● 귀하(근로자)는 본 계약에 대하여 충분히 설명을 들은 후 그 내용을 이해하고 자의로서 인정하여 본 계약서에 서명한 것입니까? 예 <input id="Checkbox1" type="checkbox" checked="checked" /><br />
+                                    ● 귀하(근로자)는 본 계약 체결 후 제8조에 의하여 본 계약서 사본을 교부 받았습니까? 예 <input id="Checkbox1" type="checkbox" checked="checked" />
+                                </p>
+                            </td>
+                        </tr>
+
+                    </table>
+                    <table width="100%">
+                        <tr>
+                            <td width="40%">
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-calendar-week"></i>&nbsp; 계약 작성일</span>
+                                    </div>
+                                    <input id="WorkContract_Date" name="WorkContract_Date" type="date" @bind="ann.WorkContract_Date" format-value="yyyy-MM-dd" class="form-control" placeholder="계약 작성일" required autocomplete="off" />
+                                </div>
+                            </td>
+                            <td width="40%">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%" border="1">
+                        <tr>
+                            <td colspan="2" style="text-align: center; background-color: ghostwhite" height="40">
+                                <span style="font-weight:bold"><i class="bi bi-file-person-fill"></i> 사용자</span>
+                            </td>
+                            <td colspan="2" style="text-align: center; background-color: ghostwhite">
+                                <span style="font-weight:bold"> <i class="bi bi-file-person"></i> 근로자</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 10%; background-color: ghostwhite; text-align: center" height="40">주 소</td>
+                            <td style="width: 40%; padding-left: 10px">@ann.Ceo_Adress</td>
+                            <td style="width: 10%; background-color: ghostwhite; text-align: center" height="40">주 소</td>
+                            <td style="width: 40%">
+                                <input id="User_Code" name="User_Code" type="text" @bind="ann.Adress" class="form-control" autocomplete="off" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 10%; background-color: ghostwhite; text-align: center" height="40">연락처</td>
+                            <td style="width: 40%; padding-left: 10px">@ann.Ceo_Telephone</td>
+                            <td style="width: 10%; background-color: ghostwhite; text-align: center" height="40">연락처</td>
+                            <td style="width: 40%">
+                                <input id="User_Code" name="User_Code" type="tel" @bind="ann.Mobile" class="form-control" autocomplete="off" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 10%; background-color: ghostwhite; text-align: center" height="40">성 명</td>
+                            <td style="width: 40%; padding-left: 10px">@ann.Ceo_Name</td>
+                            <td style="width: 10%; background-color: ghostwhite; text-align: center" height="40">성 명</td>
+                            <td style="width: 40%">
+                                <input id="UserName" name="UserName" @bind="ann.UserName" type="text" class="form-control" autocomplete="off" />
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%">
+                        <tr>
+                            <td class="text-center" height="50" style="vertical-align: middle">
+                                작성된 모든 내용을 이해하고 작성하여 승인을 요청합니다. <input id="Checkbox1" type="checkbox" checked="checked" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input id="Button1" class="btn btn-danger" type="button" @onclick="btnSave" value="승인 요청" />
+                            </td>
+                        </tr>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else if (Views == "C")
+{
+    <div class="card">
+        <div class="card-header">
+            <h5><span class="bi bi-book-fill"></span> @ann.UserName 근로계약서 상세정보</h5>
+        </div>
+        <div class="card-body">
+            <div>
+                <div style="margin-bottom: 20px">
+                    주식회사 @ann.Ceo_Company
+                    와(과) 근로자 <span style="color:darkslategray; font-weight:bold">@ann.UserName</span> 은 상호 신의와 성실로써 다음과 같이 근로계약을 체결한다.
+                </div>
+
+                <div>
+                    1. 근로계약기간 :   본 계약은 시작일
+                    @ann.LaborStartDate.ToShortDateString()
+                    일부터 종료일 @ann.LaborEndDate.ToShortDateString() 일까지로 한다.       촉탁여부 :  @ann.PartTime
+
+                    <p style="line-height: 2.2; padding-left: 10px">
+                        (1) 본 계약 만료 후 당사자 간에 별도의 의사표시가 없다면 양 당사자 간에 근로계약 갱신에 대한 합의가 있는 것으로 인정하여 계약연도의 12월 31일까지(기간 내에 수요처와의 용역계약 만료 시에는 용역 만료일 까지) 연장한다.<br />
+                        (2) 전항(1)의 계약기간 만료일 전에 당사자 중 일방이 사전에 서면(또는 통신)으로 근로계약의 종료를 통보할 경우에 본 근로계약은 종료되고 수요처와의 용역계약의 연장을 이유로 자동 갱신되지 않는다.<br />
+                        (3) 사용자는 위 근로계약 기간 동안에 근로자의 근무성적 및 건강, 소비자의 평가 등을 종합하여 일정 기준에 미달할 시에는 전항(2)에 따른 만료 통보를 할 수 있으며 근로자는 계약갱신 기대권을 주장하지 않는다.<br />
+                        (4) 근무지 수요기관과의 용역계약 만료(중도 해지 포함)된 경우에는 용역계약 만료일에 자동으로 본 근로계약은 종료된다. 단, 수요기간과의 용역계약이 연장 또는 재선정 되어 계속하여 업무를 수행할 경우에도 본 조항은 유효하며 당사자 간에 용역 개시일을 시작일로 하는 새로운 근로계약을 서면으로 작성하여야 한다.<br />
+                        ● 상기 근로자는 위 계약 조건에 대하여 충분한 설명을 들었고, 이를 완전히 이해하고 자의로 동의하며 위 조항으로 인한 근로계약 만료 시 계약갱신 기대권을 주장하지 않겠습니다. &nbsp;&nbsp; &nbsp;&nbsp; (근로자 확인 : <input id="Checkbox1" value="@ann.Read_Approval" checked="checked" type="checkbox" />)
+                    </p>
+                </div>
+            </div>
+
+
+
+            <div style="margin-top: 20px">
+                2. 근로시간 : <span style="color: red"> 아래 근로시간과 시(시간) 단위로 입력할 수 있으며, 분단위로는 입력할 수 없습니다. </span>
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%">
+                        <tr>
+                            <td style="width: 15%; padding-left: 2px; padding-right: 2px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-clipboard-check"></i>&nbsp;선택</span>
+                                    </div>
+                                    <input id="User_Code" name="User_Code" @bind="ann.WorktimeSort" readonly="readonly" placeholder="'기타수당'에 대한 상세내역을 메모는 하는 곳" type="text" class="form-control" autocomplete="off" />
+                                </div>
+                            </td>
+                            <td style="width: 15%; padding-left: 2px; padding-right: 2px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp;근 &nbsp; 로</span>
+                                    </div>
+                                    <input id="Worktime" name="Worktime" type="number" value="@ann.Worktime" readonly="readonly" class="form-control text-right" autocomplete="off" />
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">시간</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="width: 15%; padding-left: 2px; padding-right: 2px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 토요일</span>
+                                    </div>
+                                    <input id="User_Code" name="User_Code" type="number" value="@ann.WorktimeWeekend" readonly="readonly" class="form-control text-right" autocomplete="off" />
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">시간</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="width: 15%; padding-left: 2px; padding-right: 2px; vertical-align:middle; text-align:center">
+                                월간 :  @ann.WorkMonthTime 시간
+                            </td>
+                            <td style="width: 40%;padding-left: 2px;">
+                                <input id="User_Code" name="User_Code" value="@ann.WorkTimeEtc" readonly="readonly" type="text" placeholder="근로시간에 기타 사항을 입력하는 곳" class="form-control" autocomplete="off" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table style="width: 100%">
+                        <tr>
+                            <td class="text-right" style="width: 10%; padding-left: 2px; padding-right: 2px">
+                                근로 시작 시간 :
+                            </td>
+                            <td style="width: 15%; padding-left: 2px; padding-right: 2px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp;시간</span>
+                                    </div>
+                                    <input id="User_Code" name="User_Code" type="text" @bind="ann.StartWorkTime" readonly="readonly" class="form-control text-right" autocomplete="off" />
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">시부터</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-right" style="width: 10%; padding-left: 2px; padding-right: 2px">
+                                근로 시작 시간 :
+                            </td>
+                            <td style="width: 15%; padding-left: 2px; padding-right: 2px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp;시간</span>
+                                    </div>
+                                    <input id="User_Code" name="User_Code" type="text" @bind="ann.EndWorkTime" readonly="readonly" class="form-control text-right" autocomplete="off" />
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">시부터</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="vertical-align:middle; padding-left: 10px">
+
+                                근로 시작 시간과 종료시간을 반드시 입력하여야 합니다. <br />
+                                시간은 시 단위로 입력하여야 하며, 분단위로는 입력되지 않습니다.
+
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                3. 휴게시간
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%">
+                        <tr>
+                            <td width="14%" style="vertical-align:middle;">
+                                근로형태 : @BreaktimeDivision
+                            </td>
+                            <td width="18%" style="vertical-align:middle; padding-left: 2px; padding-right: 2px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp;주간휴게</span>
+                                    </div>
+                                    <input id="User_Code" name="User_Code" type="number" value="@ann.BreaktimeDaytime" readonly="readonly" class="form-control text-right" autocomplete="off" />
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">시간</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td width="18%" style="vertical-align:middle; padding-left: 2px; padding-right: 2px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 야간휴게</span>
+                                    </div>
+                                    <input id="User_Code" name="User_Code" type="number" value="@ann.BreaktimeNight" readonly="readonly" class="form-control text-right" autocomplete="off" />
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">시간</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td width="50%" style="vertical-align:middle; padding-left: 2px; padding-right: 2px">
+                                <input id="User_Code" name="User_Code" type="text" @bind="ann.BreakTimeEtc" readonly="readonly" placeholder="이곳에 20시부터 02시까지와 같이 구체적으로 입력해 주세요" class="form-control" autocomplete="off" />
+                            </td>
+
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="row" style="margin-top: 10px; padding-left: 20px">
+                    <p style="line-height: 2.2">
+                        ● 휴게시간은 근로자가 관리감독자의 통제를 받지 않고 자유롭게 이용할 수 있으나 그 준수의무는 근로자에게 있다. <br />
+                        만약 수요처의 부당한 지시 등으로 자유로운 휴게시간이 보장되지 않을 경우 근로자는 즉시 사용자에게 보고하여야 이를 준수하도록 조치 받아야 하며 보고하지 않은 사항에 대하여 사용자의 책임을 물을 수 없다.
+                    </p>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                4. 임금 내역 :
+                <div class="row" style="margin-top: 10px">
+                    <div class="col-3">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 기본급</span>
+                            </div>
+                            <input id="User_Code" type="number" readonly="readonly" value="@ann.BasicsPay" class="form-control text-right" required autocomplete="off" />
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">원</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 야간수당</span>
+                            </div>
+                            <input id="User_Code" name="User_Code" type="number" value="@ann.Pay_A" readonly="readonly" class="form-control text-right" autocomplete="off" />
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">원</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col3">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 직책수당</span>
+                            </div>
+                            <input id="User_Code" name="User_Code" type="number" readonly="readonly" value="@ann.Pay_B" class="form-control text-right" autocomplete="off" />
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">원</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 자격수당</span>
+                            </div>
+                            <input id="User_Code" name="User_Code" type="number" readonly="readonly" value="@ann.Pay_D" class="form-control text-right" autocomplete="off" />
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">원</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 10px">
+
+                    <div class="col-3">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 기타수당</span>
+                            </div>
+                            <input id="User_Code" name="User_Code" value="@ann.Pay_C" readonly="readonly" type="number" class="form-control text-right" autocomplete="off" />
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">원</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 기타사항</span>
+                            </div>
+                            <input id="User_Code" name="User_Code" @bind="ann.Pay_Etc" readonly="readonly" placeholder="'기타수당'에 대한 상세내역을 메모는 하는 곳" type="text" class="form-control" autocomplete="off" />
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">원</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        합계 : &nbsp; @Sum_Pay 원
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%">
+                        <tr>
+                            <td style="width:10%; vertical-align:middle">
+                                5. 근무할 장소 :
+                            </td>
+                            <td>
+                                <input id="User_Code" name="User_Code" type="text" @bind="ann.WorkPlace" readonly="readonly" placeholder="근무할 장소를 별도로 지정하여야 하는 경우에 입력하세요." class="form-control" autocomplete="off" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding-left: 10px">
+                                <p style="line-height: 2.2">
+                                    단, 사용자(회사)의 필요에 의한 근무지 및 보직 변경에 대하여 근로자는 특별한 사유 없이 이를 거부할 수 없다.
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%">
+                        <tr>
+                            <td style="width:10%; vertical-align:middle">
+                                6. 업무 내용 :
+                            </td>
+                            <td>
+                                <input id="User_Code" name="User_Code" type="text" @bind="ann.WorkDetail" readonly="readonly" placeholder="업무 내용은 반드시 필요한 경우에만 입력하여야 합니다. 잘못 업무 내용을 입력할 경우 법적 분쟁이 될 수 있습니다." class="form-control" autocote="off" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding-left: 10px">
+                                <p style="line-height: 2.2">
+                                    기본 업무 이외에 긴급 또는 간헐적으로 발생하거나 근로자가 자발적으로 처리한 서비스의 경우에는 본 업무의 연장으로 본다. 다만 수요처의 부당한 지시가 있을 경우에는 반드시 사용자에게 보고하여 이를 시정하도록 조치하여야 하고 사용자에게 보고하지 않은 사항에 대하여는 향후 사용자에게 일체의 이의를 제기하지 않는다.
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%">
+                        <tr>
+
+                            <td>
+                                7. 기  타 : 기타  정해지지 않은 사항에 대해서는 근로기준법 등 노동관계 법령과 회사의 취업규칙에 따른다.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 15px">
+                                <p style="line-height: 2.2">
+                                    (1) 산업안전 : 사용자는 근로자의 고의나 과실, 업무 이외의 원인 등으로 인한 재해에 대하여서는 책임을 지지 않는다.<br />
+                                    (2) 징    계 : 주의, 경고 이상의 징계는 인사위원회의 의결로 결정한다.<br />
+                                    (3) 휴    가 : 연차휴가는 근로기준법 제60조에 정한 바에 따라 부여하되, 취업규칙에 따른 유급휴가 이외의 모든 휴가는 연차를 사용하여 실시한다.<br />
+                                    (4) 퇴    직 : 근로자는 퇴직하고자 할 경우 퇴직희망일 7일전까지 퇴직원을 제출하여야 하며, 사용자에게 통보하지
+                                    않고 계속하여 5일 이상 무단 결근 시에는 퇴직의 의사가 있는 것으로 인정하여 자동으로 본 계약을 종료한다.<br />
+                                    (5) 정    년 : 본 사업장의 근무정년은 만
+                                    <input id="Text1" type="number" @bind="ann.RetirementAge" readonly="readonly" required style="width: 60px; height: 25px; text-align: center" />
+                                    세에 도달한 날로 한다.<br />
+                                    (6) 촉    탁(촉탁근로자에 한함) : 촉탁으로 계약한 자는 본 계약의 만료 이후에는 계속하여 기한연장을 주장할 수 없다.
+                                    위 근로계약 기간 동안에 근로자의 건강에 이상이 있다고 판단할 경우에는 본 촉탁근로계약은 즉시 종료할 수 있다.<br />
+                                    (7) 법정 퇴직 급여는 "을"의 계속근로연수가 1년 이상인 때에만 지급한다.<br />
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 10px">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-journal-minus"></i>&nbsp; 기타 사항</span>
+                                    </div>
+                                    <input id="User_Code" name="User_Code" type="text" @bind="ann.Contract_Etc" readonly="readonly" class="form-control" placeholder="기타 특약 사항 등 추가하여 입력하여야 하는 경우에 입력하는 곳" autocomplete="off" />
+                                    @*<div class="input-group-prepend">
+                                            <span class="input-group-text">시간</span>
+                                        </div>*@
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%">
+                        <tr>
+
+                            <td style="padding-left: 10px; vertical-align:middle" height="30">
+                                <h6><span class="bi bi-book-fill"></span>&nbsp; 확인 사항</h6>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 15px; vertical-align:middle" height="30">
+                                <p style="line-height: 2.2">
+                                    ● 본인의 근로형태는 근로기준법 제63조제3호에 따른 감시·단속적 근로임을 확인하고 근로기준법 제50조(근로시간 제53조(연장근로의 제한), 제54조(휴게), 제55조(휴일), 제56조(연장 및 휴일근로), 제59조(근로시간 및 휴게시간의 특례)등의 규정 적용이 제외됨을 알고 이에 동의하십니까? 예 <input id="Checkbox1" type="checkbox" checked="checked" /><br />
+                                    ● 귀하(근로자)는 본 계약에 대하여 충분히 설명을 들은 후 그 내용을 이해하고 자의로서 인정하여 본 계약서에 서명한 것입니까? 예 <input id="Checkbox1" type="checkbox" checked="checked" /><br />
+                                    ● 귀하(근로자)는 본 계약 체결 후 제8조에 의하여 본 계약서 사본을 교부 받았습니까? 예 <input id="Checkbox1" type="checkbox" checked="checked" />
+                                </p>
+                            </td>
+                        </tr>
+
+                    </table>
+                    <table width="100%">
+                        <tr>
+                            <td width="30%">
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="bi bi-calendar-week"></i>&nbsp; 계약 작성일</span>
+                                    </div>
+                                    <input id="User_Code" name="User_Code" type="date" @bind="ann.WorkContract_Date" readonly="readonly" format-value="yyyy-MM-dd" class="form-control" placeholder="계약 작성일" required autocomplete="off" />
+                                </div>
+                            </td>
+                            <td width="30%">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%" border="1">
+                        <tr>
+                            <td colspan="2" style="text-align: center; background-color: ghostwhite" height="40">
+                                <span style="font-weight:bold"><i class="bi bi-file-person-fill"></i> 사용자</span>
+                            </td>
+                            <td colspan="2" style="text-align: center; background-color: ghostwhite">
+                                <span style="font-weight:bold"> <i class="bi bi-file-person"></i> 근로자</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 10%; background-color: ghostwhite; text-align: center" height="40">주 소</td>
+                            <td style="width: 40%; padding-left: 10px">@ann.Ceo_Adress</td>
+                            <td style="width: 10%; background-color: ghostwhite; text-align: center" height="40">주 소</td>
+                            <td style="width: 40%">
+                                <input id="User_Code" name="User_Code" type="text" @bind="ann.Adress" readonly="readonly" class="form-control" autocomplete="off" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 10%; background-color: ghostwhite; text-align: center" height="40">연락처</td>
+                            <td style="width: 40%; padding-left: 10px">@ann.Ceo_Telephone</td>
+                            <td style="width: 10%; background-color: ghostwhite; text-align: center" height="40">연락처</td>
+                            <td style="width: 40%">
+                                <input id="User_Code" name="User_Code" type="tel" @bind="ann.Mobile" readonly="readonly" class="form-control" autocomplete="off" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 10%; background-color: ghostwhite; text-align: center" height="40">성 명</td>
+                            <td style="width: 40%; padding-left: 10px">@ann.Ceo_Name</td>
+                            <td style="width: 10%; background-color: ghostwhite; text-align: center" height="40">성 명</td>
+                            <td style="width: 40%">
+                                <input id="User_Code" name="User_Code" @bind="ann.UserName" type="text" readonly="readonly" class="form-control" autocomplete="off" />
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                <div class="row" style="margin-top: 10px; padding-left: 10px">
+                    <table width="100%">
+                        <tr>
+                            <td class="text-right" height="50" style="vertical-align: middle">
+                                @if (ann.ContractApprovalDivision == "A")
+                                {
+                                    <span>작성된 모든 내용을 이해하고 작성하여 승인을 요청합니다. </span><input id="Checkbox1" type="checkbox" checked="checked" /><span> &nbsp; &nbsp; &nbsp; </span>
+
+                                    <input id="Button1" class="btn btn-danger btn-sm" type="button" @onclick="@(() => btnEditViews(ann))" value="수 정" /><span> &nbsp; &nbsp; &nbsp; </span>
+
+                                    <input id="Button1" class="btn btn-danger btn-sm" type="button" @onclick="@(() => btnRemove(ann.Aid))" value="삭 제" /><span> &nbsp; &nbsp; &nbsp; </span>
+
+                                    <input id="Button1" class="btn btn-success btn-sm" type="button" @onclick="btnSaveViews" value="새로 입력" />
+
+                                }
+                                else
+                                {
+                                    
+                                    @if (ann.Files_Count > 0)
+                                    {
+                                        <button type="button" class="btn btn-success btn-sm" @onclick="OnFileViews"><span class="bi-images"></span>&nbsp; 첨부파일 보기</button>
+                                        <span> &nbsp; &nbsp; &nbsp; </span>
+                                    }
+
+
+                                   
+                                    <button type="button" class="btn btn-primary btn-sm" @onclick="() => btnInputFiles(ann.Aid)"><span class="bi-file-earmark-arrow-up-fill"></span>&nbsp; 파일 첨부</button>
+                                    <span> &nbsp; &nbsp; &nbsp; </span>
+
+                                   
+                                    <button type="button" class="btn btn-primary btn-sm" @onclick="() => btnPrint(ann)"><span class="bi-printer-fill"></span>&nbsp; 인 쇄</button>
+                                }
+
+                                <span> &nbsp; &nbsp; &nbsp; </span>
+                                <button type="button" class="btn btn-secondary btn-sm" @onclick="CloseA"><span class="bi-clipboard-x"></span>&nbsp; 닫 기</button>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    @*<div class="card">
+            <div class="card-body">
+                <table width="100%">
+                    <tr>
+                        <td class="text-right">
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>*@
+
+}
+
+
+
+
+<div class="card" style="margin-top: 10px">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <h5><i class="bi bi-person-check-fill"></i> 근로계약서 목록</h5>
+                </td>
+                <td class="text-right">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnNewViews"><span class="bi-box-arrow-in-right"></span>&nbsp; 새로입력</button>
+                    @*<input id="Button1" class="btn btn-outline-primary btn-sm" type="button" @onclick="btnNewViews" value="새로 입력" />*@
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <table class="table table-sm table-hover" style="font-size: 0.9em">
+            <tr style="background-color: ghostwhite">
+                <th class="text-center">식별코드</th>
+                <th class="text-center">근로자</th>
+                <th class="text-center">모바일</th>
+                <th class="text-center">공동주택명</th>
+                <th class="text-center">계약기간</th>
+                <th class="text-center">계약일</th>
+                <th class="text-center">승인여부</th>
+                <th class="text-center">첨부여부</th>
+                <th class="text-center">선 택</th>
+            </tr>
+            @foreach (var item in bnn)
+            {
+                <tr title="@item.UserName">
+                    <td class="text-center" style="vertical-align:middle" @onclick="(() => SelectView(item))">
+                        @item.Aid
+                        @*@string.Format("{0: ###,###.##}", (intNum--))*@
+                    </td>
+
+                    <td class="text-center" style="vertical-align:middle" @onclick="(() => SelectView(item))">
+                        @item.UserName
+                    </td>
+                    <td class="text-center" style="vertical-align:middle" @onclick="(() => SelectView(item))">
+                        @item.Mobile
+                    </td>
+                    <td class="text-center" style="vertical-align:middle" @onclick="(() => SelectView(item))">
+                        @item.Apt_Name
+                    </td>
+                    <td class="text-center" style="vertical-align:middle" @onclick="(() => SelectView(item))">
+                        시작일 : @item.LaborStartDate.ToShortDateString() ~ 종료일 : @item.LaborEndDate.ToShortDateString() <i class="bi bi-chevron-double-right"></i> 날짜 수 : @Func_span(item.LaborStartDate, item.LaborEndDate) 일간
+                    </td>
+                    <td class="text-center" style="vertical-align:middle" @onclick="(() => SelectView(item))">
+                        @item.WorkContract_Date.ToShortDateString()
+                    </td>
+                    <td class="text-center" style="vertical-align:middle" @onclick="(() => OnApproval(item))">
+                        @if (item.ContractApprovalDivision == "A")
+                        {
+                            if (LevelCount >= 9)
+                            {
+                                <a class="btn btn-link btn-sm" @onclick="(() => OnApproval(item.Aid))"><span style="color: red; font-size: 0.9em">미승인</span></a>
+                            }
+                            else
+                            {
+                                <span style="color: red; font-size: 0.9em">미승인</span>
+                            }
+
+                        }
+                        else
+                        {
+                            if (LevelCount >= 9)
+                            {
+                                <a class="btn btn-link btn-sm" @onclick="(() => OnApprovalB(item.Aid))"><span style="color: blue; font-size: 0.9em">승인</span></a>
+                            }
+                            else
+                            {
+                                <span style="color: blue; font-size: 0.9em">승인</span>
+                            }
+
+                        }
+                        @*@FuncResult(item.ContractApprovalDivision)*@
+                    </td>
+                    <td class="text-center" style="vertical-align:middle">
+                        @item.Files_Count<span>개</span>
+                    </td>
+
+                    <td class="text-center" style="vertical-align:middle">
+                        <input id="btnSelect" type="button" value="선택" class="btn btn-link btn-sm" @onclick="(() => SelectView(item))" />
+                    </td>
+                </tr>
+            }
+        </table>
+        <div class="col-md-12">
+            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+        </div>
+    </div>
+</div>
+
+
+@*파일 첨부 올리기*@
+@if (FileInputViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><span class="bi-file-code"></span> 첨부파일 입력</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="FilesClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div style="margin-top: 10px">
+
+                        <p>
+                            <InputFile OnChange="LoadFiles" class="custom-file" style="font-size: 0.9em" multiple></InputFile>
+                        </p>
+                        @if (isLoading)
+                        {
+                            <p style="text-align: center">
+                                <img src="/images/loader.gif" height="40" />
+                            </p>
+                            <p>Progress: @string.Format("{0:P0}", progressPercent)</p>
+                        }
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary" @onclick="btnFileSave">저장</button>*@
+                    <button type="button" class="btn btn-secondary" @onclick="FilesClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*첨부파일 보기*@
+@if (FileViews == "B")
+{
+    <div class="modal fade show d-block" id="subInput" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:beige">
+                    <h5 class="modal-title"><span class="bi-people"></span>  &nbsp; 첨부파일 상세 정보</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ViewsClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    @if (Files_Count > 0)
+                    {
+                        <div style="height: 600px; width: 100%; overflow-y: scroll; overflow-x: hidden">
+                            @foreach (var item in Files_Entity)
+                            {
+                                if (OnExtension(item.FileName) == ".pdf")
+                                {
+                                    <div>
+                                        <embed src="/A_Files/@item.FileName" type="application/pdf" style="width: 100%; height: 650px" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    if (Dul.BoardLibrary.IsPhoto(item.FileName))
+                                    {
+                                        <div>
+                                            <img src="/A_Files/@item.FileName" style="width: 900px;" class="img-thumbnail" />
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+
+                        foreach (var it in Files_Entity)
+                        {
+                            @if (LevelCount >= 10)
+                            {
+                                <button id="btnFileDelete" class="btn btn-link btn-sm" @onclick="() => FilesRemove(it)">
+                                    @*@Dul.StringLibrary.CutString(it.FileName, 16)*@
+                                    <span class="bi-x-circle-fill" style="color:red"></span>
+                                </button>@*<span> &nbsp;</span>*@
+                            }
+                            <span style="font-size: 0.9em">@Dul.StringLibrary.CutString(it.FileName, 16) &nbsp; &nbsp;</span>
+                        }
+
+                    }
+
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary btn-sm" @onclick="ViewsFileInsert">파일올리기</button>*@
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="ViewsClose"><span class="bi-clipboard-x"></span>&nbsp;닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@*근로계약서 입력*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: cornflowerblue; color: white">
+                    <h5 class="modal-title"><span class="bi-house-door"></span>&nbsp;@strTitle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseV">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div style="height: 700px; overflow-y:auto">
+                        <table class="table table-sm" style="margin-bottom: 5px; font-size: 0.9em">
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 근로자검색</span>
+                                        </div>
+                                        <input id="User_Code" type="text" @bind="UserName" style="font-size: 0.9em" class="form-control text-center" placeholder="근로자 성명 입력" autocomplete="on" />
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-primary btn-sm" type="button" @onclick="onNamed" id="button-addon2">검색</button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-search"></span>&nbsp;근로자명</span></div>
+                                        <select id="ddlSortB" class="custom-select" value="@ann.UserID" style="font-size: 0.9em; vertical-align: middle" @onchange="onName_s">
+                                            <option>::이름선택::</option>
+                                            @foreach (var item in rnn)
+                                            {
+                                                <option value="@item.User_ID">@item.User_Name</option>
+                                            }
+
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-search"></span>&nbsp;고용주</span></div>
+                                        <select id="Select1" value="@strCor_Code" class="custom-select" style="font-size: 0.9em" @onchange="onCor_Code">
+                                            <option style="line-height: 50px" value="">::업체선택::</option>
+                                            <option style="line-height: 50px" value="sw5">(주)신원티엠씨</option>
+                                            <option style="line-height: 50px" value="sw5a">남광개발(주)</option>
+                                            <option style="line-height: 50px" value="sw5b">(주)지엔텍</option>
+                                            <option style="line-height: 50px" value="sw5c">삼일환경</option>
+                                        </select>
+                                    </div>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <span style="font-weight: bold; color: darkslategray">1. 근로계약기간 &nbsp;&nbsp;&nbsp; </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-calendar-date"></span>&nbsp;계약 시작일</span></div>
+                                        <input id="LaborStartDate" type="date" class="text-center form-control" style="font-size: 0.9em" @bind="@ann.LaborStartDate" placeholder="2021-02-01 형식으로 입력" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-calendar-date"></span>&nbsp;계약 종료일</span></div>
+                                        <input id="LaborStartDate" type="date" class="text-center form-control" style="font-size: 0.9em" @bind="@ann.LaborEndDate" placeholder="2021-02-01 형식으로 입력" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-calendar-date"></span>&nbsp;계약 종료일</span></div>
+                                        <select value="@ann.Division" id="onPartTime" @onchange="onPartTime" class="custom-select" style="font-size: 0.9em">
+                                            <option value="">::촉탁여부::</option>
+                                            <option value="불촉탁">불촉탁</option>
+                                            <option value="촉탁">촉탁</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            @*근로시간 관련*@
+
+                            <tr>
+                                <td colspan="3">
+                                    <span style="font-weight: bold; color: darkslategray">2. 근로시간 &nbsp;&nbsp;&nbsp; </span> <span style="color: red"> 아래 근로시간은 시(시간) 단위로입력할 수 있으며, 분단위로는 입력할 수 없습니다.</span>
+                                </td>
+                                
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-clipboard-check"></i>&nbsp;근로형태</span>
+                                        </div>
+                                        <select id="WorktimeSort" value="@ann.WorktimeSort" class="custom-select" style="font-size: 0.9em" @onchange="onWorktimeSort">
+                                            <option value="">::근로형태선택::</option>
+                                            <option value="매일(월~금)">매일(월~금)</option>
+                                            <option value="격일">격일</option>
+                                            <option value="3교대">3교대</option>
+                                            <option value="기타">기타</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group" title="근로 형태 선택 시 자동으로 입력 시간과 다르다면 수정해 주세요.">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-calendar-date"></span>&nbsp;근로</span></div>
+                                        <input id="Worktime" name="Worktime" type="number" style="font-size: 0.9em" value="@ann.Worktime" @onchange="onWorktime" class="form-control text-right" autocomplete="off" />
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="font-size: 0.9em">시간</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group" title="토요일 근로시간이 있다면 입력하세요, 그렇지 않다면 입력하지 않습니다.">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 토요일</span>
+                                        </div>
+                                        <input id="WorktimeWeekend" name="WorktimeWeekend" type="number" value="@ann.WorktimeWeekend" @onchange="onWorktimeWeekend" class="form-control text-right" style="font-size: 0.9em" autocomplete="off" />
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="font-size: 0.9em">시간</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group" title="근로시작시간을 반드시 입력하세요. 근로시간은 시간은 시 단위로 입력하여야 하며, 분단위로는 입력되지 않습니다.">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 근로시작</span>
+                                        </div>
+                                        <input id="StartWorkTime" name="StartWorkTime" style="font-size: 0.9em" type="text" @bind="ann.StartWorkTime" class="form-control text-right" />
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="font-size: 0.9em">시부터</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group" title="근로종료시간을 반드시 입력하세요. 근로시간은 시간은 시 단위로 입력하여야 하며, 분단위로는 입력되지 않습니다.">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 근로종료</span>
+                                        </div>
+                                        <input id="EndWorkTime" name="EndWorkTime" style="font-size: 0.9em" type="text" @bind="ann.EndWorkTime" class="form-control text-right" />
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="font-size: 0.9em">시까지</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="vertical-align: middle">
+                                    <span style="font-weight:bold">월간근로시간 : </span> @WorkMonthTime <span style="font-size: 0.9em">시간</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">                                   
+                                    <div class="input-group" title="시간과 관련된 기타 사항을 입력하는 곳입니다..">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 기타</span>
+                                        </div>
+                                        <input id="WorkTimeEtc" name="WorkTimeEtc" style="font-size: 0.9em" type="text" @bind="ann.WorkTimeEtc" class="form-control" />
+                                    </div>                                
+                                </td>
+                            </tr>
+
+
+                            @*휴게시간 관련*@
+                            <tr>
+                                <td colspan="3">
+                                    <span style="font-weight: bold; color: darkslategray">3. 휴게시간 &nbsp;&nbsp;&nbsp; </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group" title="주간 휴게시간을 입력하는 곳. 소수 입력 가능.">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 주간휴게</span>
+                                        </div>
+                                        <input id="BreaktimeDaytime" name="BreaktimeDaytime" style="font-size: 0.9em" type="text" value="@ann.BreaktimeDaytime" class="form-control text-right" @onchange="onBreaktimeDaytime" />
+
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="font-size: 0.9em">시</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group" title="야간휴게시간 입력하는 곳. 소수 입력 가능.">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 야간휴게</span>
+                                        </div>
+                                        <input id="BreaktimeNight" name="BreaktimeNight" style="font-size: 0.9em" type="text" value="@ann.BreaktimeNight" class="form-control text-right" @onchange="onBreaktimeNight" />
+                                        <span class="input-group-text" style="font-size: 0.9em">시</span>
+                                    </div>
+
+                                </td>
+                                <td style="vertical-align:middle">
+                                    <span style="font-weight: bold">합계 : </span> @(ann.BreaktimeDaytime + ann.BreaktimeNight)<span>시간</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <div class="input-group" title="이곳에 휴게시간을 [예, 심야시간 20시부터 02시까지]와 같이 구체적으로 입력해 주세요.">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 기타</span>
+                                        </div>
+                                        <input id="BreakTimeEtc" name="BreakTimeEtc" style="font-size: 0.9em" type="text" @bind="ann.BreakTimeEtc" class="form-control" placeholder="구체적인 휴게시간 입력" />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <span style="font-weight: bold; color: darkslategray">4. 임금내역 &nbsp;&nbsp;&nbsp; </span> <span style="font-weight: bold">법정 야간 수당 : </span> <span style="color: red">@MonthNightPay</span><span>원</span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group" title="급여 중에 기본급에 해당하는 금액.">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 기본급</span>
+                                        </div>
+                                        <input id="BasicsPay" type="number" style="font-size: 0.9em" @onchange="onBasicePay" value="@ann.BasicsPay" class="form-control text-right" />
+                                        @*<input id="BreaktimeDaytime" name="BreaktimeDaytime" style="font-size: 0.9em" type="number" @bind="ann.BreaktimeDaytime" class="form-control text-right" />*@
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="font-size: 0.9em">원</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group" title="야간휴게시간 입력하는 곳. 소수 입력 가능.">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 직책수당</span>
+                                        </div>
+                                        <input id="Pay_B" name="Pay_B" style="font-size: 0.9em" type="number" @onchange="onPay_B" value="@ann.Pay_B" class="form-control text-right" />
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="font-size: 0.9em">원</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group" title="야간휴게시간 입력하는 곳. 소수 입력 가능.">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 자격수당</span>
+                                        </div>
+                                        <input id="Pay_B" name="Pay_B" type="number" @onchange="onPay_D" value="@ann.Pay_D" class="form-control text-right" style="font-size: 0.9em" />
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="font-size: 0.9em">원</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="input-group" title="급여 중에 기본급에 해당하는 금액.">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 야간수당</span>
+                                        </div>
+                                        <input id="Pay_A" name="Pay_A" type="number" @onchange="onPay_A" value="@ann.Pay_A" class="form-control text-right" style="font-size: 0.9em" />
+                                        @*<input id="BreaktimeDaytime" name="BreaktimeDaytime" style="font-size: 0.9em" type="number" @bind="ann.BreaktimeDaytime" class="form-control text-right" />*@
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="font-size: 0.9em">원</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group" title="야간휴게시간 입력하는 곳. 소수 입력 가능.">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 기타수당</span>
+                                        </div>
+                                        <input id="Pay_C" name="Pay_C" @onchange="onPay_C" value="@ann.Pay_C" type="number" class="form-control text-right" style="font-size: 0.9em" />
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="font-size: 0.9em">원</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="vertical-align:middle">
+                                    <span style="font-weight: bold">합계 : </span> @Sum_Pay<span>원</span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="3">
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 임금 기타</span>
+                                        </div>
+                                        <input id="Pay_Etc" name="Pay_Etc" @bind="ann.Pay_Etc" style="font-size: 0.9em" placeholder="'기타수당'에 대한 상세내역을 메모는 하는 곳" type="text" class="form-control" autocomplete="on" />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <span style="font-weight: bold; color: darkslategray">5.근무장소 &nbsp;&nbsp;&nbsp; </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 근무장소</span>
+                                        </div>
+                                        <input id="WorkPlace" name="WorkPlace" type="text" @bind="ann.WorkPlace" style="font-size: 0.9em" placeholder="근무할 장소를 별도로 지정하여야 하는 경우에 입력하세요." class="form-control" autocomplete="on" />
+                                    </div>
+                                </td>
+
+                            </tr>
+
+                            <tr>
+                                <td colspan="3">
+                                    <span style="font-weight: bold; color: darkslategray">6. 업무내용 &nbsp;&nbsp;&nbsp; </span>
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td colspan="3">
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 업무내용</span>
+                                        </div>
+                                        <input id="WorkDetail" name="WorkDetail" type="text" @bind="ann.WorkDetail" style="font-size: 0.9em" placeholder="업무 내용은 반드시 필요한 경우에만 입력하여야 합니다. 잘못 업무 내용을 입력할 경우 법적 분쟁이 될 수 있습니다." class="form-control" />
+                                    </div>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <span style="font-weight: bold; color: darkslategray">7. 기타 &nbsp;&nbsp;&nbsp; </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 기타 사항</span>
+                                        </div>
+                                        <input id="Contract_Etc" name="Contract_Etc" type="text" @bind="ann.Contract_Etc" style="font-size: 0.9em" class="form-control" placeholder="기타 특약 사항 등 추가하여 입력하여야 하는 경우에 입력하는 곳" autocomplete="on" />
+                                    </div>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td style="text-align: center">
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 계약일</span>
+                                        </div>
+                                        <input id="WorkContract_Date" name="WorkContract_Date" style="font-size: 0.9em" type="date" @bind="ann.WorkContract_Date" format-value="yyyy-MM-dd" class="form-control" placeholder="계약 작성일" required autocomplete="off" />
+                                    </div>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+
+                                    <table class="table table-sm table-bordered" style="font-size: 0.9em">
+                                        <tr style="background-color: whitesmoke">
+                                            <th class="text-center" colspan="2">
+                                                <span style="font-weight:bold"><i class="bi bi-file-person-fill"></i> 사용자</span>
+                                            </th>
+                                            <th colspan="2" style="text-align: center; background-color: ghostwhite">
+                                                <span style="font-weight:bold"> <i class="bi bi-file-person"></i> 근로자</span>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center; width: 150px; vertical-align:middle">
+                                                주 소
+                                            </td>
+                                            <td>
+                                                @ann.Ceo_Adress
+                                            </td>
+                                            <td style="text-align: center; width: 150px; vertical-align:middle">
+                                                주 소
+                                            </td>
+                                            <td>
+                                                @ann.Adress
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center; width: 150px; vertical-align:middle">
+                                                연락처
+                                            </td>
+                                            <td>
+                                                @ann.Ceo_Telephone
+                                            </td>
+                                            <td style="text-align: center; width: 150px; vertical-align:middle">
+                                                연락처
+                                            </td>
+                                            <td>
+                                                @ann.Mobile
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center; width: 150px; vertical-align:middle">
+                                                성 명
+                                            </td>
+                                            <td>
+                                                @ann.Ceo_Name
+                                            </td>
+                                            <td style="text-align: center; width: 150px; vertical-align:middle">
+                                                성 명
+                                            </td>
+                                            <td>
+                                                @ann.UserName
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave"><span class="bi-save2"></span>&nbsp; 저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseV"><span class="bi-x-square"></span>&nbsp; 닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}

@@ -1,0 +1,994 @@
+﻿@page "/Accountings/Details"
+@page "/Accountings/Details/{Aid:int}"
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <h6><span class="bi-journal-text"> </span>&nbsp;지출결의서 상세 정보</h6>
+                </td>
+                <td>
+                </td>
+                <td class="text-right">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnInsert"> <span class="bi-save"></span>&nbsp;지출 내역 입력</button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" @onclick="btnPrint"> <span class="bi-printer"></span>&nbsp;인쇄</button>                    
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <table class="table table-borderless" style="margin-bottom : 0px; margin-top: 0px; padding: 0px">
+            <tr style="background-color: whitesmoke">
+                <td style="font-size: 1em; font-weight: bold; color:darkslategrey; vertical-align:middle">
+                    
+                </td>
+                <td class="text-right">
+
+                    <table align="right" style="padding: 0px">
+                        <tr>
+                            @foreach (var st in app)
+                            {
+                                <td style="width: 80px; padding: 0px; margin: 0px">
+                                    <table style="width: 79px; background-color: white; color: black; font-size: 0.7em">
+                                        <tr style="border-style:dotted; border-width:1px; border-color: black; ">
+                                            <td style="text-align: center; padding:0px; margin: 0px; vertical-align:middle" height="25px">
+                                                @st.PostDuty
+                                            </td>
+                                        </tr>
+                                        <tr style="border-width: 1px; border-style:dotted; border-color: black; ">
+                                            <td style="text-align: center; padding:0px; margin: 0px; vertical-align:middle" height="45px">
+                                                @if (FuncShowOK(st.PostDuty, st.AptCode, Aid) != "결재하기")
+                                                {
+                                                    <img src="data:image/jpg;base64,@Convert.ToBase64String(sealImage(st.AptCode, st.Post, st.Duty, Aid, "Disbursement", strUserCode))" height="40" alt="" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="/images/inn.gif" alt="" height="38" />
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr style="border-width: 1px; border-style:dotted; border-color: black; ">
+                                            <td style="text-align: center; vertical-align:middle; color:black; padding:0px; margin: 0px; vertical-align:middle" height="25px">
+                                                @if (decisionA != "결재하기")
+                                                {
+                                                    @decisionA
+                                                }
+                                                else
+                                                {
+                                                    if (PostDuty == st.PostDuty)
+                                                    {
+                                                        <a style="background-color: orange; color: white" @onclick="btnDecision">결재하기</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>해당없음</span>
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            }
+                        </tr>
+                    </table>
+
+                </td>
+            </tr>
+        </table>
+        <table class="table table-sm" style="font-size: 0.9em">
+            <thead>
+                <tr style="background-color:whitesmoke;">
+                    <th style="text-align: center">
+                        <span class="badge-secondary">지출결의서명</span>
+                    </th>
+                    <th style="text-align: center">
+                        결재일
+                    </th>
+                    <th style="text-align: center">
+                        집행일
+                    </th>
+                    <th style="text-align: center">
+                        지출합계
+                    </th>
+                    <th style="text-align: center">
+                        집행자
+                    </th>
+                    <th style="text-align: center">
+                        설명
+                    </th>
+                    <th style="text-align: center">
+                        선택
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: center; vertical-align: middle">
+                        @disbursementSort_Lib.dbsort_Name(cnn.DisbursementName)
+                    </td>
+                    <td style="text-align: center; vertical-align: middle">
+                        @cnn.DraftDate.ToShortDateString()
+                    </td>
+                    <td style="text-align: center; vertical-align: middle">
+                        @cnn.InputDate.ToShortDateString()
+                    </td>
+                    <td style="text-align: center; vertical-align: middle">
+                        @string.Format("{0: ###,###.##}", cnn.InputSum)<span>원</span>
+                    </td>
+                    <td style="text-align: center; vertical-align: middle">
+                        @Name(cnn.User_Code)
+                    </td>
+                    <td style="text-align: center; vertical-align: middle">
+                        @if (string.IsNullOrWhiteSpace(cnn.Details))
+                        {
+                            <span>없음</span>
+                        }
+                        else
+                        {
+                            <span>@Dul.StringLibrary.CutString(cnn.Details, 20)</span>
+                        }
+                    </td>
+                    <td style="text-align: center; vertical-align: middle">
+                        <input id="Button1" class="btn btn-link btn-sm" @onclick="() => btnEdit(cnn)" type="button" value="수정" />
+                        <input id="Button2" class="btn btn-link btn-sm" @onclick="() => ByRemove(cnn.Aid)" type="button" value="삭제" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table width="100%">
+            <tr>
+                <td width="30%">
+                    <span><img src="/images/sub/board_tit_bullet.png" /> &nbsp; 지출내역(현금지급) 정보   </span>
+                </td>
+                <td>
+                    총액 :@string.Format("{0: ###,###.##}", IntTotalSum_A)<span>원</span>
+
+                </td>
+                <td style="text-align:right">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnInsert"> <span class="bi-save"></span>&nbsp;지출 내역 입력</button>
+                </td>
+            </tr>
+
+        </table>
+
+        @if (ann == null)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" style="height: 80px" />
+            </p>
+        }
+        else if (ann.Count == 0)
+        {
+
+            <p style="text-align:center; color:red">
+                입력된 정보가 없습니다. ............
+            </p>
+        }
+        else
+        {
+            <table class="table table-sm" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color:whitesmoke; border-bottom: 1px">
+                        <th style="text-align: center">
+                            계정 과목
+                        </th>
+                        <th style="text-align: center">
+                            내 역
+                        </th>
+                        <th style="text-align: center">
+                            대체 계정
+                        </th>
+                        <th style="text-align: center">
+                            통장명
+                        </th>
+                        <th style="text-align: center">
+                            지출액
+                        </th>
+                        <th style="text-align: center">
+                            지출처
+                        </th>
+                        <th style="text-align: center">
+                            지급방법
+                        </th>
+                        <th style="text-align: center">
+                            지급일
+                        </th>
+                        <th style="text-align: center">
+                            버튼
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var st in ann)
+                    {
+                        <tr>
+                            <td style="text-align: center; vertical-align: middle">
+                                @account_Lib.Account_Name(st.AccountCode)
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                <span>@Dul.StringLibrary.CutString(st.Details, 18)</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @account_Lib.Account_Name(st.SubstitutionAccountCode)
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @bankAccount_Lib.BankAccount_Name(Convert.ToInt32(st.BankAccountCode))
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @string.Format("{0: ###,###.##}", st.InputSum)<span>원</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.ProvidePlace
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.ProvideWay
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.ExecutionDate.ToShortDateString()
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @if (cnn.Approval == "A")
+                                {
+                                    <a class="badge badge-light bg-primary" style="color: white" @onclick="() => onFileInput(st.Aid.ToString(), strSortA)"><span class="bi-pencil-square"></span>&nbsp;징빙 첨부 </a>
+                                    <a class="badge badge-light bg-primary" style="color: white" @onclick="() => btnEditA(st)"><span class="bi-pen"></span>&nbsp;수정 </a>
+                                    <a class="badge badge-light bg-danger" style="color: white" @onclick="() => ByRemoveA(st.Aid)"><span style="font-size:0.8em">X</span>&nbsp;삭제 </a>
+                                }
+                                @if (st.Files_Count > 0)
+                                {
+                                    <a class="badge badge-light bg-primary" style="color: white" @onclick="() => onFileViews(st.Aid.ToString(), strSortA)"><span class="bi-pencil-square"></span>&nbsp;첨부 보기 </a>
+                                }
+                                                               
+
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        }
+
+
+        <table width="100%">
+            <tr>
+                <td width="30%">
+                    <span><img src="/images/sub/board_tit_bullet.png" /> &nbsp; 지출내역(자동이체) 정보   </span>
+                </td>
+                <td>
+                    총액 :@string.Format("{0: ###,###.##}", IntTotalSum_B)<span>원</span>
+
+                </td>
+                <td>
+                </td>
+            </tr>
+
+        </table>
+        @if (annA == null)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" style="height: 80px" />
+            </p>
+
+        }
+        else if (annA.Count == 0)
+        {
+            <p style="text-align:center; color:red">
+                입력된 정보가 없습니다. ............
+            </p>
+        }
+        else
+        {
+            <table class="table table-sm" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color:whitesmoke;">
+                        <th style="text-align: center">
+                            계정 과목
+                        </th>
+                        <th style="text-align: center">
+                            내 역
+                        </th>
+                        <th style="text-align: center">
+                            대체 계정
+                        </th>
+                        <th style="text-align: center">
+                            통장명
+                        </th>
+                        <th style="text-align: center">
+                            지출액
+                        </th>
+                        <th style="text-align: center">
+                            지출처
+                        </th>
+                        <th style="text-align: center">
+                            지급방법
+                        </th>
+                        <th style="text-align: center">
+                            지급일
+                        </th>
+                        <th style="text-align: center">
+                            버튼
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var st in annA)
+                    {
+                        <tr>
+                            <td style="text-align: center; vertical-align: middle">
+                                @account_Lib.Account_Name(st.AccountCode)
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                <span>@Dul.StringLibrary.CutString(st.Details, 18)</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @account_Lib.Account_Name(st.SubstitutionAccountCode)
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @bankAccount_Lib.BankAccount_Name(Convert.ToInt32(st.BankAccountCode))
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @string.Format("{0: ###,###.##}", st.InputSum)<span>원</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.ProvidePlace
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.ProvideWay
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.ExecutionDate.ToShortDateString()
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @if (cnn.Approval == "A")
+                                {
+                                    <a class="badge badge-light bg-primary" style="color: white" @onclick="() => onFileInput(st.Aid.ToString(), strSortA)"><span class="bi-pencil-square"></span>&nbsp;징빙 첨부 </a>
+                                    <a class="badge badge-light bg-primary" style="color: white" @onclick="() => btnEditA(st)"><span class="bi-pen"></span>&nbsp;수정 </a>
+                                    <a class="badge badge-light bg-danger" style="color: white" @onclick="() => ByRemoveA(st.Aid)"><span style="font-size:0.8em">X</span>&nbsp;삭제 </a>
+                                }
+                                @if (st.Files_Count > 0)
+                                {
+                                    <a class="badge badge-light bg-primary" style="color: white" @onclick="() => onFileViews(st.Aid.ToString(), strSortA)"><span class="bi-pencil-square"></span>&nbsp;첨부 보기 </a>
+                                }
+
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        }
+
+
+
+        <table width="100%" style="margin-bottom: 5px">
+            <tr>
+                <td width="30%">
+                    <span><img src="/images/sub/board_tit_bullet.png" /> &nbsp; 통장(계좌) 내역 정보   </span>
+                </td>
+                <td>
+                    &nbsp;&nbsp;&nbsp; 총액 :@string.Format("{0: ###,###.##}", IntTotalSum_A)<span>원</span>
+
+                </td>
+                <td style="text-align:right">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnInsertBanksDeals"> <span class="bi-save"></span>&nbsp;통장(계좌) 내역 입력</button> &nbsp;&nbsp;&nbsp; <button type="button" class="btn btn-dark btn-sm" @onclick="btnBlankMove"> <span class="bi-bank2"></span>&nbsp;통장 등록</button>
+                </td>
+            </tr>
+
+        </table>
+        @if (bank == null)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" style="height: 80px" />
+            </p>
+
+        }
+        else if (bank.Count == 0)
+        {
+            <p style="text-align:center; color:red">
+                입력된 정보가 없습니다. ............
+            </p>
+        }
+        else
+        {
+            <table class="table table-sm" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color:whitesmoke;">
+                        <th style="text-align: center">
+                            통장명
+                        </th>
+                        <th style="text-align: center">
+                            은행명
+                        </th>
+                        <th style="text-align: center">
+                            집행일
+                        </th>
+                        <th style="text-align: center">
+                            지출전 잔액
+                        </th>
+                        <th style="text-align: center">
+                            지출액
+                        </th>
+                        <th style="text-align: center">
+                            입금액
+                        </th>
+                        <th style="text-align: center">
+                            지출후 잔액
+                        </th>
+                        @*<th style="text-align: center">
+                            입력여부
+                        </th>*@
+                        <th style="text-align: center">
+                            통장사본
+                        </th>
+                        <th style="text-align: center">
+                            결재
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var st in bank)
+                    {
+                        <tr style="border-bottom-style:solid; border-bottom-width: 1px">
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.BankAccountName
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.BankName
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @if (@Being_BankAccount(Apt_Code, Aid.ToString(), st.Aid.ToString()) > 0)
+                                {
+                                    @bankAccountDeals_Lib.InputDate(Apt_Code, Aid.ToString(), st.Aid.ToString()).ToShortDateString()
+                                }
+                                else
+                                {
+                                    <span style="color:red">미입력</span>
+                                }
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @Ago_Balance(st.Aid.ToString(), Aid.ToString(), @Apt_Code)
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @OutputSum(st.Aid.ToString(), Aid.ToString(), @Apt_Code)
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @InputSum(st.Aid.ToString(), Aid.ToString(), @Apt_Code)
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @After_Balance(st.Aid.ToString(), Aid.ToString(), @Apt_Code)
+                            </td>
+                            @*<td style="text-align: center; vertical-align: middle">
+                                @if (Being_BankAccount(Apt_Code, Aid.ToString(), st.Aid.ToString()) > 0)
+                                {
+                                    @bankAccountDeals_Lib.InputDate(Apt_Code, Aid.ToString(), st.Aid.ToString()).ToShortDateString()
+                                }else
+                                {
+                                    <span style="color:red">미입력</span>
+                                }
+                            </td>*@
+                            <td style="text-align: center; vertical-align: middle">
+                                @if (Files(st.Aid.ToString()) > 0)
+                                {
+                                    <a class="badge badge-light bg-primary" style="color: white" @onclick="() => onFileViews(st.Aid.ToString(), strSortB)"><span class="bi-pencil-square"></span>&nbsp;통장 보기 </a>
+                                }
+
+                                @if (cnn.Approval == "A")
+                                {
+                                    <a class="badge badge-light bg-primary" style="color: white" @onclick="() => onFileInput(st.Aid.ToString(), strSortB)"><span class="bi-pencil-square"></span>&nbsp;통장 첨부 </a>
+                                }
+                               
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @if (ApprovalView(Aid.ToString(), st.Aid.ToString()) == "A")
+                                {
+                                    <a class="badge badge-light bg-danger" style="color: white" @onclick="() => ByApproval(st.Aid)"><span class="bi-pencil-square"></span>&nbsp;결 재 </a>
+                                }
+                                else if (ApprovalView(Aid.ToString(), st.Aid.ToString()) == "B")
+                                {
+                                    <span>결재완료</span>
+                                }
+                                else
+                                {
+                                    <span style="color: red">미입력</span>
+                                }
+
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        }
+
+
+
+    </div>
+    <div class="card-footer" style="text-align: right">
+        @Apt_Name  &nbsp;&nbsp;  @User_Name
+    </div>
+</div>
+
+
+@* 지출내역 새로 등록 모달 폼*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="margin-bottom: 0px">
+                        <tr>
+                            <td width="50%">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>대분류</span></div>
+                                    <select id="AccountSortCodeA" class="custom-select" value="@bnn.AccountSortCodeA" @onchange="OnSortA" style="font-size: 0.9em" required>
+                                        <option value="">::대분류 선택::</option>
+                                        @foreach (var it in accA)
+                                        {
+                                            <option value="@it.Aid">@it.SortName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>중분류</span></div>
+                                    <select id="AccountSortCodeB" class="custom-select" value="@bnn.AccountSortCodeB" @onchange="OnSortB" style="font-size: 0.9em" required>
+                                        <option value="">::중분류 선택::</option>
+                                        @foreach (var it in accB)
+                                        {
+                                            <option value="@it.Aid">@it.SortName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>계정</span></div>
+                                    <select id="AccountCode" class="custom-select" @bind="bnn.AccountCode" style="font-size: 0.9em" required>
+                                        <option value="">::계정과목 선택::</option>
+                                        @foreach (var it in acc)
+                                        {
+                                            <option value="@it.Aid">@it.AccountName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>대체</span></div>
+                                    <select id="Select1" class="custom-select" @bind="bnn.SubstitutionAccountCode" style="font-size: 0.9em" required>
+                                        <option value="">::대체계정 선택::</option>
+                                        @foreach (var it in accT)
+                                        {
+                                            <option value="@it.Aid">@it.AccountName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>통장</span></div>
+                                    <select id="BankAccountCode" class="custom-select" @bind="bnn.BankAccountCode" style="font-size: 0.9em" required>
+                                        <option value="">::통장명 선택::</option>
+                                        @foreach (var it in bank)
+                                        {
+                                            <option value="@it.Aid">@it.BankAccountName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>지급방법</span></div>
+                                    <select id="Select1" class="custom-select" @bind="bnn.ProvideWay" style="font-size: 0.9em" required>
+                                        <option value="">::방법 선택::</option>
+                                        <option value="현금송금">현금송금</option>
+                                        <option value="계좌이체">계좌이체</option>
+                                        <option value="카드이체">카드이체</option>
+                                        <option value="자동이체">자동이체</option>
+                                        <option value="지로납부">지로납부</option>
+                                        <option value="현금인출">현금인출</option>
+                                        <option value="기타">기타</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                       <tr>
+                           <td>
+                               <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-currency-exchange"></span>지출액</span></div>
+                                        <input id="InputSum" name="InputSum" style="font-size: 0.9em" placeholder="지출금액 입력" @bind="bnn.InputSum" class="form-control text-right" type="number" />
+                                    </div>
+                                </div>
+                           </td>
+                           <td>
+                               <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-calendar4"></span>지급일</span></div>
+                                        <input id="ExecutionDate" name="ExecutionDate" style="font-size: 0.9em" @bind="bnn.ExecutionDate" placeholder="지급일 입력" class="form-control" type="date" />
+                                    </div>
+                                </div>
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>
+                               <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>내·외부</span></div>
+                                    <select id="InOutDivision" class="custom-select" value="@bnn.InOutDivision" @onchange="OnDivision"  style="font-size: 0.9em" required>
+                                        <option value="">=구분선택=</option>
+                                        <option value="A">외부지출</option>
+                                        <option value="B">내부이체</option>
+                                    </select>
+                                </div>
+                           </td>
+                           <td>
+                               <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span>지급처</span></div>
+                                        @if (bnn.InOutDivision == "B")
+                                        {
+                                            <select id="BankAccountCode" class="custom-select" value="@bnn.InputBankAccountCode" @onchange="OnInputBank" style="font-size: 0.9em" required>
+                                                <option value="">::통장명 선택::</option>
+                                                @foreach (var it in bank)
+                                                {
+                                                    <option value="@it.Aid">@it.BankAccountName</option>
+                                                }
+                                            </select>
+                                        }
+                                        else
+                                        {
+                                            <input id="ProvidePlace" name="ProvidePlace" style="font-size: 0.9em" @bind="bnn.ProvidePlace" placeholder="지급처 입력하세요." class="form-control" type="text" />    
+                                        }
+                                        
+                                    </div>
+                                </div>
+                           </td>
+                       </tr>
+                       <tr>
+                           <td colspan="2">
+                               <textarea id="Details" class="form-control" rows="3" style="min-width: 100%" @bind="bnn.Details" required></textarea>
+                           </td>
+                       </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave"><span class="bi-save2-fill"></span>&nbsp;저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose"><span class="bi-send-x"></span>&nbsp;닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* 은행계좌 새로 등록 모달 폼*@
+@if (InsertBanks == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnBankClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <table class="table">
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span> &nbsp; 은행명</span></div>
+                                            <input id="BankName" name="BankName" style="font-size: 0.9em" @bind="bankA.BankName" class="form-control" type="text" placeholder="은행명 입력" />
+                                        </div>
+                                    </div>
+                                </td>
+                            
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span> &nbsp; 계좌명</span></div>
+                                            <input id="BankAccountName" name="BankAccountName" style="font-size: 0.9em" @bind="bankA.BankAccountName" class="form-control" type="text" placeholder="통장이름(별칭) 입력" />
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="input-group" title="시재금 통장이면 시재금계좌를 선택하고, 그렇지 않으면 일반계좌를 선택하세요.">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>시재금여부</span></div>
+                                        <select id="InputDivision" class="custom-select" @bind="bankA.InputDivision" style="font-size: 0.9em">
+                                            <option value="">=구분선택=</option>
+                                            <option value="A">일반계좌</option>
+                                            <option value="B">시재금계좌</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            
+                                <td>
+                                    <div class="input-group" title="통장의 계좌번호를 입력하세요.">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span> &nbsp; 계좌번호</span></div>
+                                            <input id="BankNumber" name="BankNumber" style="font-size: 0.9em" title="통장 계좌번호를 입력해 주세요." @bind="bankA.BankNumber" class="form-control" type="text" placeholder="계좌번호 입력" />
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="input-group" title="통장 용도를(관리비, 잡수입, 장기수선충당금 등) 입력하는 곳">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span> &nbsp; 통장용도</span></div>
+                                            <input id="BankAccountSort" name="BankAccountSort" style="font-size: 0.9em" @bind="bankA.BankAccountSort" title="용도(관리비, 잡수입, 장기수선충당금 등)" class="form-control" type="text" placeholder="용도를(관리비, 잡수입, 장기수선충당금 등) 입력하는 곳" />
+                                        </div>
+                                    </div>
+                                </td>
+                            
+                                <td>
+                                    <div class="input-group" title="종류(자유예금, 적금, 정기예금 등)" type="text">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span> &nbsp; 통장구분</span></div>
+                                            <input id="BankNumber" name="BankNumber" style="font-size: 0.9em" @bind="bankA.BankAccountDivision" class="form-control" placeholder="종류(자유예금, 적금, 정기예금 등)" />
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <textarea id="Intro" class="form-control" rows="3" style="min-width: 100%" @bind="bankA.Details"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div style="height: 300px; overflow-y: auto">
+                        <table class="table table-sm table-hover" style="font-size: 0.9em">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center; vertical-align:middle">
+                                        코드
+                                    </th>
+                                    <th style="text-align:center; vertical-align:middle">
+                                        은행명
+                                    </th>
+                                    <th style="text-align:center; vertical-align:middle">
+                                        통장명
+                                    </th>
+                                    <th style="text-align:center; vertical-align:middle">
+                                        통장구분
+                                    </th>
+                                    <th style="text-align:center; vertical-align:middle">
+                                        통장종류
+                                    </th>
+                                    <th style="text-align:center; vertical-align:middle">
+                                        계좌번호
+                                    </th>
+                                    <th style="text-align:center; vertical-align:middle">
+                                        입력일
+                                    </th>
+                                    <th style="text-align:center; vertical-align:middle">
+                                        버튼
+                                    </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var st in bank)
+                                {
+                                    <tr>
+                                        <td style="text-align:center; vertical-align:middle">
+                                            @st.Aid
+                                        </td>
+                                        <td style="text-align:center; vertical-align:middle">
+                                            @st.BankName
+                                        </td>
+                                        <td style="text-align:center; vertical-align:middle">
+                                            @st.BankAccountName
+                                        </td>
+                                        <td style="text-align:center; vertical-align:middle">
+                                            @st.BankAccountDivision
+                                        </td>
+                                        <td style="text-align:center; vertical-align:middle">
+                                            @st.BankAccountSort
+                                        </td>
+                                        <td style="text-align:center; vertical-align:middle">
+                                            @st.BankNumber
+                                        </td>
+                                        <td style="text-align:center; vertical-align:middle">
+                                            @st.PostDate.ToShortDateString()
+                                        </td>
+                                        <td>
+                                            <a class="badge badge-light bg-danger" style="color: white" @onclick="() => ByRemoveB(st.Aid)"><span style="font-size:0.8em">X</span>&nbsp;삭제 </a>
+                                        </td>
+                                    </tr>
+                                }
+                                
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnBankSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnBankClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@* 은행거래 내역 새로 등록 모달 폼*@
+@if (InsertBankDeals == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>통장</span></div>
+                                    <select id="BankAccountCode" class="custom-select" value="@bankAA.BankAccountCode" @onchange="OnBankSelect" style="font-size: 0.9em" required>
+                                        <option value="">=통장선택=</option>
+                                        @foreach (var it in bank)
+                                        {
+                                            <option value="@it.Aid">@it.BankAccountName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                            </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span>지출전</span></div>
+                                    <input id="Ago_Balance" name="Ago_Balance" style="font-size: 0.9em; text-align:right" @bind="bankAA.Ago_Balance" class="form-control" type="number" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span>지출후</span></div>
+                                    <input id="After_Balance" name="After_Balance" style="font-size: 0.9em; text-align:right" @bind="bankAA.After_Balance" class="form-control" type="number" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <textarea id="Details" class="form-control" rows="4" style="min-width: 100%; font-size: 0.9em" @bind="bankAA.Details" pplaceholder="참고사항 입력"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSaveBankDeals">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseC">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*파일 첨부 올리기*@
+@if (FileInsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="bi-file-code"></span> 첨부파일 입력</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnFileClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div style="margin-top: 10px">
+
+                        <p>
+                            <InputFile OnChange="LoadFiles" class="custom-file" style="font-size: 0.9em" multiple></InputFile>
+                        </p>
+                        @if (isLoading)
+                        {
+                            <p style="text-align: center">
+                                <img src="/images/loader.gif" height="40" />
+                            </p>
+                            <p>Progress: @string.Format("{0:P0}", progressPercent)</p>
+                        }
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnFileClose"><span class="bi-bag-x-fill"></span>&nbsp;닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop show"></div>
+}
+
+@*파일 보기 모달품*@
+@if (FileViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-file-code"></span> 첨부파일 보기</h6>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+
+                    @if (Files_Count > 0)
+                    {
+                        <div style="height: 500px; overflow-y: scroll; overflow-x: hidden">
+                            @foreach (var item in Files_Entity)
+                            {
+                                if (OnExtension(item.Sw_FileName) == ".pdf")
+                                {
+                                    <div>
+                                        <embed src="/Appeal/@item.Sw_FileName" type="application/pdf" style="width: 100%; height: 500px" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    if (Dul.BoardLibrary.IsPhoto(item.Sw_FileName))
+                                    {
+                                        <div>
+                                            <img src="/Appeal/@item.Sw_FileName" style="width: 900px;" class="img-thumbnail" />
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                        @if (cnn.Approval == "A")
+                        {
+                            <div style="width: 100%; overflow-x : scroll">
+                                @foreach (var st in Files_Entity)
+                                {
+                                    @st.Sw_FileName <button id="newWorks" name="newWorks" class="btn btn-link btn-sm" @onclick="() => ByFileRemove(st)"><span class="bi-journal-x"> 삭제</span></button>
+                                }
+                            </div>
+                        }
+
+                    }
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" @onclick="FilesViewsClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop show"></div>
+}

@@ -1,0 +1,595 @@
+﻿@page "/Staff/Details"
+
+<div class="card">
+    <div class="card-header">
+        <h6><span class="bi-person-check"></span>&nbsp; <span style="color: slategrey"> @User_Name </span> 개인정보 관리</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-8 col-md-8">
+                <table class="table table-sm" style="margin-bottom: 0px; font-size: 0.9em">
+                    <tr>
+                        <th style="background-color: whitesmoke; width: 150px" class="text-center">
+                            이 름
+                        </th>
+                        <td>
+                            @staff.User_Name
+                        </td>
+                        <th style="background-color: whitesmoke; width: 150px" class="text-center">
+                            아이디
+                        </th>
+                        <td>
+                            @staff.User_ID
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="background-color: whitesmoke" class="text-center">
+                            출생일
+                        </th>
+                        <td>
+                            @staff.Scn
+                        </td>
+                        <th style="background-color: whitesmoke" class="text-center">
+                            가입일
+                        </th>
+                        <td>
+                            @staff.JoinDate.ToShortDateString()
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="background-color: whitesmoke" class="text-center">
+                            방문 수
+                        </th>
+                        <td>
+                            @string.Format("{0: ###,###.##}", staff.VisitCount)<span>회</span>
+                        </td>
+                        <th style="background-color: whitesmoke" class="text-center">
+                            읽은 수
+                        </th>
+                        <td>
+                            @string.Format("{0: ###,###.##}", staff.ReadCount)<span>회</span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th style="background-color: whitesmoke" class="text-center">
+                            주  소
+                        </th>
+                        <td>
+                            @staffSub.st_Sido @staffSub.st_GunGu @staffSub.st_Adress_Rest
+                        </td>
+                        <th style="background-color: whitesmoke" class="text-center">
+                            연락처
+                        </th>
+                        <td>
+                            @staffSub.Mobile_Number
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="background-color: whitesmoke" class="text-center">
+                            자격증
+                        </th>
+                        <td>
+                            @staffSub.d_division
+                        </td>
+                        <th style="background-color: whitesmoke" class="text-center">
+                            자기 소개
+                        </th>
+                        <td>
+                            @staff.Intro
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="background-color: whitesmoke" class="text-center">
+                            입력일
+                        </th>
+                        <td>
+                            @staff.JoinDate.ToShortDateString()
+                        </td>
+                        <th style="background-color: whitesmoke" class="text-center">
+                            등 급
+                        </th>
+                        <td>
+                            @staff.LevelCount
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-4 col-md-4">
+                <div>
+                    @if (Files_Count > 0)
+                    {
+                        <div style="height: 200px; overflow-y: scroll; overflow-x: hidden">
+
+                            @foreach (var files in Files_Entity)
+                            {
+                                <div class="text-center">
+                                    <img src="/UpFiles/Staff/@files.Sw_FileName" alt="" width="200" class="img-thumbnail" />
+                                </div>
+                            }
+                        
+                            @foreach (var files in Files_Entity)
+                            {
+                                <div class="text-center">
+                                    <a class="btn btn-link btn-sm" @onclick="() => ByFileRemove(files)">@files.Sw_FileName <span class="bi-x" style="color: red; font-weight: bold">&nbsp; 삭제 </span></a>
+                                    @*<button class="btn btn-link btn-sm" @onclick="() => ByFileRemove(files)">@files.Sw_FileName</button>*@
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="height: 200px; overflow-y: scroll; overflow-x: hidden">
+
+                            <div class="text-center">
+                                <img src="/images/wedew_d.gif" alt="" width="200" class="img-thumbnail" />
+                            </div>
+
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="text-right">
+            <button id="OnEditViews" name="OnEditViews" class="btn btn-outline-secondary btn-sm" @onclick="OnEditViews"><span class="bi-pen-fill"></span> 회원정보 수정</button>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <button id="btnFileInsert" name="btnFileInsert" class="btn btn-outline-secondary btn-sm" @onclick="btnFileInsert"><span class="bi-pen-fill"></span> 사진첨부</button>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <button id="OnEditPaw" name="OnEditPaw" class="btn btn-outline-secondary btn-sm" @onclick="OnEditPaw"><span class="bi-pen-fill"></span> 암호 수정</button>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 5px">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <h6><span class="bi-building"></span> &nbsp; 직원정보 관리 </h6>
+                </td>
+
+                <td>
+                </td>
+                <td class="text-right">
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <table class="table table-sm table-hover" width="100%" style="font-size: 0.9em">
+            <thead>
+                <tr style="background-color: ghostwhite">
+                    <th class="text-center">
+                        일련번호
+                    </th>
+                    <th class="text-center">
+                        아이디
+                    </th>
+                    <th class="text-center">
+                        공동주택
+                    </th>
+                    <th class="text-center">
+                        지역
+                    </th>
+                    <th class="text-center">
+                        세대수
+                    </th>
+                    <th class="text-center">
+                        부서
+                    </th>
+                    <th class="text-center">
+                        직책
+                    </th>
+                    @*<th class="text-center">
+                            이름
+                        </th>*@
+                    <th class="text-center">
+                        입사일
+                    </th>
+                    <th class="text-center">
+                        퇴사일
+                    </th>
+                    <th class="text-center">
+                        근무여부
+                    </th>
+                    <th class="text-center">
+                        소속
+                    </th>
+                    @*<th class="text-center">
+                            입력일
+                        </th>*@
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ann)
+                {
+                    <tr>
+                        <td class="text-center" style="vertical-align: middle">
+                            @item.Aid
+                            @*@string.Format("{0: ###,###.##}", (intNum--))*@
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            @item.User_ID
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            @item.Apt_Name
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            @item.Apt_Adress_Sido @item.Apt_Adress_Gun
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            @item.HouseHold_Num<span>세대</span>
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            @item.Post
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            @item.Duty
+                        </td>
+                        @*<td class="text-center" style="vertical-align: middle">
+                                @item.User_Name
+                            </td>*@
+                        <td class="text-center" style="vertical-align: middle">
+                            @item.Career_Start_Date.ToShortDateString()
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            @if (item.Division == "A")
+                            {
+                                <span style="color: blue">없음</span>
+                            }
+                            else
+                            {
+                                <span style="color: red">@item.Career_End_Date.ToShortDateString()</span>
+                            }
+
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            @if (item.Division == "A")
+                            {
+                                <span style="color: blue">근무중</span>
+                            }
+                            else
+                            {
+                                <span style="color: red">퇴사</span>
+                            }
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            @item.Cor_Code
+                        </td>
+                        @*<td class="text-center" style="vertical-align: middle">
+                                @item.PostDatge.ToShortDateString()
+                            </td>*@
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (LevelCount > 12)
+{
+    <div class="card" style="margin-top: 5px">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <h6 style="font-weight:bold"><span class="bi-basket"></span> &nbsp; 관리자 설정 관리 </h6>
+                </td>
+
+                <td>
+                </td>
+                <td class="text-right">
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <tr>
+                <td style="text-align:center; vertical-align: middle">
+                    <a class="btn btn-outline-info btn-sm" href="/Admin/Contract_Sort" data-toggle="button" aria-pressed="false"><span class="bi-bell"></span> &nbsp; 계약분류 관리 </a>
+                </td>
+                <td style="text-align:center; vertical-align: middle">
+                    <a class="btn btn-outline-info btn-sm" href="/Accountings/Admin" title="지출결의서 계정 분류 관리로 들어가기" data-toggle="button" aria-pressed="false"><span class="bi-bell"></span> &nbsp; 계정분류 관리 </a>
+                </td>
+                <td style="text-align:center; vertical-align: middle">
+                    <a class="btn btn-outline-info btn-sm" href="/Appeal_Sort_List" data-toggle="button" aria-pressed="false"><span class="bi-bell"></span> &nbsp; 민원분류 관리 </a>
+                </td>
+                <td style="text-align:center; vertical-align: middle">
+                    <a class="btn btn-outline-info btn-sm" href="/Admin/Bloom/" data-toggle="button" aria-pressed="false"><span class="bi-bell"></span> &nbsp; 업무분류 관리 </a>
+                </td>
+                
+                <td style="text-align:center; vertical-align: middle">
+                        <a class="btn btn-outline-info btn-sm" href="/Documents/Index_Sort" data-toggle="button" aria-pressed="false"><span class="bi-bell"></span> &nbsp; 문서분류 관리 </a>
+                </td>
+                    <td style="text-align:center; vertical-align: middle">
+                        <a class="btn btn-outline-info btn-sm" href="/Admin/PostDuty" data-toggle="button" aria-pressed="false"><span class="bi-bell"></span> &nbsp; 부서직책 관리 </a>
+                    </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-footer">
+        <span>이곳은 최고 관리자만 사용할 수 있습니다. 시스템 전체에 영향을 미칠 수 있으므로 다른 사용자는 이용할 수 없습니다.</span>
+    </div>
+</div>
+}
+
+
+
+@*파일 첨부 모달품*@
+@if (FileViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h5 class="modal-title"><span class="bi-file-code"></span> 첨부파일 입력</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+
+                    <div style="margin-top: 10px">
+                        <p>
+                            <InputFile OnChange="OnFileChage" class="custom-select" multiple accept="image/png,image/gif,image/jpeg"></InputFile>
+                        </p>
+
+                        @if (imageDataUrls.Count > 0)
+                        {
+                            <h4>Images</h4>
+                            <div style="height: 400px; overflow-y: scroll; overflow-x: hidden">
+                                @foreach (var imageDataUrl in imageDataUrls)
+                                {
+                                    <img class="img-thumbnail m-1" src="@imageDataUrl" />
+                                }
+                            </div>
+                        }
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="btnFileSave">저장</button>
+                    <button type="button" class="btn btn-secondary" @onclick="FilesClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* 직원 정보 카드 작성(수정) 모달 폼*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" id="subInputB" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:beige">
+                    <h5 class="modal-title"><span class="bi-people"></span>  &nbsp; 직원 정보 카드 작성</h5>
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="margin-bottom: 0px; margin-bottom: 0px">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-x"></span>  &nbsp; 아이디</span>
+                                    </div>
+                                    <input id="txtUser_ID" name="txtUser_ID" style="font-size: 0.9em; ime-mode:disabled" @bind="bnn.User_ID" class="form-control" type="text" readonly="readonly" />
+
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-plus"></span>  &nbsp; 이&nbsp;&nbsp;름</span>
+                                    </div>
+                                    <input id="txtUser_ID" name="txtUser_ID" style="font-size: 0.9em; ime-mode:active" @bind="bnn.User_Name" class="form-control" type="text" />
+                                </div>
+                            </td>
+
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-calendar"></span> &nbsp; 출생일</span></div>
+                                        <input id="txtScn" name="txtScn" @bind="Scn" style="font-size: 0.9em" class="form-control" type="date" />
+                                    </div>
+
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span> &nbsp; 이메일</span></div>
+                                        <input id="txtEmail" name="txtEmail" style="font-size: 0.9em" @bind="cnn.Email" class="form-control" type="text" />
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-telephone-plus"></span> &nbsp; 모바일</span></div>
+                                        <input id="txtEmail" name="txtEmail" style="font-size: 0.9em" @bind="cnn.Mobile_Number" class="form-control" type="tel" />
+                                    </div>
+
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-telephone"></span> &nbsp; 연락처</span></div>
+                                        <input id="txtEmail" name="txtEmail" style="font-size: 0.9em" @bind="cnn.Telephone" class="form-control" type="tel" />
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-list-check"></span>  &nbsp; 자격여부</span></div>
+                                    <select id="txtAdress_Sido" style="font-size: 0.9em" class="custom-select" @onchange="OnD_Division">
+                                        <option value="Z">::자격증선택::</option>
+                                        <option value="주택관리사">주택관리사</option>
+                                        <option value="전기기사">전기기사</option>
+                                        <option value="설비기사">설비기사</option>
+                                        <option value="소방기사">소방기사</option>
+                                        <option value="조경기사">조경기사</option>
+                                        <option value="주거복지사">주거복지사</option>
+                                        <option value="전기기능사">전기기능사</option>
+                                        <option value="조경기능사">조경기능사</option>
+                                        <option value="기타">기타</option>
+                                    </select>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-check-circle"></span> &nbsp; 입사일</span></div>
+                                        <input id="txtStartDate" name="txtStartDate" @bind="cnn.Start_Date" style="font-size: 0.9em" class="form-control" type="date" />
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> &nbsp; 자격증</span></div>
+                                        <input id="txtd_division" name="txtd_division" placeholder="보유자격증 등록하기" style="font-size: 0.9em" @bind="cnn.d_division" class="form-control" type="text" />
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp; 시도</span></div>
+                                    <select id="txtAdress_Sido" style="font-size: 0.9em" value="@Sido " class="custom-select" @onchange="OnSido">
+                                        <option value="">::시도선택::</option>
+                                        <option value="서울특별시">서울특별시</option>
+                                        <option value="경기도">경기도</option>
+                                        <option value="부산광역시">부산광역시</option>
+                                        <option value="대구광역시">대구광역시</option>
+                                        <option value="인천광역시">인천광역시</option>
+                                        <option value="광주광역시">광주광역시</option>
+                                        <option value="대전광역시">대전광역시</option>
+                                        <option value="울산광역시">울산광역시</option>
+                                        <option value="세종특별자치시">세종특별자치시</option>
+                                        <option value="충청남도">충청남도</option>
+                                        <option value="충청북도">충청북도</option>
+                                        <option value="경상남도">경상남도</option>
+                                        <option value="경상북도">경상북도</option>
+                                        <option value="전라남도">전라남도</option>
+                                        <option value="전라북도">전라북도</option>
+                                        <option value="강원도">강원도</option>
+                                        <option value="제주특별자치도">제주특별자치도</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span>&nbsp; 시군구</span></div>
+                                    <select id="Select1" class="custom-select" value="@SiGunGu" @onchange="onGunGu" style="font-size: 0.9em" required>
+                                        <option value="Z">=시군구 선택=</option>
+
+                                        @foreach (var it in sigungu)
+                                        {
+                                            <option value="@it.Sido_Code">@it.Region</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-caret-down"></span> &nbsp; 나머지 주소</span></div>
+                                        <input id="txtff" name="txtff" placeholder="나머지 주소 입력하기" style="font-size: 0.9em" @bind="cnn.st_Adress_Rest" class="form-control" type="text" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr id="vw4">
+                            <td colspan="2">
+                                <textarea id="txtIntro" class="form-control" rows="3" style="min-width: 100%; font-size: 0.9em" @bind="cnn.Etc" required></textarea>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer" style="background-color : aliceblue">
+
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnStaffSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnStaffClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}
+
+@*암호 수정 모달품*@
+@if (PassViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-lock-fill"></span>&nbsp; 암호 수정</h6>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+
+                    <div style="margin-top: 10px">
+                        <div class="input-group" style="margin-bottom: 20px">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-plus"></span>  &nbsp; 기존 암호 입력</span>
+                            </div>
+                            <input id="txtUser_Password" name="txtUser_Password" style="font-size: 0.9em; ime-mode:active" value="@Old_Password" @onchange="OnPass" class="form-control" type="password" />
+                        </div>
+                        @if (Password_sw == "B")
+                        {
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-plus"></span>  &nbsp; 신규 암호 입력</span>
+                                </div>
+                                <input id="txtUser_NewPassword" name="txtUser_NewPassword" style="font-size: 0.9em; ime-mode:active" @bind="New_Password" class="form-control" type="password" />
+                            </div>
+                        }
+
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="btnPassSave">저장</button>
+                    <button type="button" class="btn btn-secondary" @onclick="PassClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

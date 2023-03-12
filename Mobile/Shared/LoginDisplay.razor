@@ -1,0 +1,36 @@
+﻿<AuthorizeView>
+    <Authorized>
+        @*<a href="Identity/Account/Manage">Hello, @context.User.Identity?.Name!</a>
+        <form method="post" action="Identity/Account/LogOut">
+            <button type="submit" class="nav-link btn btn-link">Log out</button>
+        </form>*@
+        <table width="100%">
+            <tr>
+
+                <td>
+                    <a href="/"><img src="/favicon.ico" width="20" /> &nbsp; 관리앱</a>
+                </td>
+                <td class="text-right">
+                    @*<a href="/"><span style="font-weight: bold; color:cadetblue">환영합니다! &nbsp;&nbsp;</span></a>*@
+
+
+                    @*<span style="color: blue"> @context.User.Identity.Name 님!</span>*@
+                    <a class="btn btn-link" href="/Admin/Details">@context.User.Identity.Name</a>
+                </td>
+                <td class="text-right">
+                    <form method="post" action="/Logs/LogOut">
+                        <button type="submit" class="nav-link btn btn-link">로그아웃</button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </Authorized>
+    <NotAuthorized>
+        <a href="/"><img src="/favicon.ico" width="20" />&nbsp; 관리앱</a>
+        <a class="btn btn-link" href="/Home/Index">로그인</a>
+
+        <a class="btn btn-link" href="/Admin/Join">회원가입</a>
+        @*<a href="Identity/Account/Register">Register</a>
+        <a href="Identity/Account/Login">Log in</a>*@
+    </NotAuthorized>
+</AuthorizeView>

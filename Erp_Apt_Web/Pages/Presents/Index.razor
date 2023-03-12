@@ -1,0 +1,100 @@
+﻿@page "/Presents"
+<div class="card">
+    <div class="card-header">
+        <table style="width: 100%">
+            <tr>
+                <td style="font-size: 1.1em">
+                    <span class="bi-alarm-fill"> </span>&nbsp; <span style="font-weight:bold"> 로그 파일 정보 목록</span>
+                </td>
+                <td style="text-align: right">
+                    @string.Format("{0: ###,###.##}", pager.RecordCount)<span>건</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        @if (ann == null)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" />
+            </p>
+        }
+        else if (ann.Count == 0)
+        {
+            <p style="text-align:center">
+                입력된 정보가 없습니다. ............
+            </p>
+        }
+        else
+        {
+
+            <table class="table table-sm" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color:whitesmoke;">
+                        <th style="text-align: center">
+                            번호
+                        </th>
+                        <th style="text-align: center">
+                            제목
+                        </th>
+                        <th style="text-align: center">
+                            이용자명
+                        </th>
+                        <th style="text-align: center">
+                            공동주택코드
+                        </th>
+                        <th style="text-align: center">
+                            메세지
+                        </th>
+                        <th style="text-align: center">
+                            등급
+                        </th>
+                        <th style="text-align: center">
+                            입력일
+                        </th>
+                        <th style="text-align: center">
+                            입력자 아이피
+                        </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var st in ann)
+                    {
+                        <tr>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.Id
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.Application
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.Logger
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.Message
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.Level
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.MessageTemplate
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @Convert.ToDateTime(st.TimeStamp).ToShortDateString()
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.ipAddress
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        }
+        <div class="col-md-12">
+            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+        </div>
+    </div>
+</div>
+

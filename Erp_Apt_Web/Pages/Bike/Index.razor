@@ -1,0 +1,364 @@
+﻿@page "/Bike"
+
+<div class="card">
+    <div class="card-header">
+        <table style="width: 100%; font-size: 0.9em">
+            <tr>
+                <td valign="middle">
+                    <span style="font-size: 1.1em; font-weight: bold"> <span class="bi-bicycle text-primary" > 자전거 정보 목록</span> </span>
+                </td>
+                <td>
+                    등록된 건수 :  @string.Format("{0: ###,###.##}", pager.RecordCount)<span>건</span>&nbsp;&nbsp;
+                </td>
+                <td style="text-align:right">
+                    <button id="Appeal" class="btn btn-primary btn-sm" @onclick="onOpen">자전거 등록</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <div class="row" style="margin-top: 5px; margin-bottom: 5px">
+            <div class="col-8"></div>
+
+            <div class="col-2">
+                <div class="input-group">
+                    <div class="input-group-append">
+                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-house"></i>&nbsp; 동</span>
+                    </div>
+                    <select id="Select1" class="form-control" style="font-size: 0.9em" @onchange="onDongSearch">
+                        <option>=동선택=</option>
+                        @foreach (var it in pnn)
+                        {
+                            <option value="@it.Dong">@it.Dong</option>
+                        }
+                        <option value="140A">140A</option>
+                        <option value="140B">140B</option>
+                        <option value="140C">140C</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-2">
+                <div class="input-group">
+                    <div class="input-group-append">
+                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-house"></i>&nbsp; 호</span>
+                    </div>
+                    <select id="Select1" class="form-control" style="font-size: 0.9em" @onchange="onHoSearch">
+                        <option>=호선택=</option>
+                        @foreach (var it in qnn)
+                        {
+                            <option value="@it.Ho">@it.Ho</option>
+                        }
+                        <option value="관리실">관리실</option>
+                        <option value="외부인">외부인</option>
+                        <option value="상기">상가</option>
+                    </select>
+                </div>
+            </div>
+
+
+
+        </div>
+
+        <div>
+            <table class="table table-sm table-hover" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color: ghostwhite">
+                        <th class="text-center">등록번호</th>
+                        <th class="text-center">동호</th>
+                        <th class="text-center">소유주</th>
+                        <th class="text-center">연락처</th>
+                        <th class="text-center">자전거명</th>
+
+                        <th class="text-center">등록여부</th>
+                        <th class="text-center">이사일</th>
+                        <th class="text-center">설명</th>
+                        <th class="text-center">등록일</th>
+                        <th class="text-center">버튼</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var it in bnn)
+                    {
+                        <tr>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => btnByAid(it)">
+                                @string.Format("{0: ###,###.##}", it.Aid)
+                            </td>
+                            <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">@it.Dong - @it.Ho</td>
+                            <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">@it.Name</td>
+                            <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">@it.Mobile</td>
+                            <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">
+                                @if (string.IsNullOrWhiteSpace(it.Bike_Name))
+                                {
+                                    <span>기재않음.</span>
+                                }
+                                else
+                                {
+                                    @it.Bike_Name
+                                }
+                            </td>
+                            <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">
+                                @if (@it.del == "A")
+                                {
+                                    <span style="color: cadetblue">등록중</span>
+                                }
+                                else
+                                {
+                                    <span style="color: firebrick">등록취소</span>
+
+                                }
+                            </td>
+                            <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">
+                                @if (@it.del == "A")
+                                {
+                                    <span style="color: darkolivegreen">등록중</span>
+                                }
+                                else
+                                {
+                                    @it.MoveDate.ToShortDateString()
+
+                                }
+                            </td>
+                            <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">@Dul.StringLibrary.CutString(it.Etc, 20)</td>
+                            <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">@it.PostDate.ToShortDateString()</td>
+                            @*<td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">
+                    @if (it.del == "A")
+                    {
+                        <span>등록함</span>
+                    }
+                    else
+                    {
+                        <span>등록취소</span>
+                    }
+                </td>*@
+
+                            <td class="text-center" style="vertical-align: middle">
+                                <input id="Button1" class="btn btn-link btn-sm" type="button" @onclick="() => btnByAid(it)" value="상세" /> &nbsp;
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="col-md-12">
+                <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*자전거 새로등록*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-bicycle"></span><span class="text-primary" style="font-weight:bold"> 자전거 등록(수정)</span></h6>
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="font-size: 0.9em">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-house"></i>&nbsp;동</span>
+                                    </div>
+                                    <select id="Dong" class="form-control" value="@ann.Dong" @onchange="onDong" style="font-size: 0.9em">
+                                        <option value="">=동선택=</option>
+                                        @foreach (var it in pnn)
+                                        {
+                                            <option value="@it.Dong">@it.Dong</option>
+                                        }
+                                        <option value="140A">140A</option>
+                                        <option value="140B">140B</option>
+                                        <option value="140C">140C</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-house"></i>&nbsp;호</span>
+                                    </div>
+                                    <select id="Ho" class="form-control" value="@ann.Ho" @onchange="onHo" style="font-size: 0.9em">
+                                        <option value="">=호선택=</option>
+                                        @foreach (var it in onn)
+                                        {
+                                            <option value="@it.Ho">@it.Ho</option>
+                                        }
+                                        <option value="관리실">관리실</option>
+                                        <option value="외부인">외부인</option>
+                                        <option value="상가">상가</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        @if (intBeing > 0)
+                        {
+                            <tr>
+                                <td colspan="2">
+                                    @foreach (var st in dnn)
+                                    {
+                                        <span>소유자 : </span> @st.InnerName <span>&nbsp;&nbsp; 연락처 : </span> @st.Hp <span>&nbsp;&nbsp;</span> <input id="Button1" class="btn btn-link btn-sm" type="button" @onclick="() => btnBySelect(st)" value="선택" /> <br />
+                                    }
+                                </td>
+                            </tr>
+                        }
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-people"></i>&nbsp;소유자</span>
+                                    </div>
+                                    <input id="Name" name="Name" required type="text" style="font-size: 0.9em" @bind="@ann.Name" class="form-control" readonly="readonly" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-telephone"></i>&nbsp;연락처</span>
+                                    </div>
+                                    <input id="Mobile" name="Mobile" type="tel" style="font-size: 0.9em" @bind="@ann.Mobile" class="form-control" readonly="readonly" />
+
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-people"></i>&nbsp;자전거명</span>
+                                    </div>
+                                    <input id="bikeName" name="BikeName" required type="text" style="font-size: 0.9em" @bind="@ann.Bike_Name" class="form-control" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-telephone"></i>&nbsp;입력일</span>
+                                    </div>
+                                    <input id="Mobile" name="Mobile" type="tel" style="font-size: 0.9em" @bind="@ann.PostDate" class="form-control" readonly="readonly" />
+
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;설명</span>
+                                    </div>
+                                    <input id="Etc" name="Etc" required type="text" style="font-size: 0.9em" @bind="@ann.Etc" class="form-control" />
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+
+
+                </div>
+
+                <div class="modal-footer">
+                    <input id="Button1" type="button" class="btn btn-primary btn-sm" title="자동차 정보를 입력하고 이곳을 입력해 주세요." value="저 장" @onclick="btnSave" />
+                    &nbsp;&nbsp;
+                    <input id="Button1" type="button" class="btn btn-outline-dark btn-sm" title="팝업 닫기" value="닫기" @onclick="btnInsertViewsClose" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*자전거 상세보기*@
+@if (Views == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="text-primary" style="font-weight:bold"><span class="bi-bicycle"></span> 자동차 정보 보기</span></h6>
+
+                </div>
+                <div class="modal-body">
+
+                    <table class="table" style="font-size: 0.9em">
+                        <tr>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">동호 : </span> @ann.Dong<span>동-</span>@ann.Ho<span>호</span>
+                            </td>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">등록번호 : </span> @ann.Aid
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">소유주 : </span> @ann.Name
+                            </td>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">연락처 : </span> @ann.Mobile
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">이사여부 : </span>
+                                @if (@ann.del == "A")
+                                {
+                                    <span style="color: blue">등록됨</span>
+                                }
+                                else
+                                {
+                                    <span style="color: firebrick">등록취소</span>
+                                }
+
+                            </td>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">이사일 : </span>
+                                @if (@ann.del == "A")
+                                {
+                                    <span style="color: darkolivegreen">등록중</span>
+                                }
+                                else
+                                {
+                                    @ann.MoveDate.ToShortDateString()
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">자전거명 : </span>
+                                @if (string.IsNullOrWhiteSpace(ann.Bike_Name))
+                                {
+                                    <span>기재하지 않음</span>
+                                }
+                                else
+                                {
+                                    @ann.Bike_Name
+                                }
+
+                            </td>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">등록일 : </span> @ann.MoveDate.ToShortDateString()
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">설명 : </span> @ann.Etc
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer text-light">
+
+                    <input id="Button1" class="btn btn-danger btn-sm" type="button" @onclick="() => btnMove(ann.Aid)" value="이사등록" /> &nbsp;
+                    <input id="Button1" class="btn btn-warning btn-sm" type="button" @onclick="() => btnByEdit(ann)" value="수정" /> &nbsp;
+                    <input id="Button1" type="button" class="btn btn-outline-dark btn-sm" title="팝업 닫기" value="닫기" @onclick="btnViewsClose" />
+                </div>
+            </div>
+        </div>
+    </div>
+}

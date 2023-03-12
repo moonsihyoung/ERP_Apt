@@ -1,0 +1,107 @@
+﻿@page "/Staff/My_Page"
+
+<div class="row">
+    <div class="container">
+        <div class="col-3">
+
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+
+                </div>
+                <div class="card-body">
+                    <table class="table" style="margin-bottom: 0px; margin-bottom: 0px; font-size: 0.9em">
+                        <tr>
+                            <td>
+                                아이디 : @ann.User_ID
+
+                            </td>
+                            <td>
+                                이 름 : @ann.User_Name
+                            </td>
+
+                        </tr>
+
+                        <tr>
+                            <td>
+                                출생일 : @ann.Scn
+                            </td>
+
+                            <td>
+                                이메일 :
+                                @if (ann.Email == null && ann.Email == "")
+                                {
+                                    <span>해당없음</span>
+                                }
+                                else
+                                {
+                                    @ann.Email
+                                }
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                모바일 : @ann.Mobile_Number
+
+                            </td>
+                            <td>
+                                연락처 : @ann.Telephone
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                입사일 : @ann.Career_Start_Date.ToShortDateString()
+                            </td>
+
+                            <td colspan="2">
+                                자격증 : @ann.Apt_Name
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                등 급 : @ann.LevelCount
+                            </td>
+
+                            <td colspan="2">
+                                근무일수 :
+                                @if (ann.Division == "A")
+                                {
+                                    <span style="color: red">
+                                        @referral_Career_Lib.Date_scomp(ann.Career_Start_Date.ToShortDateString(), DateTime.Now.ToShortDateString())<span>일간</span>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span style="color: red">@referral_Career_Lib.Date_scomp(ann.Career_Start_Date.ToShortDateString(), ann.Career_End_Date.ToShortDateString())<span>일간</span></span>
+                                }
+
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                주 소 : @ann.st_Sido @ann.st_GunGu @ann.st_Adress_Rest
+                            </td>
+
+                        </tr>
+
+                        <tr id="vw4">
+                            <td colspan="2">
+                                자기 소개 : @ann.Etc
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+
+        </div>
+    </div>
+</div>

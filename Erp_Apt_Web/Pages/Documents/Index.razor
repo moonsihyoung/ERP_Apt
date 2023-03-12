@@ -1,0 +1,547 @@
+﻿@page "/Documents"
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <span style="font-size: 1.0em"><span class="bi-tools"></span>&nbsp;공문서 목록</span>
+                </td>
+                <td class="text-right">
+                    <button type="button" class="btn btn-outline-dark btn-sm" @onclick="btnInsert"> <span class="bi-tools"></span>&nbsp;문서 등록</button>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    <div class="card-body">
+        <table width="100%" style="margin-bottom: 10px">
+            <tr>
+                <td width="60%">
+                </td>
+                <td>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <select id="txtAdress_Sido" style="font-size: 0.9em" value="@strSearchs" class="custom-select" @onchange="OnSearchs">
+                                <option value="Z">::검색선택::</option>
+                                <option value="Title">제목</option>
+                                <option value="Details">주요내용</option>
+                                <option value="Division">수발신여부</option>
+                                <option value="Organization">수발신처</option>
+                                <option value="Etc">참고사항</option>
+                            </select>
+                        </div>
+                        <input id="txt1" class="form-control" @bind="strQuery" style="font-size: 0.9em" type="text" placeholder="검색할 단어를 입력해 주세요." />
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-dark btn-sm" @onclick="OnClick"><span class="bi-tools"></span>&nbsp;<span style="color:red">검색*</span></button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        @if (ann == null)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" height="100" />
+            </p>
+        }
+        else if (ann.Count == 0)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" height="100" />
+            </p>
+        }
+        else
+        {
+            <table class="table table-sm table-hover" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color:ghostwhite">
+                        <th class="text-center">
+                            번호
+                        </th>
+                        <th class="text-center">
+                            문서번호
+                        </th>
+                        <th class="text-center">
+                            분류
+                        </th>
+                        <th class="text-center">
+                            해당기관
+                        </th>
+                        <th class="text-center">
+                            제 목
+                        </th>
+                        <th class="text-center">
+                            내 용
+                        </th>
+                        <th class="text-center">
+                            구분
+                        </th>
+                        <th class="text-center">
+                            해당일
+                        </th>
+                        <th class="text-center">
+                            담당자
+                        </th>
+                        <th class="text-center">
+                            첨부
+                        </th>
+                        <th class="text-center">
+                            결재
+                        </th>
+                        <th class="text-center">
+                            선택
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var it in ann)
+                    {
+                        <tr>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @*@it.Aid*@
+                                @string.Format("{0: ###,###.##}", (intNum--))
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @it.Doc_Code
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @Sort_Name(it.Sort_Code)
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                <span title="@it.Organization">@Dul.StringLibrary.CutString(it.Organization, 16)</span>
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                <span title="@it.Title">@Dul.StringLibrary.CutString(it.Title, 20)</span>
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                <span title="@it.Details">@Dul.StringLibrary.CutString(it.Details, 20)</span>
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @Division_Name(it.Division)
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @it.AcceptDate.ToShortDateString()
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @staff_Lib.UsersName(it.WorkMan)
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @it.Files_Count
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @if (it.Approval == "B")
+                                {
+                                    <span style="color: blue">결재</span>
+                                }
+                                else
+                                {
+                                    <span style="color: red">미결재</span>
+                                }
+                            </td>
+                            <td class="text-center" style="vertical-align:middle">
+                                <input id="Button1" class="btn btn-link btn-sm" @onclick="() => ByAid(it)" type="button" value="상세" />&nbsp;&nbsp;
+                                <input id="Button1" class="btn btn-link btn-sm" @onclick="() => ByEdit(it)" type="button" value="수정" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+            <div class="col-md-12">
+                <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+            </div>
+        }
+    </div>
+</div>
+
+@*문서 상세보기 *@
+@if (Views == "B")
+{
+    <div class="modal fade show d-block" id="subInput" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:beige">
+                    <h5 class="modal-title"><span class="bi-envelope-open"></span>  &nbsp; 문서 상세 정보</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ViewsClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <table style="width: 100%">
+                        <tr>
+                            <td>
+                                <table align="right">
+                                    <tr>
+                                        @foreach (var st in app)
+                                        {
+                                            <td style="width: 70px">
+                                                <table style="width: 100%; background-color: white; color: black; font-size: 0.7em">
+                                                    <tr style="border-style:dotted; border-width:1px; border-color: black; ">
+                                                        <td style="text-align: center" height="18px">
+                                                            @st.PostDuty
+                                                        </td>
+                                                    </tr>
+                                                    <tr style="border-width: 1px; border-style:dotted; border-color: black; ">
+                                                        <td style="text-align: center" height="50px">
+                                                            @if (FuncShowOK(st.PostDuty, st.AptCode, bnn.Aid) != "결재하기")
+                                                            {
+                                                                @*@Html.Raw(moo.Seal_View(st.PostDuty, st.AptCode, ViewBag.apNum, "Appeal"))*@
+                                                                <img src="data:image/jpg;base64,@Convert.ToBase64String(sealImage(st.AptCode, st.Post, st.Duty, bnn.Aid, "Document", strUserCode))" height="45" alt="" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <img src="/images/inn.gif" alt="" height="35" />
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    <tr style="border-width: 1px; border-style:dotted; border-color: black; ">
+                                                        <td style="text-align: center; vertical-align:middle; color:black" height="25px">
+                                                            @if (decisionA != "결재하기")
+                                                            {
+                                                                @decisionA
+                                                            }
+                                                            else
+                                                            {
+                                                                if (PostDuty == st.PostDuty)
+                                                                {
+                                                                    <a style="background-color: orange; color: white" @onclick="btnDecision">결재하기</a>
+                                                                    @*<button type="button" style="font-size: 0.8em; background-color: blue; color: white">결재하기</button>*@
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>해당없음</span>
+                                                                }
+
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        }
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div style="height: 600px; overflow-y:scroll">
+                        <table class="table" style="margin-bottom: 0px; margin-bottom: 0px; font-size: 0.9em">
+                            <tr>
+                                <td colspan="2">
+                                    <span style="font-weight:bold"><span class="bi-easel"></span>&nbsp; 날짜 : </span>
+                                    @bnn.AcceptDate.ToShortDateString() &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <span style="font-weight:bold"><span class="bi-easel"></span>&nbsp; 문서 번호 : </span>
+                                    @bnn.Doc_Code &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <span style="font-weight:bold"><span class="bi-easel"></span>&nbsp; 구분 : </span>
+
+                                    @if (bnn.Division == "A")
+                                    {
+                                        <span>관리소 발신</span>
+                                        <span> &nbsp; &nbsp; &nbsp; &nbsp;</span><br />
+                                        <span style="font-weight:bold"><span class="bi-easel"></span>&nbsp; 수신처 : </span>
+                                        @bnn.Organization
+                                    }
+                                    else if (bnn.Division == "B")
+                                    {
+                                        <span>관리소 수신</span>
+                                        <span> &nbsp; &nbsp; &nbsp; &nbsp;</span><br />
+                                        <span style="font-weight:bold"><span class="bi-easel"></span>&nbsp; 발신처 : </span>
+                                        @bnn.Organization
+                                    }
+                                    else if (bnn.Division == "C")
+                                    {
+                                        <span>입대의 발신</span>
+                                        <span> &nbsp; &nbsp; &nbsp; &nbsp;</span><br />
+                                        <span style="font-weight:bold"><span class="bi-easel"></span>&nbsp; 수신처 : </span>
+                                        @bnn.Organization
+                                    }
+                                    else if (bnn.Division == "D")
+                                    {
+                                        <span>입대의 수신</span>
+                                        <span> &nbsp; &nbsp; &nbsp; &nbsp;</span><br />
+                                        <span style="font-weight:bold"><span class="bi-easel"></span>&nbsp; 발신처 : </span>
+                                        @bnn.Organization
+                                    }
+                                    else if (bnn.Division == "E")
+                                    {
+                                        <span>선관의 발신</span>
+                                        <span> &nbsp; &nbsp; &nbsp; &nbsp;</span><br />
+                                        <span style="font-weight:bold"><span class="bi-easel"></span>&nbsp; 수신처 : </span>
+                                        @bnn.Organization
+                                    }
+                                    else if (bnn.Division == "F")
+                                    {
+                                        <span>선관의 수신</span>
+                                        <span> &nbsp; &nbsp; &nbsp; &nbsp;</span><br />
+                                        <span style="font-weight:bold"><span class="bi-easel"></span>&nbsp; 발신처 : </span>
+                                        @bnn.Organization
+                                    }
+                                    else if (bnn.Division == "G")
+                                    {
+                                        <span>기타 발신</span>
+                                        <span> &nbsp; &nbsp; &nbsp; &nbsp;</span><br />
+                                        <span style="font-weight:bold"><span class="bi-easel"></span>&nbsp; 수신처 : </span>
+                                        @bnn.Organization
+                                    }
+                                    else if (bnn.Division == "H")
+                                    {
+                                        <span>기타 수신</span>
+                                        <span> &nbsp; &nbsp; &nbsp; &nbsp;</span><br />
+                                        <span style="font-weight:bold"><span class="bi-easel"></span>&nbsp; 발신처 : </span>
+                                        @bnn.Organization
+                                    }
+
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <span style="font-weight:bold"><span class="bi-easel"></span>&nbsp; 결재여부 : </span>
+                                    @if (bnn.Approval == "A")
+                                    {
+                                        <span style="color:red">미결재</span>
+                                    }
+                                    else if (bnn.Approval == "B")
+                                    {
+                                        <span style="color:blue">미결재</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color:red">에러</span>
+                                    }
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                </td>
+
+
+                            </tr>
+
+                            <tr>
+                                <td colspan="2">
+                                    <span style="font-weight:bold"><span class="bi-easel"></span>&nbsp; 문서명 : </span>
+                                    @bnn.Title
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td width="50%">
+                                    <span style="font-weight:bold"><span class="bi-easel"></span>&nbsp; 주요내용 : </span>
+                                    @bnn.Details
+
+                                </td>
+                                <td>
+                                    <span style="font-weight:bold"><span class="bi-easel"></span>&nbsp; 참고사항 : </span>
+                                    @bnn.Etc
+                                </td>
+                            </tr>
+                            @if (Files_Count > 0)
+                            {
+                                <tr>
+                                    <td colspan="2">
+                                        @* <div style="height: 500px; width: 100%; overflow-y: scroll; overflow-x: hidden">*@
+                                        <div>
+                                            @foreach (var item in Files_Entity)
+                                            {
+                                                if (OnExtension(item.Sw_FileName) == ".pdf")
+                                                {
+                                                    <div>
+                                                        <embed src="/Appeal/@item.Sw_FileName" type="application/pdf" style="width: 100%; height: 500px" />
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    if (Dul.BoardLibrary.IsPhoto(item.Sw_FileName))
+                                                    {
+                                                        <div>
+                                                            <img src="/Appeal/@item.Sw_FileName" style="width: 900px;" class="img-thumbnail" />
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+
+                                            @if (isLoading)
+                                            {
+                                                <p style="text-align: center">
+                                                    <img src="/images/loader.gif" height="40" />
+                                                </p>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+
+                                        @foreach (var it in Files_Entity)
+                                        {
+                                            <button id="btnFileDelete" class="btn btn-link" @onclick="() => FilesRemove(it)">@Dul.StringLibrary.CutString(it.Sw_FileName, 16)</button><span> &nbsp; &nbsp;</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="ViewsFileInsert">파일올리기</button>
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="ViewsClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@*파일 첨부 올리기*@
+@if (FileInputViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><span class="bi-file-code"></span> 첨부파일 입력</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+
+                    <div style="margin-top: 10px">
+                        <p>
+                            <InputFile OnChange="LoadFiles" class="custom-file" style="font-size: 0.9em" multiple></InputFile>
+                        </p>
+                        @if (isLoading)
+                        {
+                            <p style="text-align: center">
+                                <img src="/images/loader.gif" height="40" />
+                            </p>
+                            <p>Progress: @string.Format("{0:P0}", progressPercent)</p>
+                        }
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary" @onclick="btnFileSave">저장</button>*@
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="FilesClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*문서 새로 등록 모달 폼*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h5 class="modal-title"><span class="bi-envelope-fill"></span>문서 등록 입력</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="margin-bottom: 0px; font-size: 0.9em">
+                        <tr>
+                            <td width="50%">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-calendar-check"></span> &nbsp;날짜</span></div>
+                                    <input id="AcceptDate" name="AcceptDate" style="font-size: 0.9em" @bind="bnn.AcceptDate" class="form-control" type="date" />
+                                </div>
+
+                            </td>
+                            <td width="50%">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span>&nbsp;구분</span></div>
+                                    <select id="Division" class="custom-select" style="font-size: 0.9em" value="@bnn.Division" @onchange="OnDivision">
+                                        <option value="">=구분 선택=</option>
+                                        <option value="A">관리소 발신</option>
+                                        <option value="B">관리소 수신</option>
+                                        <option value="C">입대의 발신</option>
+                                        <option value="D">입대의 수신</option>
+                                        <option value="E">선관위 발신</option>
+                                        <option value="F">선관위 수신</option>
+                                        <option value="G">기타 발신</option>
+                                        <option value="H">기타 수신</option>
+                                    </select>
+                                </div>
+                            </td>
+
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp;수발신처</span></div>
+                                        <input id="Organization" name="Organization" @bind="bnn.Organization" style="font-size: 0.9em" class="form-control" type="text" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp;문서번호</span></div>
+                                        <input id="Doc_Code" name="Doc_Code" @bind="bnn.Doc_Code" style="font-size: 0.9em;" readonly="readonly" class="form-control" type="text" />
+                                    </div>
+
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span>&nbsp;</span></div>
+                                    <select id="Select1" class="custom-select" @bind="bnn.Sort_Code" style="font-size: 0.9em" required>
+                                        <option value="">=분류 선택=</option>
+
+                                        @foreach (var it in fnn)
+                                        {
+                                            <option value="@it.Aid">@it.Sort_Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> &nbsp;제 목</span></div>
+                                        <input id="Title" name="Title" style="font-size: 0.9em" @bind="bnn.Title" class="form-control" type="text" />
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                        </tr>
+
+
+
+                        <tr id="vw4">
+                            <td colspan="2">
+                                <textarea id="Intro" class="form-control" rows="4" style="min-width: 100%" @bind="bnn.Details" placeholder="주요 내용 입력" required></textarea>
+                            </td>
+                        </tr>
+                        <tr id="vw4">
+                            <td colspan="2">
+                                <textarea id="Intro" class="form-control" rows="4" style="min-width: 100%" @bind="bnn.Etc" placeholder="참고사항 입력" required></textarea>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

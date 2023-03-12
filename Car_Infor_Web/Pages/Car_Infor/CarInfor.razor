@@ -1,0 +1,80 @@
+﻿@page "/CarInfor"
+@layout NoLayout
+
+    <div style="margin-bottom: 10px">
+        <img src="/images/cars.png" alt="" height="40" /> &nbsp; &nbsp; <span style="font-size: 1.5em; font-weight:bold; color:darkolivegreen">차량 검색</span>
+    </div>
+
+<div class="card">
+    <div class="card-body">
+       
+            @*<div class="input-group">*@
+                @*<div class="input-group-append">
+                    <span class="input-group-text" style="font-size:1.5em">차량</span>
+                </div>*@
+                <input class="form-control form-control-lg text-center" style="font-size:xx-large" height="50" @bind="ann.Car_Num" type="text" placeholder="차량번호 뒷자리" />
+            @*</div>*@
+        <br />
+            <div>
+                <input id="Submit1" class="btn btn-primary btn-lg btn-block" type="submit" @onclick="btnSave" value="찾 기" />
+            </div>
+        
+
+            <div>
+               
+
+                <table class="table table-sm" style="font-size: 1.2em; margin-top: 10px">
+                    @if (car.Count == 0)
+                    {
+                        <tr>
+                            <td>
+                                <span style="font-size:xx-large; font-weight:bold; color: red">등록되지 않은 차량입니다.</span>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in car)
+                        {
+                            <tr style="border-top-width: 5px">
+                                <td style="background-color:gainsboro; border-top-color:grey; border-bottom-width: 3px; border-top-style:groove">
+                                    동호 : @item.Dong - @item.Ho
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    차량번호 : @item.Car_Num
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    소유자 : @item.OwnerName
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    연락처 : @item.Mobile
+                                </td>
+                            </tr>
+                            <tr style="border-bottom-width: 2px">
+                                <td>
+                                    차종 : @item.Car_Name
+                                </td>
+
+                            </tr>
+                        }
+                    }
+
+
+                </table>
+
+            </div>
+    </div>
+    <div class="card-footer text-right">
+         <h4><img src="/favicon.ico" class="rounded" height="35" /> &nbsp; @Apt_Name</h4>
+    </div>
+</div>
+
+
+

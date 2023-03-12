@@ -1,0 +1,240 @@
+﻿@page "/Admin/Approval"
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <h6><span class="bi-journal-text"> </span>&nbsp;계약정보 목록</h6>
+                </td>
+                <td>
+                </td>
+                <td class="text-right">
+                    <button type="button" class="btn btn-outline-primary btn-sm" @onclick="btnInsertOpen"> <span class="bi-tools"></span>&nbsp;결재 등록</button> <button type="button" class="btn btn-outline-dark btn-sm" @onclick="btnResert"> <span class="bi-box-arrow-in-up"></span>&nbsp;처음으로</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <table style="width: 100%; margin-bottom: 5px">
+            <tr>
+                <td>
+                    
+                </td>
+                <td>
+                </td>
+                <td class="text-right" style="width: 300px">
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>&nbsp;업무분류</span></div>
+                        <select id="Select1" class="custom-select" value="@strBloom" @onchange="OnBloom" style="font-size: 0.9em">
+                            <option value="">=업무분류선택=</option>
+                            <option value="작업일지">작업일지</option>
+                            <option value="민원일지">민원일지</option>
+                            <option value="시설물점검일지">시설물점검일지</option>
+                            <option value="문서관리">문서관리</option>
+                            <option value="지출결의서">지출결의서</option>
+                            <option value="기안문서">기안문서</option>
+                            <option value="방송·공고">방송·공고</option>
+                            <option value="커뮤니티관리">커뮤니티관리</option>
+                        </select>
+                    </div>
+                </td>
+                
+            </tr>
+        </table>
+        @if (ann == null)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" />
+            </p>
+        }
+        else if (ann.Count == 0)
+        {
+            <p style="text-align:center">
+                입력된 정보가 없습니다. ............
+            </p>
+        }
+        else
+        {
+            <table class="table table-sm" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color:whitesmoke;">
+                        <th style="text-align: center">
+                            번호
+                        </th>
+                        <th style="text-align: center">
+                            아파트 코드
+                        </th>
+                        <th style="text-align: center">
+                            공동주택명
+                        </th>
+                        <th style="text-align: center">
+                            업무명
+                        </th>
+                        <th style="text-align: center">
+                            업무코드
+                        </th>
+                        <th style="text-align: center">
+                            부서직책
+                        </th>
+                        <th style="text-align: center">
+                            순서
+                        </th>
+                        <th style="text-align: center">
+                            설명
+                        </th>
+                        <th style="text-align: center">
+                            입력일
+                        </th>
+                        <th style="text-align: center">
+                            버튼
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                   @foreach (var st in ann)
+                   {
+                        <tr>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.Num
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.AptCode
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.AptName
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.Bloom
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.Bloom_Code
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.PostDuty
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.Step
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.Intro
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.PostDate.ToShortDateString()
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                <input id="Button1" class="btn btn-link btn-sm" @onclick="() => btnRemove(st)" type="button" value="삭제" />
+                                <input id="Button11" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByEdits(st)" value="수정" />
+                            </td>
+                        </tr>
+                    }
+                    
+                </tbody>
+            </table>
+        }
+
+
+        <div class="col-md-12">
+            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+        </div>
+
+
+    </div>
+    <div class="card-footer">
+        @Apt_Name
+    </div>
+</div>
+
+@*..... 새로 등록 모달 폼*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    
+                    <table class="table" style="font-size: 0.9em; margin-bottom: 0px">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>&nbsp;업무분류</span></div>
+                                    <select id="Select1" class="custom-select" value="@bnn.Bloom" @onchange="OnBloom" style="font-size: 0.9em">
+                                        <option value="">=업무분류선택=</option>
+                                        <option value="작업일지">작업일지</option>
+                                        <option value="민원일지">민원일지</option>
+                                        <option value="시설물점검일지">시설물점검일지</option>
+                                        <option value="문서관리">문서관리</option>
+                                        <option value="지출결의서">지출결의서</option>
+                                        <option value="기안문서">기안문서</option>
+                                        <option value="방송·공고">방송·공고</option>
+                                        <option value="주민공동시설">주민공동시설</option>
+                                        <option value="하자관리">하자관리</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>부서</span></div>
+                                    <select id="Select1" class="custom-select" value="@Post_Code" @onchange="OnPost" style="font-size: 0.9em" required>
+                                        <option value="">=부서선택=</option>
+
+                                        @foreach (var it in Post)
+                                        {
+                                            <option value="@it.PostCode">@it.PostName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>직책</span></div>
+                                    <select id="Select2" class="custom-select" @bind="bnn.Duty" style="font-size: 0.9em" required>
+                                        <option value="">=직책선택=</option>
+
+                                        @foreach (var it in Duty)
+                                        {
+                                            <option value="@it.DutyName">@it.DutyName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-steam"></span> 결재 순서</span></div>
+                                    <input id="Step" name="Step" style="font-size: 0.9em" @bind="bnn.Step" class="form-control" type="number" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 설명</span></div>
+                                        <input id="Intro" name="Intro" style="font-size: 0.9em" @bind="bnn.Intro" class="form-control" type="text" />
+                                    </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+

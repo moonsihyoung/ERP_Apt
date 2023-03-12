@@ -1,0 +1,1020 @@
+﻿@page "/CostDebit"
+
+<div style="padding: 5px">
+    <span class="bi-calendar-range"> 우리 관리비 정보</span>
+    <table class="table table-sm" style="font-size: 0.9em">
+        <tr>
+            <td>
+                <span style="font-size: 1em; font-weight:bold">@dnn.Month </span>
+            </td>
+        </tr>
+        <tr style="border-top: solid">
+            <td>
+                <span style="font-weight:bold">월 관리비 총합계 : </span>
+                @string.Format("{0: ###,###.##}", dnn.extendDue)<span>원</span>
+            </td>
+        </tr>
+        <tr style="border-top: solid; border-top-width: 2px; border-top-color: cornflowerblue">
+            <td @onclick="onPlusA" title="관리비 내용 상세 정보 더보기" style="font-weight:bold">
+                <img src="/images/btn_add1.gif" /> 관리비 합계 :
+                @if (dnn.maintenanceFeeSum > 0)
+                {
+                    @string.Format("{0: ###,###.##}", dnn.maintenanceFeeSum)
+                }
+                else
+                {
+                    <span>0</span>
+                }
+                <span>원</span>
+                <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                (전월 :
+                @if (re1 > 0)
+                {
+                    @if (dnn.maintenanceFeeSum > cnn.maintenanceFeeSum)
+                    {
+                        <span style="color: red">
+                            @string.Format("{0: ###,###.##}", cnn.maintenanceFeeSum)
+                        </span>
+                    }
+                    else
+                    {
+                        <span style="color: blue">
+                            @string.Format("{0: ###,###.##}", cnn.maintenanceFeeSum)
+                        </span>
+                    }
+
+                }
+                else
+                {
+                    <span>0</span>
+                }
+                <span>원</span>)
+            </td>
+        </tr>
+
+        @if (PlusA == "B")
+        {
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 일반관리비 :
+                    @if (dnn.generalDue > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.generalDue)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.generalDue > cnn.generalDue)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.generalDue)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.generalDue)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 경비비 :
+                    @if (dnn.securityDue > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.securityDue)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.securityDue > cnn.securityDue)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.securityDue)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.securityDue)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 청소비 :
+                    @if (dnn.cleaningDue > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.cleaningDue)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.cleaningDue > cnn.cleaningDue)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.cleaningDue)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.cleaningDue)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 소독비 :
+                    @if (dnn.disinfectionDue > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.disinfectionDue)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.disinfectionDue > cnn.disinfectionDue)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.disinfectionDue)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.disinfectionDue)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 수선유지비 :
+                    @if (dnn.repairDue > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.repairDue)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.repairDue > cnn.repairDue)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.repairDue)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.repairDue)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 승강기유지비 :
+                    @if (dnn.elevatorExpenseDue > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.elevatorExpenseDue)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.elevatorExpenseDue > cnn.elevatorExpenseDue)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.elevatorExpenseDue)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.elevatorExpenseDue)
+                            </span>
+                        }
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 위탁관리수수료 :
+                    @if (dnn.trustDue > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.trustDue)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.trustDue > cnn.trustDue)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.trustDue)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.trustDue)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 보험료 :
+                    @if (dnn.premiumDue > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.premiumDue)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.premiumDue > cnn.premiumDue)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.premiumDue)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.premiumDue)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 장기수선충당금 :
+                    @if (dnn.longRepairDue > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.longRepairDue)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.longRepairDue > cnn.longRepairDue)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.longRepairDue)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.longRepairDue)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+        }
+
+
+        <tr style="border-top: solid; border-top-width: 2px; border-top-color: cornflowerblue">
+            <td @onclick="onPlusB" title="사용료 내용 상세 정보 더보기" style="font-weight:bold">
+                <img src="/images/btn_add1.gif" /> 사용료 합계 :
+                @if (dnn.useFeeSum > 0)
+                {
+                    @string.Format("{0: ###,###.##}", dnn.useFeeSum)
+                }
+                else
+                {
+                    <span>0</span>
+                }
+                <span>원</span>
+                <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                (전월 :
+                @if (re1 > 0)
+                {
+                    @if (dnn.useFeeSum > cnn.useFeeSum)
+                    {
+                        <span style="color: red">
+                            @string.Format("{0: ###,###.##}", cnn.useFeeSum)
+                        </span>
+                    }
+                    else
+                    {
+                        <span style="color: blue">
+                            @string.Format("{0: ###,###.##}", cnn.useFeeSum)
+                        </span>
+                    }
+
+                }
+                else
+                {
+                    <span>0</span>
+                }
+                <span>원</span>)
+            </td>
+        </tr>
+
+        @if (PlusB == "B")
+        {
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 대표회의운영비 :
+                    @if (dnn.delegateCdue > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.delegateCdue)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.delegateCdue > cnn.delegateCdue)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.delegateCdue)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.delegateCdue)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 선거관리운영비 :
+                    @if (dnn.electionMdue > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.electionMdue)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.electionMdue > cnn.electionMdue)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.electionMdue)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.electionMdue)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 세대전기 사용량 :
+                    @if (dnn.electricUse > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.electricUse)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>KWH</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.cleaningDue > cnn.electricUse)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.electricUse)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.electricUse)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>KWH</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 세대전기료 :
+                    @if (dnn.electricPcharges > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.electricPcharges)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.electricPcharges > cnn.electricPcharges)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.electricPcharges)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.electricPcharges)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 공동전기료 :
+                    @if (dnn.electricCcharges > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.electricCcharges)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.electricCcharges > cnn.electricCcharges)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.electricCcharges)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.electricCcharges)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 승강기전기료 :
+                    @if (dnn.elevatorEcharges > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.elevatorEcharges)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.elevatorEcharges > cnn.elevatorEcharges)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.elevatorEcharges)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.elevatorEcharges)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> TV수신료 :
+                    @if (dnn.tvFee > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.tvFee)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.tvFee > cnn.tvFee)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.tvFee)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.tvFee)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 전기충전료 :
+                    @if (dnn.electricChargeDue > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.electricChargeDue)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.electricChargeDue > cnn.electricChargeDue)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.electricChargeDue)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.electricChargeDue)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 세대수도 사용량 :
+                    @if (dnn.waterUse > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.waterUse)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>톤</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.waterUse > cnn.waterUse)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.waterUse)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.waterUse)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>톤</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 세대수도료 :
+                    @if (dnn.waterPrates > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.waterPrates)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.waterPrates > cnn.waterPrates)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.waterPrates)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.waterPrates)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 공동수도료 :
+                    @if (dnn.waterCrates > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.waterCrates)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.waterCrates > cnn.waterCrates)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.waterCrates)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.waterCrates)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px">
+                    <span class="bi-pause"></span> 주차비부과금 :
+                    @if (dnn.parkingDue > 0)
+                    {
+                        @string.Format("{0: ###,###.##}", dnn.parkingDue)
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                    (전월 :
+                    @if (re1 > 0)
+                    {
+                        @if (dnn.parkingDue > cnn.parkingDue)
+                        {
+                            <span style="color: red">
+                                @string.Format("{0: ###,###.##}", cnn.parkingDue)
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">
+                                @string.Format("{0: ###,###.##}", cnn.parkingDue)
+                            </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }
+                    <span>원</span>)
+                </td>
+            </tr>
+
+        }
+
+        @* 주민공동시설 이용 내역 정보*@
+        <tr style="border-top: solid; border-top-width: 2px; border-top-color:cornflowerblue">
+            <td @onclick="onPlusD" title="주민공동시설 이용 내역 상세 정보 더보기" style="font-weight:bold">
+                <img src="/images/btn_add1.gif" /> 주민공동시설 이용료 :
+                @if (dnn.facilityCdue > 0)
+                {
+                    @string.Format("{0: ###,###.##}", dnn.facilityCdue)
+                }
+                else
+                {
+                    <span>0</span>
+                }
+                <span>원</span>
+                <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                (전월 :
+                @if (re1 > 0)
+                {
+                    @if (dnn.facilityCdue > cnn.facilityCdue)
+                    {
+                        <span style="color: red">
+                            @string.Format("{0: ###,###.##}", cnn.facilityCdue)
+                        </span>
+                    }
+                    else
+                    {
+                        <span style="color: blue">
+                            @string.Format("{0: ###,###.##}", cnn.facilityCdue)
+                        </span>
+                    }
+
+                }
+                else
+                {
+                    <span>0</span>
+                }
+                <span>원</span>)
+            </td>
+        </tr>
+
+        @if (PlusD == "B")
+        {
+            @if (list.Count == 0)
+            {
+                <tr>
+                    <td>
+                        <span style="color: red">사용 내역 없음</span>
+                    </td>
+                </tr>
+
+            }
+            else
+            {
+                @foreach (var st in list)
+                {
+                    <tr>
+                        <td>
+                            <span class="bi-pause"></span> @st.UsingKindName -> @st.Ticket : @string.Format("{0: ###,###.##}", st.UseCost)<span>원</span> (@st.UserName)
+                        </td>
+                    </tr>
+                }
+            }
+        }
+
+
+        <tr style="border-top: solid; border-top-width: 2px; border-top-color:cornflowerblue">
+            <td @onclick="onPlusC" title="관리비 차감 내용 상세 정보 더보기" style="font-weight:bold">
+                <img src="/images/btn_add1.gif" /> 관리비 차감 :
+
+                @if (dnn.costMdeduction > 0)
+                {
+                    @string.Format("{0: ###,###.##}", dnn.costMdeduction)
+                }
+                else
+                {
+                    <span>0</span>
+                }
+                <span>원</span>
+                <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                (전월 :
+                @if (re1 > 0)
+                {
+                    @if (dnn.costMdeduction > cnn.costMdeduction)
+                    {
+                        <span style="color: red">
+                            @string.Format("{0: ###,###.##}", cnn.costMdeduction)
+                        </span>
+                    }
+                    else
+                    {
+                        <span style="color: blue">
+                            @string.Format("{0: ###,###.##}", cnn.costMdeduction)
+                        </span>
+                    }
+
+                }
+                else
+                {
+                    <span>0</span>
+                }
+                <span>원</span>)
+            </td>
+        </tr>
+
+        @*@if (PlusC == "B")
+        {
+        <tr>
+        <td style="padding-left: 25px">
+        <span class="bi-pause"></span> 관리비 차감 : @string.Format("{0: ###,###.##}", dnn.costMdeduction)<span>원</span>
+        </td>
+        </tr>
+        <tr>
+        <td style="padding-left: 25px">
+        <span class="bi-pause"></span> 일자리안정차감 : @string.Format("{0: ###,###.##}", dnn.workSdeduction)<span>원</span>
+        </td>
+        </tr>
+        }*@
+
+
+
+        <tr style="border-top: solid">
+            <td>
+                미납액 :
+                @if (dnn.unpaidSum > 0)
+                {
+                    @string.Format("{0: ###,###.##}", dnn.unpaidSum)
+                }
+                else
+                {
+                    <span>0</span>
+                }
+
+                <span>원</span>
+            </td>
+        </tr>
+        <tr style="border-top: solid">
+            <td>
+                납기 내 금액 : @string.Format("{0: ###,###.##}", dnn.extendDue)<span>원</span>
+            </td>
+        </tr>
+
+    </table>
+</div>

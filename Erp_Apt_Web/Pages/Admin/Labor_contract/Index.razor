@@ -1,0 +1,382 @@
+﻿@page "/Admin/Labor_contract"
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <h6><span class="bi-journal-text"> </span>&nbsp;근로 계약 정보 목록</h6>
+                </td>
+                <td>
+                </td>
+                <td class="text-right">
+                    @*<button type="button" class="btn btn-outline-primary btn-sm" @onclick="btnInsertContract"> <span class="bi-tools"></span>&nbsp;계약등록</button> &nbsp;&nbsp;*@
+                    <button type="button" class="btn btn-outline-dark btn-sm" @onclick="btnSearch_Apt"> <span class="bi-tools"></span>&nbsp;검색</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        @if (ann == null)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" />
+            </p>
+        }
+        else if (ann.Count == 0)
+        {
+            <p style="text-align:center">
+                입력된 정보가 없습니다. ............
+            </p>
+        }
+        else
+        {
+            <table class="table table-sm" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color:whitesmoke;">
+                        <th style="text-align: center">
+                            직원식별코드
+                        </th>
+                        <th style="text-align: center">
+                            근로자
+                        </th>
+                        <th style="text-align: center">
+                            모바일
+                        </th>
+                        <th style="text-align: center">
+                            공동주택명
+                        </th>
+                        <th style="text-align: center">
+                            계약기간
+                        </th>
+                        <th style="text-align: center">
+                            계약일
+                        </th>
+                        <th style="text-align: center">
+                            승 인
+                        </th>
+                        <th style="text-align: center">
+                            첨부여부
+                        </th>
+                        <th style="text-align: center">
+                            삭 제
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var st in ann)
+                    {
+                        <tr>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.UserID
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @st.UserName
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @st.Mobile
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @st.Apt_Name
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="(() => SelectView(st))">
+                                시작일 : @st.LaborStartDate.ToShortDateString() ~ 종료일 : @st.LaborEndDate.ToShortDateString() <i class="bi bi-chevron-double-right"></i> 날짜 수 : @Func_span(st.LaborStartDate, st.LaborEndDate) 일간
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @st.WorkContract_Date.ToShortDateString()
+                            </td>
+                            <td class="text-center" style="vertical-align:middle">
+                                @if (st.ContractApprovalDivision == "A")
+                                {
+                                    if (LevelCount >= 10)
+                                    {
+                                        <a class="btn btn-link btn-sm" @onclick="(() => OnApproval(st.Aid))"><span style="color: red; font-size: 0.9em">미승인</span></a>
+                                    }
+                                    else
+                                    {
+                                        <span style="color: red; font-size: 0.9em">미승인</span>
+                                    }
+
+                                }
+                                else
+                                {
+                                    if (LevelCount >= 10)
+                                    {
+                                        <a class="btn btn-link btn-sm" @onclick="(() => OnApproval(st.Aid))"><span style="color: green; font-size: 0.9em">승인</span></a>
+                                    }
+                                    else
+                                    {
+                                        <span style="color: green; font-size: 0.9em">승인</span>
+                                    }
+
+                                }
+                                @*@FuncResult(item.ContractApprovalDivision)*@
+                            </td>
+                            <td class="text-center" style="vertical-align:middle">
+                                @st.Files_Count<span>개</span>
+                            </td>
+
+                            <td class="text-center" style="vertical-align:middle">
+                                <input id="btnSelect" type="button" value="삭제" class="btn btn-link btn-sm" @onclick="(() => btnRemove(st.Aid))" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        <div class="col-md-12">
+            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+        </div>
+    </div>
+    <div class="card-footer">
+        <span>근로계약 관리자</span>
+    </div>
+</div>
+
+
+@*..... 새로 등록 모달 폼*@
+@if (Views == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body" style="height: 400px; overflow-y: scroll;">
+                    <table class="table table-sm" style="font-size: 0.9em;">
+                        <tr>
+                            <td style="vertical-align:middle; width: 34%"><span style="font-weight:bold">공동주택명</span> : @bnn.Apt_Name</td> 
+                            <td style="vertical-align:middle; width: 33%"><span style="font-weight:bold">근로자명</span> : @bnn.UserName</td> 
+                            <td style="vertical-align:middle; width: 33%"><span style="font-weight:bold">고용주</span> : @bnn.Ceo_Company</td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align:middle"><span style="font-weight:bold">계약시작일</span> : @bnn.LaborStartDate.ToShortDateString()</td> 
+                            <td style="vertical-align:middle"><span style="font-weight:bold">계약종료일</span> : @bnn.LaborEndDate.ToShortDateString()</td> 
+                            <td style="vertical-align:middle"><span style="font-weight:bold">촉택여부</span> : @bnn.PartTime</td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align:middle"><span style="font-weight:bold">근로형태</span> : @bnn.WorktimeSort</td> 
+                            <td style="vertical-align:middle"><span style="font-weight:bold">근로시간</span> : @bnn.Worktime<span>시간</span></td> 
+                            <td style="vertical-align:middle"><span style="font-weight:bold">토요일 시간</span> : @bnn.WorktimeWeekend<span>시간</span></td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align:middle"><span style="font-weight:bold">시작시간</span> : @bnn.LaborStartDate.ToShortDateString()</td> 
+                            <td style="vertical-align:middle"><span style="font-weight:bold">근로시간</span> : @bnn.LaborEndDate.ToShortDateString()</td> 
+                            <td style="vertical-align:middle"><span style="font-weight:bold">월간시간</span> : @string.Format("{0: ###,###.##}", bnn.WorkMonthTime)</td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align:middle" colspan="2"><span style="font-weight:bold">기타 근로시간 : </span> : @bnn.WorkTimeEtc</td> 
+                            <td style="vertical-align:middle"><span style="font-weight:bold">연락처</span> : @bnn.Mobile</td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align:middle"><span style="font-weight:bold">주간시간</span> : @bnn.BreaktimeDaytime<span>시간</span></td> 
+                            <td style="vertical-align:middle"><span style="font-weight:bold">야간시간</span> : @bnn.BreaktimeNight<span>시간</span></td> 
+                            <td style="vertical-align:middle"><span style="font-weight:bold">휴게 기타</span> : @bnn.BreakTimeEtc</td>
+                        </tr>
+
+                        <tr>
+                            <td style="vertical-align:middle"><span style="font-weight:bold">기본급</span> : @string.Format("{0: ###,###}", bnn.BasicsPay)<span>원</span></td> 
+                            <td style="vertical-align:middle"><span style="font-weight:bold">야간수당</span> : @string.Format("{0: ###,###}", bnn.Pay_A)<span>원</span></td> 
+                            <td style="vertical-align:middle"><span style="font-weight:bold">직책수당</span> : @string.Format("{0: ###,###}", bnn.Pay_B)<span>원</span></td>
+                        </tr>
+
+                        <tr>
+                            <td style="vertical-align:middle"><span style="font-weight:bold">자격수당</span> : @string.Format("{0: ###,###}", bnn.Pay_D)<span>원</span></td> 
+                            <td style="vertical-align:middle"><span style="font-weight:bold">기타수당</span> : @string.Format("{0: ###,###}", bnn.Pay_C)<span>원</span></td> 
+                            <td style="vertical-align:middle"><span style="font-weight:bold">급여합계</span> : @string.Format("{0: ###,###}", bnn.TotalSum)<span>원</span></td>
+                        </tr>
+
+                        <tr>
+                            <td style="vertical-align:middle"><span style="font-weight:bold">근무장소</span> : @bnn.WorkPlace</td> 
+                            <td style="vertical-align:middle" colspan="2"><span style="font-weight:bold">업무 내용</span> : @bnn.WorkDetail</td> 
+                        </tr>
+
+                        <tr>
+                            <td style="vertical-align:middle"><span style="font-weight:bold">근무정년</span> : @bnn.RetirementAge</td> 
+                            <td style="vertical-align:middle" colspan="2"><span style="font-weight:bold">주소</span> : @bnn.Adress</td> 
+                            
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    @if (bnn.Files_Count > 0)
+                    {
+                        <button type="button" class="btn btn-success btn-sm" @onclick="(() => OnFileViews(bnn.Aid))"><span class="bi-images"></span>&nbsp; 첨부파일 보기</button>
+                        <span> &nbsp; &nbsp; &nbsp; </span>
+                    }
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose"><span class="bi-clipboard-x"></span>&nbsp;닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*첨부파일 보기*@
+@if (FileViews == "B")
+{
+    <div class="modal fade show d-block" id="subInput" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:beige">
+                    <h5 class="modal-title"><span class="bi-people"></span>  &nbsp; 첨부파일 상세 정보</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ViewsClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    @if (Files_Count > 0)
+                    {
+                        <div style="height: 600px; width: 100%; overflow-y: scroll; overflow-x: hidden">
+                            @foreach (var item in Files_Entity)
+                            {
+                                if (OnExtension(item.FileName) == ".pdf")
+                                {
+                                    <div>
+                                        <embed src="/A_Files/@item.FileName" type="application/pdf" style="width: 100%; height: 650px" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    if (Dul.BoardLibrary.IsPhoto(item.FileName))
+                                    {
+                                        <div>
+                                            <img src="/A_Files/@item.FileName" style="width: 900px;" class="img-thumbnail" />
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+
+                        foreach (var it in Files_Entity)
+                        {
+                            @if (LevelCount >= 10)
+                            {
+                                <button id="btnFileDelete" class="btn btn-link btn-sm" @onclick="() => FilesRemove(it)">
+                                    @*@Dul.StringLibrary.CutString(it.FileName, 16)*@
+                                    <span class="bi-x-circle-fill" style="color:red"></span>
+                                </button>@*<span> &nbsp;</span>*@
+                            }
+                            <span style="font-size: 0.9em">@Dul.StringLibrary.CutString(it.FileName, 16) &nbsp; &nbsp;</span>
+                        }
+
+                    }
+
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary btn-sm" @onclick="ViewsFileInsert">파일올리기</button>*@
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="ViewsClose"><span class="bi-clipboard-x"></span>&nbsp;닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@* 검색 새로 등록 모달 폼*@
+@if (SearchViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-search"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseS">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="font-size: 0.9em">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span> &nbsp; 이름</span></div>
+                                        <input id="txtUser_Name" name="txtUser_Name" style="font-size: 0.9em" value="@strSearchName" @onchange="OnSearchName" placeholder="근로자 이름 입력" class="form-control" type="text" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center; vertical-align:middle">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-incognito"></span> &nbsp; 시도</span></div>
+                                    <select id="txtAdress_Sido" style="font-size: 0.9em" value="@strSido" class="custom-select" @onchange="OnSido">
+                                        <option value="">::시도선택::</option>
+                                        <option value="서울특별시">서울특별시</option>
+                                        <option value="경기도">경기도</option>
+                                        <option value="부산광역시">부산광역시</option>
+                                        <option value="대구광역시">대구광역시</option>
+                                        <option value="인천광역시">인천광역시</option>
+                                        <option value="광주광역시">광주광역시</option>
+                                        <option value="대전광역시">대전광역시</option>
+                                        <option value="울산광역시">울산광역시</option>
+                                        <option value="세종특별자시">세종특별자치시</option>
+                                        <option value="충청남도">충청남도</option>
+                                        <option value="충청북도">충청북도</option>
+                                        <option value="경상남도">경상남도</option>
+                                        <option value="경상북도">경상북도</option>
+                                        <option value="전라남도">전라남도</option>
+                                        <option value="전라북도">전라북도</option>
+                                        <option value="강원도">강원도</option>
+                                        <option value="제주특별자치도">제주특별자치도</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span>아파트</span></div>
+                                    <select id="Select1" class="custom-select" value="@strSiGunGu" style="font-size: 0.9em" @onchange="OnSiGunGu">
+                                        <option value="">=아파트 선택=</option>
+
+                                        @foreach (var it in sido)
+                                        {
+                                            <option value="@it.Region">@it.Region</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span> 시군구</span></div>
+                                    <select id="Select1" class="custom-select" value="@strAptCode" style="font-size: 0.9em" @onchange="OnApt">
+                                        <option value="">::아파트 선택::</option>
+                                        @foreach (var it in apt)
+                                        {
+                                            <option value="@it.Apt_Code">@it.Apt_Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span> &nbsp; 아파트명</span></div>
+                                        <input id="txtApt_Name" name="txtApt_Name" style="font-size: 0.9em" value="@strSearchApt" @onchange="OnSearchApt" placeholder="아파트 명 입력" class="form-control" type="text" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseS"> <span class="bi-door-open"></span> 닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

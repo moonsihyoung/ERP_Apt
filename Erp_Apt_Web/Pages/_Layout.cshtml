@@ -1,0 +1,101 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@namespace Erp_Apt_Web.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="~/" />
+    @*<link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />*@
+    <link href="css/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/icons-1.10.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="css/site.css" rel="stylesheet" />
+    <link href="Erp_Apt_Web.styles.css" rel="stylesheet" />
+    <component type="typeof(HeadOutlet)" render-mode="Server" />
+</head>
+<body>
+    @RenderBody()
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            다시 로드하여 주세요. 이곳을 클릭.
+        </environment>
+        <environment include="Development">
+            An unhandled exception has occurred. See browser dev tools for details.
+        </environment>
+        <a href="" class="reload">다시 로드</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script src="_framework/blazor.server.js"></script>
+    <script src="~/js/jquery/jquery.js"></script>
+    <script src="~/js/jquery/jquery-ui.min.js"></script>
+    <script src="~/css/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/js/iFreme.js"></script>
+    <script src="https://cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
+    <script src="~/js/CkEditorFour.js"></script>
+    <script src="~/js/SaveAsFile.js"></script>
+    <script src="~/js/blazor.polyfill.min.js"></script>
+
+    <script>
+        window.getUserAgent = () => {
+            return navigator.userAgent;
+        };
+    </script>
+
+    <script>
+        //팝업 메세지 구현
+        window.exampleJsFunctions =
+        {
+            ShowMsg: function (message) {
+                window.alert(message);
+            }
+        };
+    </script>
+    <script>
+        $('.modal-dialog').draggable({ handle: ".modal-header" });
+    </script>
+
+    <script type="text/javascript">
+        function setModalDraggableAndResizable() {
+            $('.modal-content').resizable({
+                //alsoResize: ".modal-dialog",
+                minHeight: 300,
+                minWidth: 300
+            });
+            $('.modal-dialog').draggable();
+        }
+    </script>
+    <script>
+        // 사이드 메뉴 선택시 해당 메뉴를 active 상태로 변경
+        $(function () {
+            $("#layoutSidenav_nav .sb-sidenav a.nav-link").on("click", function (e) {
+                $(".nav-link").removeClass("active");
+                $(this).addClass("active");
+            });
+            $(".navbar-brand").on("click", function (e) {
+                $(".nav-link").removeClass("active");
+                $("#lnkDashboard").addClass("active");
+            });
+        });
+    </script>
+
+    @* 2022-09-07 메뉴관련*@
+    <script>
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "250px";
+            document.getElementById("main").style.marginLeft = "250px";
+            document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+            document.getElementById("main").style.marginLeft = "0";
+            document.body.style.backgroundColor = "white";
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,78 @@
+﻿@page "/"
+
+@*<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+*@
+
+<div class="row">
+
+    <table class="table table-borderless" style="font-size: 0.9em">
+        <tr>
+            <td style="font-size: 1.1em; font-weight:bold" colspan="2">
+                <span class="bi-house-heart" style="color:cornflowerblue"></span> <span class="text-primary"> &nbsp; @Apt_Name</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="text-center">
+                <a href="/Communitys"><img class="img-thumbnail" src="/images/community.jpg" height="100" width="70" /></a>
+                <br />
+                <label>주민공동시설</label>
+            </td>
+            <td class="text-center">
+                <a @onclick="OnComplain"><img class="img-thumbnail" src="/images/sub/main_icon_04.png" height="100" width="80" /></a>
+                <br />
+                <label>민원신청</label>
+            </td>
+        </tr>
+        <tr>
+            <td class="text-center">
+                <a href="/CostDebit"><img class="img-thumbnail" src="/images/sub/main_icon_05.png" height="100" width="80" /></a>
+                <br />
+                <label>우리집 관리비</label>
+            </td>
+            <td class="text-center">
+                <a href="/Common_Usage"><img class="img-thumbnail" src="/images/sub/q12.png" height="100" width="80" /></a>
+                <br />
+                <label class="text-danger">공용부 사용량 정보</label>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="text-center">
+                <a href="/CarInfor"><img class="img-thumbnail" src="/images/cars.png" height="100" width="80" /></a>
+                <br />
+                <label>자동차 등록현황</label>
+            </td>
+            <td class="text-center">
+                <a href="/Bike"><img class="img-thumbnail" src="/images/bike.png" height="100" width="80" /></a>
+                <br />
+                <label class="text-danger">자전거 등록현황</label>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" style="font-size: 0.9em;">
+                관리업무 앱을 통하여 <span style="color:brown;font-weight:bold">민원신청</span>을 하시면 보다 신속하게 민원이 처리됩니다.<br />
+                공용부분 시설물 사용량 상세 정보를 확인하시려면 <span style="color:brown;font-weight:bold">공용부 사용량 정보</span>를 터치하세요.
+            </td>
+        </tr>
+    </table>
+    <!--<div class="col-6">
+        <div class="text-center" style="margin-top: 20px">-->
+    @*<input id="Button1" type="button" value="하자신청" class="btn btn-outline-success" src="/Defect" />*@
+    <!--<a href="/Communitys"><img class="img-thumbnail" src="/images/community.jpg" /></a>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="text-center" style="margin-top: 20px">-->
+    @*<input id="Button1" type="button" value="하자신청" class="btn btn-outline-success" src="/Defect" />*@
+    <!--<a @onclick="OnComplain"><img class="img-thumbnail" src="/images/appeal.jpg" /></a>
+        </div>
+    </div>-->
+
+</div>

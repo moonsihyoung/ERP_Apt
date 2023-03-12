@@ -1,0 +1,280 @@
+﻿@page "/Check/Input/Views/{Code:int}"
+
+<div class="card">
+    <div class="card-header">
+        <h6><span class="bi-check2"></span>&nbsp;점검내용 상세정보</h6>
+    </div>
+    <div class="card-body">
+        
+
+            <div class="text-right">
+                <table width="100%">
+                    <tr>
+                        <td style="text-align:right">
+                            <table align="right">
+                                <tr>
+                                    @foreach (var st in app)
+                                    {
+                                        <td style="width: 70px">
+                                            <table style="width: 100%; background-color: white; color: black; font-size: 0.7em">
+                                                <tr style="border-style:dotted; border-width:1px; border-color: black; ">
+                                                    <td style="text-align: center" height="18px">
+                                                        @st.PostDuty
+                                                    </td>
+                                                </tr>
+                                                <tr style="border-width: 1px; border-style:dotted; border-color: black; ">
+                                                    <td style="text-align: center" height="50px">
+                                                        @if (FuncShowOK(st.PostDuty, st.AptCode, Code) != "결재하기")
+                                                        {
+                                                            @*@Html.Raw(moo.Seal_View(st.PostDuty, st.AptCode, ViewBag.apNum, "Appeal"))*@
+                                                            <img src="data:image/jpg;base64,@Convert.ToBase64String(sealImage(st.AptCode, st.Post, st.Duty, Code, "Check", strUserCode))" height="45" alt="" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <img src="/images/inn.gif" alt="" />
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr style="border-width: 1px; border-style:dotted; border-color: black; ">
+                                                    <td style="text-align: center; vertical-align:middle; color:black" height="25px">
+                                                        @if (decisionA != "결재하기")
+                                                        {
+                                                            @decisionA
+                                                        }
+                                                        else
+                                                        {
+                                                            if (PostDuty == st.PostDuty)
+                                                            {
+                                                                <a style="background-color: orange; color: white" @onclick="btnDecision">결재하기</a>
+                                                                @*<button type="button" style="font-size: 0.8em; background-color: blue; color: white">결재하기</button>*@
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>해당없음</span>
+                                                            }
+
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    }
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+
+            <table class="table table-sm" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color: cornflowerblue; color:white">
+                        <th class="text-center">
+                            번 호
+                        </th>
+                        <th class="text-center">
+                            점검일
+                        </th>
+                        <th class="text-center">
+                            점검대상
+                        </th>
+                        <th class="text-center">
+                            점검주기
+                        </th>
+                        <th class="text-center">
+                            점검 사항
+                        </th>
+                        <th class="text-center">
+                            점검 결과
+                        </th>
+                        <th class="text-center">
+                            조치 내용
+                        </th>
+                        <th class="text-center">
+                            점검자
+                        </th>
+                        <th class="text-center">
+                            보 기
+                        </th>
+                    </tr>
+                </thead>
+
+            @if (ann.Count < 1)
+            {
+                <tr>
+                    <td colspan="9">
+                        <p style="text-align:center">
+                            <span style="font-size: 1.1em; font-weight: bold; color:red">정보가 없습니다.</span>
+                        </p>
+                    </td>
+                </tr>
+            }
+            else if (ann == null)
+            {
+                <tr>
+                    <td colspan="9">
+                        <p style="text-align:center">
+                            <img src="/images/loader.gif" />
+                        </p>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var it in ann)
+                {
+                    <tbody>
+                        <tr>
+                            <td class="text-center" style="vertical-align: middle">
+                                @string.Format("{0: ###,###}", it.CheckID)
+                                @*@it.CheckID*@
+                            </td>
+                            <td class="text-center" style="vertical-align: middle">
+                                @it.Check_Year<span>-</span>@it.Check_Month<span>-</span>@it.Check_Day
+                            </td>
+                            <td class="text-center" style="vertical-align: middle">
+                                @it.Check_Object_Name
+                            </td>
+                            <td class="text-center" style="vertical-align: middle">
+                                @it.Check_Cycle_Name
+                            </td>
+                            <td class="text-center" style="vertical-align: middle">
+                                <span title="@it.Check_Items">@Dul.StringLibrary.CutString(it.Check_Items, 36)</span>
+                            </td>
+                            <td class="text-center" style="vertical-align: middle">
+                                @it.Check_Effect_Name
+                            </td>
+                            <td class="text-center" style="vertical-align: middle">
+                                @it.UserName
+                            </td>
+                            <td class="text-center" style="vertical-align: middle">
+                                @it.Check_Year<span>-</span>@it.Check_Month<span>-</span>@it.Check_Day
+                            </td>
+                            <td class="text-center" style="vertical-align: middle">
+                                @*@it.Files_Count*@
+                                @if (it.Files_Count > 0)
+                                {
+                                    <input id="btnSelect" type="button" value="사진 보기" class="btn btn-link btn-sm" @onclick="(() => PhotoView(it.CheckID))" />
+                                }
+                                else
+                                {
+                                    <span>없음</span>
+                                }
+
+                                <input id="btnSelectA" type="button" value="사진첨부" class="btn btn-link btn-sm" @onclick="(() => FiledBy(it.CheckID))" title="사진 올리기" />
+                            </td>
+                        </tr>
+                    </tbody>
+                }
+            }
+            </table>
+            <table width="100%">
+                <tr>
+                    <td>
+
+                    </td>
+                    <td class="text-right">
+                        @if (strFiles_Count > 0)
+                        {
+                            <button class="btn btn-info btn-sm" @onclick="OnFileView">첨부파일보기</button>
+                        }
+                    </td>
+                    <td class="text-right">
+                        @if (AgoBe > 0)
+                        {
+                            <button class="btn btn-outline-primary btn-sm" @onclick="OnAgo">이전 페이지</button>
+                        }
+                        else
+                        {
+                            <span style="color: red">없음</span>
+                        }
+                        &nbsp;&nbsp;
+                        <button class="btn btn-link btn-sm" @onclick="OnReset">목록으로</button>
+                        &nbsp;&nbsp;
+                        @if (NextBe > 0)
+                        {
+                            <button class="btn btn-outline-primary btn-sm" @onclick="OnNext">다음 페이지</button>
+                        }
+                        else
+                        {
+                            <span style="color: red">없음</span>
+                        }
+                    </td>
+                </tr>
+            </table>
+        
+    </div>
+</div>
+
+@*파일 보기 모달품*@
+@if (View == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h5 class="modal-title"><span class="bi-file-code"></span> 첨부파일 보기</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+            <span aria-hidden="true">&times;</span>
+        </button>*@
+                </div>
+                <div class="modal-body">
+
+                    @if (Files_Count > 0)
+                    {
+                        <div style="height: 500px; overflow-y: scroll; overflow-x: hidden">
+
+                            @foreach (var files in Files_Entity)
+                            {
+                                <div class="text-center">
+                                    <img src="/UpFiles/Check/@files.Sw_FileName" alt="" class="img-thumbnail" />
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="FilesViewsClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*파일 첨부 올리기*@
+@if (FileInsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><span class="bi-file-code"></span> 첨부파일 입력</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                <span aria-hidden="true">&times;</span>
+                </button>*@
+                </div>
+                <div class="modal-body">
+
+                    <div style="margin-top: 10px">
+
+                        <p>
+                            <InputFile OnChange="LoadFiles" class="custom-file" style="font-size: 0.9em" multiple></InputFile>
+                        </p>
+                        @if (isLoading)
+                        {
+                            <p style="text-align: center">
+                                <img src="/images/loader.gif" height="40" />
+                            </p>
+                        }
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary" @onclick="btnFileSave">저장</button>*@
+                    <button type="button" class="btn btn-secondary" @onclick="FilesClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,45 @@
+﻿@using Erp_Apt_Lib
+@model Defect_Entity
+@{ 
+    string ext = "";
+}
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-sm" style="font-size: 0.9em">
+            <tr>
+                <td>
+                    @Model.Bloom_Name_A
+                </td>
+                <td>
+                    @Model.Bloom_Name_B
+                </td>
+                <td>
+                    @Model.Bloom_Name_C
+                </td>
+                <td>
+                    @Model.Position
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <span>하자 내용 :</span> 
+                </td>
+            </tr>
+            @foreach (Sw_Files_Entity st in (List<Sw_Files_Entity>)ViewBag.bnn)
+            {
+                <tr>
+                    <td>
+                        @ext = st.Sw_FileName.Substring(st.Sw_FileName.Length - 3);
+                        if (ext == "gif" || ext == "jpg" || ext == "png" || ext == "bmp")
+                        {
+                        <div class="text-center">
+                            <img src="@Url.Content("/UpFiles/Defect/" + st.Sw_FileName)" alt="" width="700" height="500" class="img-rounded img-thumbnail" />
+                        </div>
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

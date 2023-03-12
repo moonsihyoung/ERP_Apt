@@ -1,0 +1,1071 @@
+﻿@page "/Common_Usage"
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <span style="font-size: 1em; font-weight:bold"><span class="bi-journal-text"> </span>&nbsp; 공동부 사용량 정보 목록</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+
+        <table class="table table-sm table-hover" style="font-size:0.9em">
+            <thead>
+                <tr>
+                    <th style="text-align: center; vertical-align:middle">해당월</th>
+                    <th style="text-align: center; vertical-align:middle">난방방식</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ann.Count == 0)
+                {
+                    <tr>
+                        <td colspan="2">
+                            <p style="text-align:center">
+                                입력된 정보가 없습니다. ............
+                            </p>
+                        </td>
+                    </tr>
+                }
+                else if (ann == null)
+                {
+                    <tr>
+                        <td colspan="2">
+                            <p style="text-align:center">
+                                <img src="/images/loader.gif" height="100" />
+                            </p>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var st in ann)
+                    {
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @st.intYear<span>년</span> @st.intMonth<span>월</span>
+                            </td>
+
+
+                            <td style="text-align:center; vertical-align:middle" @onclick="(() => SelectView(st))">
+                                @st.codeHeatNm
+                            </td>
+                        </tr>
+                    }
+
+                    <tr>
+                        <td colspan="2">
+                            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+                        </td>
+                    </tr>
+
+                }
+
+            </tbody>
+        </table>
+
+    </div>
+    <div class="card-footer" style="text-align: right">
+        <span class="text-primary" style="font-size: 1em; font-weight: bold">
+            신원티엠씨(TMC)
+        </span>
+    </div>
+</div>
+
+@if (Views == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-thermometer-sun"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseA">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div style="height: 600px; overflow-y:auto">
+                        <table class="table table-sm" style="font-size: 0.9em">
+
+                            <tr>
+                                <td>
+                                    <span style="font-weight:bold">전기계약방식 : </span>
+                                    @bnn.ElectricContractMethod
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="font-weight:bold">전기부과방식 : </span>
+                                    @bnn.ElectricInpose
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <span style="font-weight:bold">난방방식 : </span>
+                                    @bnn.codeHeatNm
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="font-weight:bold">해당월 : </span>
+                                    @bnn.intYear<span>년 </span> @bnn.intMonth<span>월</span>;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="font-weight:bold">전기 전체 사용량 : </span>
+
+                                    @if (bnn.ElectricAllUsage > 0)
+                                    {
+                                        @bnn.ElectricAllUsage
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>KWh</span>
+                                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.ElectricAllUsage > dnn.ElectricAllUsage)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", dnn.ElectricAllUsage)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", dnn.ElectricAllUsage)
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>KWh</span>
+                                    )
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="font-weight:bold">전기 전체 사용료 : </span>
+
+                                    @if (bnn.ElectricAllFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.ElectricAllFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.ElectricAllFee > dnn.ElectricAllFee)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", dnn.ElectricAllFee)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", dnn.ElectricAllFee)
+                                            </span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                    )
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <span style="font-weight:bold">전기 세대 사용량 : </span>
+
+                                    @if (bnn.ElectricPerUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.ElectricPerUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>KWh</span>
+                                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.ElectricPerUsage > dnn.ElectricPerUsage)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", dnn.ElectricPerUsage)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", dnn.ElectricPerUsage)
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>KWh</span>
+                                    )
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="font-weight:bold">전기 세대 사용료 : </span>
+
+                                    @if (bnn.ElectricPerFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.ElectricPerFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.ElectricPerFee > dnn.ElectricPerFee)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", dnn.ElectricPerFee)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", dnn.ElectricPerFee)
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                    )
+                                </td>
+                            </tr>
+                            <tr>
+                                <td @onclick="(() => DetailListViewA(bnn))">
+                                    <img src="/images/btn_add1.gif" /> <span style="font-weight:bold">전기 공동 사용량 : </span>
+                                    @if (bnn.ElectricComUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.ElectricComUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>KWh</span>
+                                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.ElectricComUsage > dnn.ElectricComUsage)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", dnn.ElectricComUsage)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", dnn.ElectricComUsage)
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>KWh</span>
+                                    )
+                                </td>
+                            </tr>
+                            <tr>
+                                <td @onclick="(() => DetailListViewA(bnn))">
+                                    <span style="font-weight:bold">전기 공동 사용료 : </span>
+                                    @if (bnn.ElectricComFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.ElectricComFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.ElectricComFee > dnn.ElectricComFee)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", dnn.ElectricComFee)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", dnn.ElectricComFee)
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                    )
+                                </td>
+                            </tr>
+                            @if (Electric_Views == "B")
+                            {
+                                if (vnnA.Count == 0)
+                                {
+                                    <tr style="border-bottom:ridge; border-top:ridge">
+                                        <td>
+                                            <span style="color:red; font-size: 0.9em">입력된 정보가 없습니다.</span>
+                                        </td>
+                                        @*<td colspan="2"> </td>*@
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var st in vnnA)
+                                    {
+                                        <tr style="border-bottom:ridge; border-top:ridge">
+                                            <td style="vertical-align:middle">
+                                                <span class="bi-pin text-danger" style="font-weight:bold"> </span>&nbsp; @st.UseName <span class="bi-chevron-double-right"> </span> &nbsp; 사용량 : @st.Usage<span>KWh</span> &nbsp; 사용료 : @string.Format("{0: ###,###.##}", st.CostSum)<span>원</span>
+                                            </td>
+                                            @*<td colspan="2"> </td>*@
+                                        </tr>
+                                    }
+                                }
+
+                            }
+                            <tr>
+                                <td>
+                                    <span style="font-weight:bold">수도 전체 사용량 : </span>
+                                    @if (bnn.WaterAllUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.WaterAllUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>톤</span>
+                                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.WaterAllUsage > dnn.WaterAllUsage)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", dnn.WaterAllUsage)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", dnn.WaterAllUsage)
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>톤</span>
+                                    )
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="font-weight:bold">수도 전체 사용료 : </span>
+                                    @if (bnn.WaterAllFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.WaterAllFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.WaterAllFee > dnn.WaterAllFee)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", dnn.WaterAllFee)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", dnn.WaterAllFee)
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                    )
+                                </td>
+                            </tr>
+
+
+
+
+                            <tr>
+                                <td>
+                                    <span style="font-weight:bold">수도 세대 사용량 : </span>
+                                    @if (bnn.WaterPerUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.WaterPerUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>톤</span>
+                                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.WaterPerUsage > dnn.WaterPerUsage)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", dnn.WaterPerUsage)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", dnn.WaterPerUsage)
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>톤</span>
+                                    )
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="font-weight:bold">수도 세대 사용료 : </span>
+                                    @if (bnn.WaterPerFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.WaterPerFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.WaterPerFee > dnn.WaterPerFee)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", dnn.WaterPerFee)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", dnn.WaterPerFee)
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                    )
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td @onclick="(() => DetailListViewB(bnn))">
+                                    <img src="/images/btn_add1.gif" />
+                                    <span style="font-weight:bold"> 수도 공용 사용량 : </span>
+                                    @if (bnn.WaterComUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.WaterComUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>톤</span>
+                                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.WaterComUsage > dnn.WaterComUsage)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", dnn.WaterComUsage)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", dnn.WaterComUsage)
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>톤</span>
+                                    )
+                                </td>
+                            </tr>
+                            <tr>
+                                <td @onclick="(() => DetailListViewB(bnn))">
+                                    <span style="font-weight:bold">수도 공용 사용료 : </span>
+                                    @if (bnn.WaterComFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.WaterComFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @if (bnn.WaterComFee > dnn.WaterComFee)
+                                        {
+                                            <span style="color: red">
+                                                @string.Format("{0: ###,###.##}", dnn.WaterComFee)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: blue">
+                                                @string.Format("{0: ###,###.##}", dnn.WaterComFee)
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                    )
+                                </td>
+                            </tr>
+
+                            @if (Water_Views == "B")
+                            {
+                                if (vnnB.Count == 0)
+                                {
+                                    <tr style="border-bottom:ridge; border-top:ridge">
+
+                                        <td>
+                                            <span style="color:red; font-size: 0.9em">입력된 정보가 없습니다.</span>
+                                        </td>
+
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var st in vnnB)
+                                    {
+                                        <tr style="border-bottom:ridge; border-top:ridge">
+
+                                            <td style="vertical-align:middle">
+                                                <span class="bi-pin text-danger" style="font-weight:bold"> </span>&nbsp; @st.UseName <span class="bi-chevron-double-right"> </span> &nbsp; 사용량 : @st.Usage<span>톤</span> &nbsp; 사용료 : @string.Format("{0: ###,###.##}", st.CostSum)<span>원</span>
+                                            </td>
+
+                                        </tr>
+                                    }
+                                }
+
+                            }
+
+                            @if (@bnn.codeHeatNm != "개별난방")
+                            {
+                                <tr>
+                                    <td>
+                                        <span style="font-weight:bold">급탕 전체 사용량 : </span>
+                                        @if (bnn.HotWaterAllUsage > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", bnn.HotWaterAllUsage)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                        (전월 :
+                                        @if (re1 > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", dnn.HotWaterAllUsage)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        )
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span style="font-weight:bold">급탕 전체 사용료 : </span>
+                                        @if (bnn.HotWaterAllFee > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", bnn.HotWaterAllFee)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <span>원</span>
+                                        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                        (전월 :
+                                        @if (re1 > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", dnn.HotWaterAllFee)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <span>원</span>
+                                        )
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <span style="font-weight:bold">급탕 세대 사용량 : </span>
+                                        @if (bnn.HotWaterPerUsage > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", bnn.HotWaterPerUsage)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+
+                                        (전월 :
+                                        @if (re1 > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", dnn.HotWaterPerUsage)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        )
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span style="font-weight:bold">급탕 세대 사용료 : </span>
+                                        @if (bnn.HotWaterPerFee > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", bnn.HotWaterPerFee)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <span>원</span>
+                                        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                        (전월 :
+                                        @if (re1 > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", dnn.HotWaterPerFee)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <span>원</span>
+                                        )
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td @onclick="(() => DetailListViewC(bnn))">
+                                        <img src="/images/btn_add1.gif" />
+                                        <span style="font-weight:bold">급탕 공동 사용량 : </span>
+                                        @if (bnn.HotWaterComUsage > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", bnn.HotWaterComUsage)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                        (전월 :
+                                        @if (re1 > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", dnn.HotWaterComUsage)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        )
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td @onclick="(() => DetailListViewC(bnn))">
+                                        <span style="font-weight:bold">급탕 공용 사용료 : </span>
+                                        @if (bnn.HotWaterComFee > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", bnn.HotWaterComFee)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <span>원</span>
+                                        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                        (전월 :
+                                        @if (re1 > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", dnn.HotWaterComFee)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <span>원</span>
+                                        )
+                                    </td>
+                                </tr>
+
+
+
+                                @if (Hoting_Views == "B")
+                                {
+                                    if (vnnC.Count == 0)
+                                    {
+                                        <tr style="border-bottom:ridge; border-top:ridge">
+                                            <td>
+                                                <span style="color:red; font-size: 0.9em">입력된 정보가 없습니다.</span>
+                                            </td>
+
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var st in vnnC)
+                                        {
+                                            <tr style="border-bottom:ridge; border-top:ridge">
+
+                                                <td style="vertical-align:middle">
+                                                    <span class="bi-pin text-danger" style="font-weight:bold"> </span>&nbsp; @st.UseName <span class="bi-chevron-double-right"> </span> &nbsp; 사용량 : @st.Usage &nbsp; 사용료 : @string.Format("{0: ###,###.##}", st.CostSum)<span>원</span>
+                                                </td>
+
+                                            </tr>
+                                        }
+                                    }
+
+                                }
+
+                                <tr>
+                                    <td>
+                                        <span style="font-weight:bold">난방 전체 사용량 : </span>
+                                        @if (bnn.HeatingAllUsage > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", bnn.HeatingAllUsage)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <br /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                        (전월 :
+                                        @if (re1 > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", dnn.HeatingAllUsage)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        )
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span style="font-weight:bold">난방 전체 사용료 : </span>
+                                        @if (bnn.HeatingAllFee > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", bnn.HeatingAllFee)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <span>원</span>
+                                        <br /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                        (전월 :
+                                        @if (re1 > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", dnn.HeatingAllFee)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <span>원</span>
+                                        )
+                                    </td>
+                                </tr>
+
+
+
+                                <tr>
+                                    <td>
+                                        <span style="font-weight:bold">난방 세대 사용량 : </span>
+                                        @if (bnn.HeatingPerUsage > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", bnn.HeatingPerUsage)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                        (전월 :
+                                        @if (re1 > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", dnn.HeatingPerUsage)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        )
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span style="font-weight:bold">난방 세대 사용료 : </span>
+                                        @if (bnn.HeatingPerFee > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", bnn.HeatingPerFee)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <span>원</span>
+
+                                        (전월 :
+                                        @if (re1 > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", dnn.HeatingPerFee)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <span>원</span>
+                                        )
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td @onclick="(() => DetailListViewD(bnn))">
+                                        <img src="/images/btn_add1.gif" />
+                                        <span style="font-weight:bold">난방 공용 사용량 : </span>
+                                        @if (bnn.HotWaterComUsage > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", bnn.HotWaterComUsage)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                        (전월 :
+                                        @if (re1 > 0)
+                                        {
+                                            @if (bnn.HotWaterComUsage > dnn.ElectricComUsage)
+                                            {
+                                                <span style="color: red">
+                                                    @string.Format("{0: ###,###.##}", dnn.HotWaterComUsage)
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span style="color: blue">
+                                                    @string.Format("{0: ###,###.##}", dnn.HotWaterComUsage)
+                                                </span>
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        )
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td @onclick="(() => DetailListViewD(bnn))">
+                                        <span style="font-weight:bold">난방 공용 사용료 : </span>
+                                        @if (bnn.HeatingPerFee > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", bnn.HeatingComFee)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <span>원</span>
+                                        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                        (전월 :
+                                        @if (re1 > 0)
+                                        {
+                                            @string.Format("{0: ###,###.##}", dnn.HeatingComFee)
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                        <span>원</span>
+                                        )
+                                    </td>
+                                </tr>
+
+                                @if (Heating_View == "B")
+                                {
+                                    if (vnnD.Count == 0)
+                                    {
+                                        <tr style="border-bottom:ridge; border-top:ridge">
+                                            <td>
+                                                <span style="color:red; font-size: 0.9em">입력된 정보가 없습니다.</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var st in vnnD)
+                                        {
+                                            <tr style="border-bottom:ridge; border-top:ridge">
+                                                <td style="vertical-align:middle">
+                                                    <span class="bi-pin text-danger" style="font-weight:bold"> </span>&nbsp; @st.UseName <span class="bi-chevron-double-right"> </span> &nbsp; 사용량 : @st.Usage &nbsp; 사용료 : @string.Format("{0: ###,###.##}", st.CostSum)<span>원</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+
+                                }
+                            }
+
+
+
+
+                            <tr>
+                                <td>
+                                    <span style="font-weight:bold">가스 사용량 : </span>
+                                    @if (bnn.GasUsage > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.GasUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>MJ</span>
+                                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", dnn.GasUsage)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    )
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="font-weight:bold">가스 사용료 : </span>
+                                    @if (bnn.GasFee > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", bnn.GasFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="bi-arrow-bar-right"></span>
+                                    (전월 :
+                                    @if (re1 > 0)
+                                    {
+                                        @string.Format("{0: ###,###.##}", dnn.GasFee)
+                                    }
+                                    else
+                                    {
+                                        <span>0</span>
+                                    }
+                                    <span>원</span>
+                                    )
+                                </td>
+
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+                @*<div class="modal-footer" style="background-color:darkseagreen">
+            <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseA">닫기</button>
+            </div>*@
+            </div>
+        </div>
+    </div>
+}

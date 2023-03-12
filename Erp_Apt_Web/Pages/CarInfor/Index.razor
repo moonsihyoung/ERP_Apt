@@ -1,0 +1,457 @@
+﻿@page "/CarInfor"
+
+@*자동차 새로등록*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h5 class="modal-title"><span class="bi-tools"></span> 자동차 등록(수정)</h5>
+                </div>
+                <div class="modal-body">
+
+                    <table class="table" style="font-size: 0.9em">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-house"></i>&nbsp; 동</span>
+                                    </div>
+                                    <select id="Dong" class="form-control" value="@ann.Dong" @onchange="onDong" style="font-size: 0.9em">
+                                        <option value="Z">=동선택=</option>
+                                        @foreach (var it in pnn)
+                                        {
+                                            <option value="@it.Dong">@it.Dong</option>
+                                        }
+                                        <option value="140A">140A</option>
+                                        <option value="140B">140B</option>
+                                        <option value="140C">140C</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-house"></i>&nbsp; 호</span>
+                                    </div>
+                                    <select id="Ho" class="form-control" value="@ann.Ho" @onchange="onHo" style="font-size: 0.9em">
+                                        <option value="Z">=호선택=</option>
+                                        @foreach (var it in onn)
+                                        {
+                                            <option value="@it.Ho">@it.Ho</option>
+                                        }
+                                        <option value="관리실">관리실</option>
+                                        <option value="외부인">외부인</option>
+                                        <option value="상가">상가</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 차량번호</span>
+                                    </div>
+                                    <input id="Car_Num" name="Car_Num" type="text" required style="font-size: 0.9em" @bind="@ann.Car_Num" class="form-control" autocomplete="off" />
+
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 차&nbsp;&nbsp;&nbsp;종</span>
+                                    </div>
+                                    <input id="Car_Name" name="Car_Name" type="text" required style="font-size: 0.9em" @bind="@ann.Car_Name" class="form-control" autocomplete="off" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-people"></i>&nbsp; 소유자</span>
+                                    </div>
+                                    <input id="OwnerName" name="OwnerName" required type="text" style="font-size: 0.9em" @bind="@ann.OwnerName" class="form-control" autocomplete="off" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-telephone"></i>&nbsp; 연락처</span>
+                                    </div>
+                                    <input id="Mobile" name="Mobile" type="tel" style="font-size: 0.9em" @bind="@ann.Mobile" class="form-control" autocomplete="off" />
+
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 등록일</span>
+                                    </div>
+                                    <input id="ResisterDate" name="ResisterDate" type="date" style="font-size: 0.9em" @bind="@ann.ResisterDate" class="form-control" autocomplete="off" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-journal-minus"></i>&nbsp; 등록번호</span>
+                                    </div>
+                                    <input id="Sort_Aid" name="Sort_Aid" required type="text" style="font-size: 0.9em" @bind="@ann.Sort_Aid" class="form-control" autocomplete="off" />
+
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-people"></i>&nbsp; 취소일</span>
+                                    </div>
+                                    <input id="MoveDate" name="MoveDate" required type="date" style="font-size: 0.9em" @bind="@ann.MoveDate" class="form-control" autocomplete="off" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em" title="자동차 등록 취소하는 곳"><i class="bi bi-house"></i>&nbsp; 이사여부</span>
+                                    </div>
+                                    <select id="Move" class="form-control" value="@ann.Move" @onchange="onMove" style="font-size: 0.9em">
+                                        <option value="Z">=등록선택=</option>
+                                        <option value="A">등록함</option>
+                                        <option value="B">등록취소</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-house"></i>&nbsp; 관 &nbsp; 계</span>
+                                    </div>
+                                    <input id="Relation" name="Relation" required type="text" style="font-size: 0.9em" @bind="@ann.Relation" class="form-control" />
+                                </div>
+                            </td>
+                            <td class="text-right">
+                                <input id="Button1" type="button" class="btn btn-outline-primary btn-sm" title="자동차 정보를 입력하고 이곳을 입력해 주세요." value="저 장" @onclick="btnSave" />
+                            </td>
+                        </tr>
+                    </table>
+                    
+                   
+
+                </div>
+
+                <div class="modal-footer">
+                    &nbsp;&nbsp;
+                    <input id="Button1" type="button" class="btn btn-outline-dark btn-sm" title="팝업 닫기" value="닫기" @onclick="btnInsertViewsClose" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*자동차 상세보기*@
+@if (Views == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h5 class="modal-title"><span class="bi-file-code"></span> 자동차 정보 보기</h5>
+
+                </div>
+                <div class="modal-body">
+
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">동호 : </span> @ann.Dong<span>동-</span>@ann.Ho<span>호</span>
+                            </td>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">차량번호 : </span> @ann.Car_Num
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">차 종 : </span> @ann.Car_Name
+                            </td>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">소유자 : </span> @ann.OwnerName
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">연락처 : </span> @ann.Mobile
+                            </td>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">등록일 : </span> @ann.ResisterDate.ToShortDateString()
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">등록번호 : </span> @ann.Sort_Aid
+                            </td>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">취소일 : </span> @ann.MoveDate.ToShortDateString()
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">이사여부 : </span>
+                                @if (@ann.Move == "A")
+                                {
+                                    <span style="color: blue">거주중</span>
+                                }
+                                else if (ann.Move == "B")
+                                {
+                                    <span style="color: firebrick">등록취소</span>
+                                }
+                                else
+                                {
+                                    <span style="color: green">에러</span>
+                                }
+
+                            </td>
+                            <td>
+                                <span class="bi-book-half"></span>&nbsp;<span style="font-weight:bold">관계 : </span> @ann.Relation
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer text-light">
+                    @if (ann.Files_Count > 0)
+                    {
+                        <input id="Button1" type="button" class="btn btn-outline-success btn-sm" title="첨부된 징빙 서류 보려면 클릭하세요." value="첨부파일 보기" @onclick="btnFilesViewsOpen" />
+                    }
+                    &nbsp;&nbsp;&nbsp;
+                    <input id="Button1" type="button" class="btn btn-outline-dark btn-sm" title="차량등록증 첨부 열기" value="차량등록증" @onclick="btnFilesOpen" />&nbsp;&nbsp;
+                    <input id="Button1" type="button" class="btn btn-outline-dark btn-sm" title="팝업 닫기" value="닫기" @onclick="btnViewsClose" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@*차량등록 목록*@
+<div class="card" style="margin-top: 10px">
+    <div class="card-header">
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <h6>
+                        <span class="bi-truck-flatbed"></span> 등록된 차량 목록
+                    </h6>
+                </td>
+                <td>
+                    
+                    <span>총 등록 차량 수 : </span> @string.Format("{0: ###,###.##}", CarCount) <span>대</span>
+                </td>
+                <td class="text-right">
+                    
+                    <button type="button" title="새로등록하기" class="btn btn-outline-dark btn-sm" @onclick="OnNewInsert"><span class="bi-folder-plus"> </span>&nbsp; 새로 등록</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <div class="row" style="margin-top: 5px; margin-bottom: 5px">
+
+            <div class="col-md-2">
+                <div class="input-group">
+                    <div class="input-group-append">
+                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-house"></i>&nbsp; 동</span>
+                    </div>
+                    <select id="Select1" class="form-control" style="font-size: 0.9em" @onchange="onDongSearch">
+                        <option>=동선택=</option>
+                        @foreach (var it in pnn)
+                            {
+                            <option value="@it.Dong">@it.Dong</option>
+                        }
+                        <option value="140A">140A</option>
+                        <option value="140B">140B</option>
+                        <option value="140C">140C</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="input-group">
+                    <div class="input-group-append">
+                        <span class="input-group-text" style="font-size: 0.9em"><i class="bi bi-house"></i>&nbsp; 호</span>
+                    </div>
+                    <select id="Select1" class="form-control" style="font-size: 0.9em" @onchange="onHoSearch">
+                        <option>=호선택=</option>
+                        @foreach (var it in qnn)
+                            {
+                            <option value="@it.Ho">@it.Ho</option>
+                        }
+                        <option value="관리실">관리실</option>
+                        <option value="외부인">외부인</option>
+                        <option value="상기">상가</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-append">
+                        <span class="input-group-text" style="font-size: 0.9em" title="자량 뒷 번호로 해당 차량 찾기"><i class="bi bi-house"></i>&nbsp; 뒤자리로 검색</span>
+                    </div>
+                    <input id="txtCarNumbers" type="text" style="font-size: 0.9em" @bind="NumberSearch" class="form-control" placeholder="차량 뒷번호 입력하세요." />
+                    <div class="input-group-prepend">
+                        <input id="btnsearch" type="button" class="btn btn-primary btn-sm" value="검색" @onclick="OnNumbersSearch" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div>
+            <table class="table table-sm table-hover" style="font-size: 0.9em">
+                <tr style="background-color: ghostwhite">
+                    <th class="text-center">번호</th>
+                    <th class="text-center">동호</th>
+                    <th class="text-center">차량번호</th>
+                    <th class="text-center">차 종</th>
+                    <th class="text-center">차 주</th>
+                    <th class="text-center">연락처</th>
+                    <th class="text-center">등록번호</th>
+                    <th class="text-center">등록일</th>
+                    <th class="text-center">등록여부</th>
+                    <th class="text-center">첨부파일</th>
+                    <th class="text-center">선택</th>
+                </tr>
+                @foreach (var it in bnn)
+                {
+            <tr>
+                <td class="text-center" style="vertical-align:middle" @onclick="() => btnByAid(it)">
+                    @string.Format("{0: ###,###.##}", (intNum--))
+                </td>
+                <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">@it.Dong - @it.Ho</td>
+                <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">@it.Car_Num</td>
+                <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">@it.Car_Name</td>
+                <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">@it.OwnerName</td>
+                <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">@it.Mobile</td>
+                <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">@it.Sort_Aid</td>
+                <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">@it.ResisterDate.ToShortDateString()</td>
+                <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">
+                    @if (it.Move == "A")
+                    {
+                        <span>등록함</span>
+                    }
+                    else
+                    {
+                        <span>등록취소</span>
+                    }
+                </td>
+                <td class="text-center" style="vertical-align: middle" @onclick="() => btnByAid(it)">@it.Files_Count</td>
+                <td class="text-center" style="vertical-align: middle">
+                    <input id="Button1" class="btn btn-link btn-sm" type="button" @onclick="() => btnByAid(it)" value="상세" /> &nbsp;
+                    <input id="Button1" class="btn btn-link btn-sm" type="button" @onclick="() => btnByEdit(it)" value="수정" />
+                </td>
+            </tr>
+                }
+            </table>
+            <div class="col-md-12">
+                <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*파일 첨부 올리기*@
+@if (FileInsert == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: antiquewhite">
+                    <h5 class="modal-title"><span class="bi-file-code"></span> 첨부파일 입력</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+
+                    <div style="margin-top: 10px">
+
+                        <p>
+                            <InputFile OnChange="LoadFiles" class="custom-file" style="font-size: 0.9em" multiple></InputFile>
+                        </p>
+                        @if (isLoading)
+                        {
+                            <p style="text-align: center">
+                                <img src="/images/loader.gif" height="40" />
+                            </p>
+                            <p>Progress: @string.Format("{0:P0}", progressPercent)</p>
+                        }
+
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="background-color: ghostwhite">
+                    <button type="button" class="btn btn-secondary" @onclick="FilesClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*파일 보기 모달품*@
+@if (FileViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h5 class="modal-title"><span class="bi-file-code"></span> 첨부파일 보기</h5>
+                    
+                </div>
+                <div class="modal-body">                    
+
+                    @if (Files_Count > 0)
+                    {
+                        <div style="height: 500px; overflow-y: scroll; overflow-x: hidden">
+
+                            @foreach (var files in Files_Entity)
+                            {
+                                if (OnExtension(files.Sw_FileName) == ".pdf")
+                                {
+                                    <div>
+                                        <embed src="/UpFiles/Car_Infor/@files.Sw_FileName" type="application/pdf" style="width: 100%; height: 650px" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    if (Dul.BoardLibrary.IsPhoto(files.Sw_FileName))
+                                    {
+                                        <div>
+                                            <img src="/UpFiles/Car_Infor/@files.Sw_FileName" style="width: 900px;" class="img-thumbnail" />
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                        <div style="height: 40px; overflow-y: hidden; overflow-x: scroll">
+                            @foreach (var item in Files_Entity)
+                            {
+                                @Dul.StringLibrary.CutString(item.Sw_FileName, 16) <span>&nbsp;</span> <button id="fileRemove" class="btn btn-link" @onclick="() => ByFileRemove(item)">삭제</button>
+                            }
+                        </div>                        
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="FilesViewsClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,164 @@
+﻿@page "/Admin/Staff/Seal_Photo"
+
+<div class="card">
+    <div class="card-header">
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <span style="font-size: 1.1em; font-weight: bold">
+                        <span class="bi bi-list-check"></span> &nbsp; 결재 도장 정보 목록
+                    </span>
+                </td>
+                <td>
+                </td>
+                <td class="text-right">
+                    <button class="btn btn-primary btn-sm" @onclick="btnOpen"><span class="bi-box-arrow-in-right"></span> &nbsp; 새로 등록</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        @if (ann == null)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" height="100" />
+            </p>
+        }
+        else if (ann.Count < 1)
+        {
+            <p style="text-align:center">
+                <h4>입력된 데이터가 없습니다.</h4>
+            </p>
+        }
+        else
+        {
+            <table class="table table-sm" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color: whitesmoke">
+                        <th class="text-center">
+                            일련번호
+                        </th>
+                        <th class="text-center">
+                            파일명
+                        </th>
+                        <th class="text-center">
+                            파일타입
+                        </th>
+                        <th class="text-center">
+                            단지 코드
+                        </th>
+                        <th class="text-center">
+                            사용자
+                        </th>
+                        <th class="text-center">
+                            도장이미지
+                        </th>
+                        <th class="text-center">
+                            입력일
+                        </th>
+                        <th class="text-center">
+                            버튼
+                        </th>
+                    </tr>
+                </thead>
+                @foreach (var st in ann)
+                {
+                    <tbody>
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle">
+                                @st.Aid
+                            </td>
+                            <td style="text-align:center; vertical-align:middle">
+                                @st.FileName
+                            </td>
+                            <td style="text-align:center; vertical-align:middle">
+                                @st.FileType
+                            </td>
+                            <td style="text-align:center; vertical-align:middle">
+                                @st.AptCode
+                            </td>
+                            <td style="text-align:center; vertical-align:middle">
+                                @st.User_Code
+                            </td>
+                            <td style="text-align:center; vertical-align:middle">
+                                <img src="data:image/jpg;base64,@Convert.ToBase64String(st.Photo)" height="45" alt="" />
+                            </td>
+                            <td style="text-align:center; vertical-align:middle">
+                                @st.PostDate.ToShortDateString()
+                            </td>
+                            <td style="text-align:center; vertical-align:middle">
+                                <input id="ByEdit" class="btn btn-link btn-sm" @onclick="() => ByEdit(st)" type="button" value="수정" />
+                                <input id="ByAid" class="btn btn-link btn-sm" @onclick="() => ByRemove(st.Aid)" type="button" value="삭제" />
+                            </td>
+                        </tr>
+                    </tbody>
+                }
+            </table>
+            <div class="col-md-12">
+                <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+            </div>
+        }
+    </div>
+</div>
+
+@*수선항목 입력*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: cornflowerblue; color: white">
+                    <h5 class="modal-title"><span class="bi-house-door"></span>&nbsp;@strTitle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <table width="100%" style="margin-bottom: 5px">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;아이디</span></div>
+                                    <input id="User_Code" name="User_Code" style="font-size: 0.9em;" value="@bnn.User_Code" @onchange="OnUserCode" class="form-control" type="text" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;이름</span></div>
+                                    <input id="strUserName" name="strUserName" style="font-size: 0.9em;" value="@strUserName" class="form-control" type="text" />
+                                </div>
+                            </td>
+                        </tr>
+                        @*<tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;파일타입</span></div>
+                                    <input id="FileType" name="FileType" style="font-size: 0.9em;" @bind="bnn.FileType" class="form-control" type="text" />
+                                </div>
+                            </td>
+                        </tr>*@
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;파일선택</span></div>
+
+                                    <InputFile OnChange="fileUp" class="custom-select"></InputFile>
+
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}

@@ -1,0 +1,1 @@
+﻿Select Top 15 * From A Where Aid Not In (Select Top (15 * @Page) Aid From A Where AptCode = @AptCode Order By Aid Desc) and a.AptCode = @AptCode Order By Aid Desc

@@ -1,0 +1,392 @@
+﻿@page "/Check/Input/Input"
+
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <h6> <span class="bi-check-square"></span>&nbsp;시설물 점검 등록</h6>
+                </td>
+                <td></td>
+                <td class="text-right" width="250">
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp;점검대상</span></div>
+                        <select id="slcObject" class="custom-select" style="font-size: 0.9em" value="@strObject_Code" @onchange="onObject" >
+                            <option value="Z">=시설물 선택=</option>
+                            @foreach (var it in coe)
+                            {
+                                <option value="@it.Check_Object_Code">@it.Check_Object_Name</option>
+                            }
+                        </select>
+
+                    </div>
+                </td>
+                <td width="250">
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp;점검주기</span></div>
+                        <select id="slcCycle" class="custom-select" style="font-size: 0.9em" value="@strCycle_Code" @onchange="OnCheck">
+                            <option value="Z">=점검주기선택=</option>
+                            @foreach (var it in cce)
+                            {
+                                <option value="@it.Check_Cycle_Code">@it.Check_Cycle_Name</option>
+                            }
+                        </select>
+
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        @if (strItems_being > 0)
+        {
+        <table class="table table-sm" style="font-size: 0.9em; margin-bottom: 0px">
+            <tr style="background-color:ghostwhite; color:darkolivegreen">
+                <th class="text-center">
+                    번호
+                </th>
+                <th class="text-center">
+                    점검대상
+                </th>
+                <th class="text-center">
+                    점검주기
+                </th>
+                <th class="text-center">
+                    점검사항
+                </th>
+                <th class="text-center">
+                    점검결과
+                </th>
+                <th class="text-center">
+                    점검선택
+                </th>
+            </tr>
+            @if (clie == null)
+            {
+                <tr>
+                    <td colspan="7" style="text-align:center">
+                        <p>
+                            <img src="/images/loader.gif" />
+                        </p>
+                    </td>
+                </tr>
+
+            }
+            else
+            {
+                @foreach (var st in cite)
+                {
+                    <tr>
+                        <td class="text-center" style="vertical-align: middle">
+                            @st.CheckItemsID
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            @st.Check_Object_Name
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            @st.Check_Cycle_Name
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            @Dul.StringLibrary.CutString(st.Check_Items, 56)
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            @FuncEffect_A(st.Check_Items_Code, st.Check_Cycle_Code, Apt_Code)
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            <input id="Button1" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByAid(st.CheckItemsID)" value="점 검" />&nbsp;
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+        <div class="col-md-12">
+            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+        </div>
+        }
+        else
+        {
+        <span style="font-size: 1em; color: red">선택된 내용이 없습니다.</span>
+        }
+
+
+    </div>
+</div>
+
+<div class="card" style="margin-top: 5px">
+    <div class="card-header">
+        <h6> <span class="bi-check-square"></span>&nbsp;시설물 점검 등록</h6>
+    </div>
+
+    <div class="card-body">
+        @if (strList_being > 0)
+        {
+        <table class="table table-sm" style="font-size: 0.9em">
+            <tr style="background-color:ghostwhite">
+                <th class="text-center">
+                    번호
+                </th>
+                <th class="text-center">
+                    점검일
+                </th>
+                <th class="text-center">
+                    점검 사항
+                </th>
+                <th class="text-center">
+                    점검 결과
+                </th>
+                <th class="text-center">
+                    조치 내용
+                </th>
+                <th class="text-center">
+                    점검자
+                </th>
+                @*<th class="text-center">
+            사진입력
+            </th>*@
+                <th class="text-center">
+                    버튼
+                </th>
+            </tr>
+
+            @if (clie == null)
+            {
+                <tr>
+                    <td colspan="7" style="text-align:center">
+                        <p>
+                            <img src="/images/loader.gif" />
+                        </p>
+                    </td>
+                </tr>
+                
+            }
+            else
+            {
+                @foreach (var st in clie)
+                {
+                    <tr>
+                        <td align="center" style="vertical-align: middle">
+                            @st.CheckID
+                        </td>
+                        <td align="center" style="vertical-align: middle">
+                            @st.Check_Year<span>년</span> @st.Check_Month<span>월</span> @st.Check_Day<span>일</span>
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            @Dul.StringLibrary.CutString(st.Check_Items, 46)
+                        </td>
+                        <td align="center" style="vertical-align: middle">
+                            @st.Check_Effect_Name
+                        </td>
+                        <td class="text-center" style="vertical-align: middle">
+                            @st.Check_Details
+                        </td>
+                        <td align="center" style="vertical-align: middle">
+                            @st.UserName
+                        </td>
+
+
+                        <td align="center" style="vertical-align: middle">
+
+                            @if (st.Files_Count > 0)
+                            {
+                                <input id="btnSelect" type="button" value="사진보기" class="btn btn-link btn-sm" @onclick="(() => FileViewsBy(st.CheckID))" title="첨부된 사진 보기" /> <span>&nbsp;</span>
+                            }
+
+                            <input id="btnSelectA" type="button" value="사진첨부" class="btn btn-link btn-sm" @onclick="(() => FiledBy(st.CheckID))" title="사진 올리기" />
+                            <input id="btnSelectB" type="button" value="삭제" class="btn btn-link btn-sm" style="color:red" @onclick="(() => btnRemove(st))" title="점검내용 삭제" /><input id="btnSelectC" type="button" value="수정" class="btn btn-link btn-sm" @onclick="(() => btnEdit(st))" title="점검내용 수정" />
+
+                        </td>
+                    </tr>
+                }
+            }
+
+
+
+        </table>
+            <div class="col-md-12">
+                <DulPager.DulPagerComponent Model="pagerA" PageIndexChanged="PageIndexChangedA"></DulPager.DulPagerComponent>
+            </div>
+        }
+        else
+        {
+            <span style="font-size: 1em; color: red">점검된 내용이 없습니다.</span>
+        }
+    </div>
+</div>
+
+
+@*입력 모달*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="vertical-align: middle">
+                    <h5 class="modal-title"><span class="bi-check-circle-fill"></span> 점검된 내용 목록</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ViewsClose">
+                            <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <table class="table" style="font-size: 0.9em; border-bottom:solid; border-bottom-width: 1px; margin-bottom: 0px;">
+                            <tr>
+                                <td width="50%">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp;점검대상</span></div>
+                                        <input id="txtPeriod" style="font-size: 0.9em" name="Name" @bind="@strObject_Name" class="form-control" type="text" readonly="readonly" />
+
+                                    </div>
+                                </td>
+                                <td rowspan="2">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <span style="font-size: 1em; font-weight: bold">점검내용 : </span><span style="font-size: 0.9em"> @cite_A.Check_Items</span>
+                                        </div>
+                                    </div>
+                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp;점검주기</span></div>
+                                        <input id="txtPeriod" style="font-size: 0.9em" name="Name" @bind="@strCycle_Name" class="form-control" type="text" readonly="readonly" />
+
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp;날짜</span></div>
+                                        <input id="txtdate" style="font-size: 0.9em" name="Name" @bind="@dbDate" class="form-control" type="date" required />
+
+                                    </div>
+                                </td>
+                                <td rowspan="2">
+                                    <textarea id="txtDetails" class="form-control" style="font-size: 0.9em" @bind="@bnn.Check_Details" rows="4"></textarea>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp;결과</span></div>
+                                        <select id="sltEffect" class="custom-select" style="font-size: 0.9em" value="@bnn.Check_Effect_Code" @onchange="onEffect">
+                                            <option value="Z">=결과 선택=</option>
+
+                                            <option value="itmCode9">양호</option>
+                                            <option value="itmCode8">요주의</option>
+                                            <option value="itmCode7">요수리</option>
+                                            <option value="itmCode6">이용금지</option>
+                                            <option value="itmCode11">적합(O)</option>
+                                            <option value="itmCode12">부적합(X)</option>
+                                            <option value="itmCode10">해당없음</option>
+                                        </select>
+                                    </div>
+
+                                    @*<div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp;점검결과</span></div>
+                                        <input id="txtPeriod" style="font-size: 0.9em" name="Name" @bind="@strCycle_Name" class="form-control" type="text" readonly="readonly" />
+
+                                    </div>*@
+                                </td>
+                            </tr>
+                            
+                        </table>
+                    </div>
+                    
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button>
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="ViewsClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*파일 첨부 올리기*@
+@if (FileInsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><span class="bi-file-code"></span> 첨부파일 입력</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+
+                    <div style="margin-top: 10px">
+
+                        <p>
+                            <InputFile OnChange="LoadFiles" class="custom-file" style="font-size: 0.9em" multiple></InputFile>
+                        </p>
+                        @if (isLoading)
+                        {
+                            <p style="text-align: center">
+                                <img src="/images/loader.gif" height="40" />
+                            </p>
+                        }
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary" @onclick="btnFileSave">저장</button>*@
+                    <button type="button" class="btn btn-secondary" @onclick="FilesClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*파일 보기 모달품*@
+@if (FileViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h5 class="modal-title"><span class="bi-file-code"></span> 첨부파일 보기</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+
+                    @if (Files_Count > 0)
+                    {
+                        <div style="height: 500px; overflow-y: scroll; overflow-x: hidden">
+
+                            @foreach (var files in Files_Entity)
+                            {
+                                <div class="text-center">
+                                    <img src="/UpFiles/Check/@files.Sw_FileName" alt="" class="img-thumbnail" />
+                                </div>
+                            }
+
+                            @foreach (var it in Files_Entity)
+                            {
+                                <div>
+                                    <input id="btnSelectA" type="button" value="@it.Sw_FileName" class="btn btn-link btn-sm" @onclick="(() => ByFileRemove(it))" title="첨부파일 올리기" />
+                                </div>
+                            }
+                        </div>
+                    }
+
+
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" @onclick="FilesViewsClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

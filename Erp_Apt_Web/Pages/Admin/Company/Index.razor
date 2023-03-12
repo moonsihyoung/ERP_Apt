@@ -1,0 +1,398 @@
+﻿@page "/Admin/Company"
+
+<div class="card">
+    <div class="card-header">
+        <table style="width: 100%">
+            <tr>
+                <td style="font-size: 1.1em">
+                    <span class="bi-alarm-fill"> </span>&nbsp; <span style="font-weight:bold"> 공동주택 위탁 계약 정보 목록</span>
+                </td>
+                <td>
+                    @pager.RecordCount<span>건</span>
+                </td>
+                <td style="text-align: right">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnOpen"><span class="bi-door-open-fill"></span>&nbsp;새로등록</button>
+                    <button type="button" class="btn btn-success btn-sm" @onclick="btnAllList"><span class="bi-door-open-fill"></span>&nbsp;전체목록</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <table class="table table-sm" style="font-size: 0.9em">
+            <thead>
+                <tr style="background-color:whitesmoke;">
+                    <th style="text-align: center">
+                        번호
+                    </th>
+                    <th style="text-align: center">
+                        단지명
+                    </th>
+                    <th style="text-align: center">
+                        관리자
+                    </th>
+                    <th style="text-align: center">
+                        입찰방법
+                    </th>
+                    <th style="text-align: center">
+                        시작일
+                    </th>
+                    <th style="text-align: center">
+                        종료일
+                    </th>
+                    <th style="text-align: center">
+                        계약금액
+                    </th>
+                    <th style="text-align: center">
+                        입력일
+                    </th>
+                    <th style="text-align: center">
+                        버튼
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ann == null)
+                {
+                    <tr>
+                        <td style="text-align:center" colspan="9">
+                            <img src="/images/loader.gif" />
+                        </td>
+                    </tr>
+                }
+                else if (ann.Count == 0)
+                {
+                    <tr>
+                        <td style="text-align:center" colspan="9">
+                            입력된 정보가 없습니다. ............
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var st in ann)
+                    {
+                        <tr>
+                            <td style="text-align: center; vertical-align: middle" @onclick="() => ByDetails(st)">
+                                @st.Aid
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" @onclick="() => ByDetails(st)">
+                                @st.Apt_Name
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" @onclick="() => ByDetails(st)">
+                                @Staff_Name(st.Apt_Code)
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" @onclick="() => ByDetails(st)">
+                                @st.Tender @st.Bid
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" @onclick="() => ByDetails(st)">
+                                @st.Contract_start_date.ToShortDateString()
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" @onclick="() => ByDetails(st)">
+                                @st.Contract_end_date.ToShortDateString()
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" @onclick="() => ByDetails(st)">
+                                @string.Format("{0: ###,###.##}", st.Contract_Sum)<span>원</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" @onclick="() => ByDetails(st)">
+                                @st.PostDate.ToShortDateString()
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                <input id="Button11" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByEdit(st)" value="수정" />
+                                <input id="Button12" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemove(st)" value="삭제" />
+                            </td>
+                        </tr>
+                    }
+                }
+                <tr>
+                    <td colspan="9">
+                        <div class="col-md-12">
+                            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+
+
+    </div>
+    <div class="card-footer">
+        @Apt_Name
+    </div>
+</div>
+
+@*..... 새로 등록 모달 폼*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:burlywood">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="margin-bottom: 0px">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span> &nbsp;공동주택명</span></div>
+                                    <input id="txtApt_Name" name="txtApt_Name" style="font-size: 0.9em" value="@strApt" @onchange="OnAptList" class="form-control" type="text" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span> &nbsp; 위탁사</span></div>
+                                    <input id="txtCor_Name" name="txtCor_Name" style="font-size: 0.9em" value="신원티엠씨" class="form-control" type="text" />
+                                </div>
+                            </td>
+                        </tr>
+                        </table>
+                    <table class="table table-sm">
+                        <tr>
+                            <td colspan="2">
+                                <table class="table table-sm" style="font-size:0.9em">
+                                    <thead>
+                                        <tr style="background-color: whitesmoke">
+                                            <th style="text-align:center; vertical-align:middle">
+                                                아파트 코드
+                                            </th>
+                                            <th style="text-align:center; vertical-align:middle">
+                                                아파트명
+                                            </th>
+                                            <th style="text-align:center; vertical-align:middle">
+                                                주소
+                                            </th>
+                                            <th style="text-align:center; vertical-align:middle">
+                                                사용검사일
+                                            </th>
+                                            <th style="text-align:center; vertical-align:middle">
+                                                세대수
+                                            </th>
+                                            <th style="text-align:center; vertical-align:middle">
+                                                버튼
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (apt.Count == 0)
+                                        {
+                                            <tr>
+                                                <td colspan="6">
+                                                    정보가 없습니다.
+                                                </td>
+
+                                            </tr>
+                                        }
+                                        else if (apt == null)
+                                        {
+                                            <tr style="text-align:center">
+                                                <td colspan="6">
+                                                    <img src="/images/loader.gif" height="70" />
+
+                                                </td>
+
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            @foreach (var st in apt)
+                                            {
+                                                <tr>
+                                                    <td style="vertical-align: middle" class="text-center">
+                                                        @st.Apt_Code
+                                                    </td>
+                                                    <td style="vertical-align: middle" class="text-center">
+                                                        @st.Apt_Name
+                                                    </td>
+                                                    <td style="vertical-align: middle" class="text-center">
+                                                        @st.Apt_Adress_Sido @st.Apt_Adress_Gun
+                                                    </td>
+                                                    <td style="vertical-align: middle" class="text-center">
+                                                        @st.AcceptancedOfWork_Date.ToShortDateString()
+                                                    </td>
+                                                    <td style="vertical-align: middle" class="text-center">
+                                                        @st.HouseHold_Num
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button @onclick="() => OnApt(st)" class="btn btn-link btn-sm">선택</button>
+                                                    </td>
+                                                </tr>
+                                            }
+
+                                            <tr>
+                                                <td colspan="6">
+                                                    <div class="col-md-12">
+                                                        <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="table" style="font-size: 0.9em">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-dash"></span>&nbsp; 공동주택명</span></div>
+                                    <input id="Apt_Name" style="font-size: 0.9em" name="Apt_Name" @bind="bnn.Apt_Name" class="form-control" type="text" placeholder="공동주택명  입력" readonly="readonly" required />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-dash"></span>&nbsp; 위탁업체</span></div>
+                                    <input id="Company_Name" style="font-size: 0.9em" name="Company_Name" @bind="bnn.Company_Name" class="form-control" type="text" placeholder="위탁업체  입력" required />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span>&nbsp;입찰방법</span></div>
+                                    <select id="Tender" class="custom-select" style="font-size: 0.9em" @bind="bnn.Tender" required>
+                                        <option value="">::입찰선택::</option>
+                                        <option value="일반경쟁">일반경쟁</option>
+                                        <option value="제한경쟁">제한경쟁</option>
+                                        <option value="부대입찰">부대입찰</option>
+                                        <option value="수의계약">수의계약</option>
+                                        <option value="기타">기타</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-dash"></span>&nbsp; 낙찰방법</span></div>
+                                    <select id="Bid" class="custom-select" style="font-size: 0.9em" @bind="bnn.Bid" required>
+                                        <option value="">::낙찰선택::</option>
+                                        <option value="최저가">최저가</option>
+                                        <option value="최고가">최고가</option>
+                                        <option value="적격심사">적격심사</option>
+                                        <option value="수의계약">수의계약</option>
+                                        <option value="재계약">재계약</option>
+                                        <option value="기타">기타</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-dash"></span>&nbsp; 시작일</span></div>
+                                    <input id="Contract_start_date" style="font-size: 0.9em" name="Contract_start_date" @bind="bnn.Contract_start_date" class="form-control" type="date" placeholder="계약 시작일  입력" required />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-dash"></span>&nbsp; 종료일</span></div>
+                                    <input id="Contract_end_date" style="font-size: 0.9em" name="Contract_end_date" value="@strDate" @onchange="OnDate" class="form-control" type="date" placeholder="계약 종료일 입력" required />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-dash"></span>&nbsp; 계약금액</span></div>
+                                    <input id="Contract_Sum" style="font-size: 0.9em" name="Contract_Sum" @bind="bnn.Contract_Sum" class="form-control" type="number" placeholder="계약 총액  입력" required />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-dash"></span>&nbsp; 계약기간</span></div>
+                                    <input id="Contract_Period" style="font-size: 0.9em" name="Contract_Period" @bind="bnn.Contract_Period" class="form-control" type="number" placeholder="계약 종료일 입력" readonly="readonly" required />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <textarea id="Intro" rows="5" @bind="@bnn.Intro" class="form-control" placeholder="이곳에 지시내용을 입력해 주세요." style="min-width: 100%; font-size: 0.9em"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (Views == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseV">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="font-size: 0.9em; margin-bottom: 0px">
+                        <tr>
+                            <td>
+                               공동주택명 : @bnn.Apt_Name
+                            </td>
+                            <td>
+                                업체명 : @bnn.Company_Name
+                            </td>
+                            <td>
+                                계약분류 : @SortName(bnn.ContractSort)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                입찰방법 : @bnn.Tender
+                            </td>
+                            <td>
+                                낙찰방법 : @bnn.Bid
+                            </td>
+                            <td>
+                                계약일 : @bnn.Contract_date.ToShortDateString()
+                            </td>
+                        </tr>
+                        <tr>
+                            
+                            <td>
+                                계약시작일 : @bnn.Contract_start_date.ToShortDateString()
+                            </td>
+                            <td>
+                                계약종료일 : @bnn.Contract_end_date.ToShortDateString()
+                            </td>
+                            <td>
+                                계약기간 : @bnn.Contract_Period<span>일간</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                계약주체 : @bnn.ContractMainAgent
+                            </td>
+                            <td>
+                                계약금액 : @string.Format("{0: ###,###.##}", bnn.Contract_Sum)<span>원</span>
+                            </td>
+                            <td>
+                                입력일 : @bnn.PostDate.ToShortDateString()
+                            </td>
+                        </tr>
+                        <tr style="border-bottom :solid; border-bottom-width: 1px; border-block-color: darkgray">
+                            <td colspan="3">
+                                기타 : @bnn.Intro
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;*@
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseV">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

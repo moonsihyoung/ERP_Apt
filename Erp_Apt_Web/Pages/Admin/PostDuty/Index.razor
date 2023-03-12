@@ -1,0 +1,264 @@
+﻿@page "/Admin/PostDuty"
+
+<div class="card">
+    <div class="card-header">
+        <table style="width: 100%">
+            <tr>
+                <td style="font-size: 1.1em">
+                    <span class="bi-alarm-fill"> </span>&nbsp; <span style="font-weight:bold"> 부서 직책 관리</span>
+                </td>
+                <td>
+                </td>
+                <td style="text-align: right">
+                    <button id="fileRemove" class="btn btn-primary btn-sm" @onclick="btnPostInput"><span class="bi-check-square"></span>&nbsp;부서 등록</button>
+                    <button id="fileRemove" class="btn btn-primary btn-sm" @onclick="btnDutyInput"><span class="bi-check-square"></span>&nbsp;직책 등록</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 col-6">
+                <table class="table table-sm" style="font-size: 0.9em">
+                    <thead>
+                        <tr style="background-color:whitesmoke;">
+                            <th style="text-align: center">
+                                식별코드
+                            </th>
+                            <th style="text-align: center">
+                                부서명
+                            </th>
+                            <th style="text-align: center">
+                                구분
+                            </th>
+                            <th style="text-align: center">
+                                설명
+                            </th>
+                            <th style="text-align: center">
+                                입력일
+                            </th>
+
+                            <th style="text-align: center">
+                                입력자 아이피
+                            </th>
+                            <th style="text-align: center">
+                                버튼
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (annP == null)
+                        {
+                            <tr>
+                                <td style="text-align:center" colspan="8">
+                                    <img src="/images/loader.gif" />
+                                </td>
+                            </tr>
+                        }
+                        else if (annP.Count == 0)
+                        {
+                            <tr>
+                                <td style="text-align:center" colspan="8">
+                                    입력된 정보가 없습니다. ............
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var st in annP)
+                            {
+                                <tr>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.PostCode
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.PostName
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.Division
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.Etc
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.PostDate.ToShortDateString()
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.PostIP
+                                    </td>
+                                    <td>
+                                        <input id="Button13" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByUpdateP(st)" value="수정" />
+                                        <input id="Button13" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemoveP(st)" value="삭제" />
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+            <div class="col-md-6 col-6">
+                <table class="table table-sm" style="font-size: 0.9em">
+                    <thead>
+                        <tr style="background-color:whitesmoke;">
+                            <th style="text-align: center">
+                                식별코드
+                            </th>
+                            <th style="text-align: center">
+                                상위코드
+                            </th>
+                            <th style="text-align: center">
+                                부서명
+                            </th>
+                            <th style="text-align: center">
+                                구분
+                            </th>
+                            <th style="text-align: center">
+                                설명
+                            </th>
+                            <th style="text-align: center">
+                                입력일
+                            </th>
+
+                            <th style="text-align: center">
+                                입력자 아이피
+                            </th>
+                            <th style="text-align: center">
+                                버튼
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (annD == null)
+                        {
+                            <tr>
+                                <td style="text-align:center" colspan="8">
+                                    <img src="/images/loader.gif" />
+                                </td>
+                            </tr>
+                        }
+                        else if (annD.Count == 0)
+                        {
+                            <tr>
+                                <td style="text-align:center" colspan="8">
+                                    입력된 정보가 없습니다. ............
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var st in annD)
+                            {
+                                <tr>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.DutyCode
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.PostCode
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.DutyName
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.Division
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.Etc
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.PostDate.ToShortDateString()
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        @st.PostIP
+                                    </td>
+                                    <td>
+                                        <input id="Button13" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByUpdateD(st)" value="수정" />
+                                        <input id="Button13" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemoveD(st)" value="삭제" />
+                                    </td>
+                                </tr>
+
+                            }
+                            <tr>
+                                <td colspan="8">
+                                    <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer" style="text-align:right">
+        <span style="font-size: 1em; font-weight: bold">신원티엠씨(TMC)</span>
+    </div>
+</div>
+
+
+@if (InsertViewsD == "B")
+{
+    <div class="modal fade show d-block" id="subInput" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:beige">
+                    <h6 class="modal-title"><span class="bi-people"></span>  &nbsp; 직책 입력</h6>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span> 부서</span></div>
+                                    <select id="svPost" class="custom-select" value="@bnnD.PostCode" style="font-size: 0.9em" @onchange="OnPost" required>
+                                        <option value="">=부서선택=</option>
+                                        @foreach (var it in Post)
+                                        {
+                                            <option value="@it.PostCode" title="@it.Etc"> @it.PostName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span> 구분</span></div>
+                                    <select id="Division" class="custom-select" @bind="bnnD.Division" style="font-size: 0.9em" required>
+                                        <option value="">=구분선택=</option>
+                                        <option value="A">공동주택</option>
+                                        <option value="B">업체</option>
+                                        <option value="C">자생단체</option>
+                                        <option value="D">기타</option>
+
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-mortarboard"></span>&nbsp;직책명</span></div>
+                                    <input id="DutyName" style="font-size: 0.9em" name="DutyName" @bind="bnnD.DutyName" class="form-control" type="text" placeholder="직책명  입력" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <textarea id="Etc" rows="2" @bind="bnnD.Etc" class="form-control" placeholder="이곳에 직책 설명을 입력해 주세요." style="min-width: 100%; font-size: 0.9em"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer" style="background-color: burlywood">
+
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSaveD"><span class="bi-save"> 저장</span></button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseD"><span class="bi-x"> 닫기</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}

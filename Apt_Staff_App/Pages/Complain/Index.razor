@@ -1,0 +1,193 @@
+﻿@page "/Complain"
+
+
+<div class="card">
+    <div class="card-header">
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <span style="font-size: 1em; font-weight: bold"> <img src="/images/appealview.gif" height="25" /> &nbsp; 민원 신청 목록</span>
+                </td>
+                <td style="text-align: right">
+                    @string.Format("{0: ###,###.##}", pager.RecordCount)<span>건</span>&nbsp;&nbsp;
+                </td>
+                <td align="right">
+
+                    <button id="Appeal" class="btn btn-primary btn-sm" @onclick="onAppealInsert_Open">민원 등록</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body" style="width: auto; overflow-x: scroll">
+
+        <table width="100%">
+            <tr>
+                <td>
+                    <div class="input-group">
+                        <select id="slcPost" class="custom-select custom-select-sm" style="font-size: 0.9em" value="@strBicSort" @onchange="onSortA">
+                            <option value="">=대분류선택=</option>
+                            @foreach (var it in snnA)
+                            {
+                                <option value="@it.Sort">@it.Sort</option>
+                            }
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group">
+
+                        <select id="strSmallSort" class="custom-select custom-select-sm" style="font-size: 0.9em" value="@strSmallSort" @onchange="onSortB">
+                            <option value="">=소분류 선택=</option>
+                            @foreach (var it in snnB)
+                            {
+                                <option value="@it.Bloom_Code">@it.Asort</option>
+                            }
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group">
+
+                        <select id="strDong" class="custom-select custom-select-sm" style="font-size: 0.9em" value="@strDong" @onchange="OnDong">
+                            <option value="">=동 선택=</option>
+                            @foreach (var it in Dong)
+                            {
+                                <option value="@it.Dong">@it.Dong</option>
+                            }
+                        </select>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="input-group">
+
+                        <select id="strHo" class="custom-select custom-select-sm" style="font-size: 0.9em" value="@strHo" @onchange="OnHo">
+                            <option value="">=호 선택=</option>
+                            @foreach (var it in Ho)
+                            {
+                                <option value="@it.Ho">@it.Ho</option>
+                            }
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 시작일</span></div>
+                        <input id="txtStartDate" style="font-size: 0.9em" value="@strStartDate" class="form-control form-control-sm" type="date" @onchange="OnStartDate" />
+                        @*<input id="txtPeriod" style="font-size: 0.9em" @bind="@apDate" class="form-control" type="date" />*@
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 종료일</span></div>
+                        <input id="txtEndDate" style="font-size: 0.9em" value="@strEndDate" class="form-control" type="date" @onchange="OnEndDate" />
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 단어</span></div>
+                        <input id="strKeyword" style="font-size: 0.9em" name="strKeyword" value="@strKeyword" class="form-control" type="text" @onchange="OnKeyWord" />
+                    </div>
+                </td>
+            </tr>
+        </table>
+        @if (ann == null)
+        {
+            <p>
+                <img src="/images/loader.gif" />
+            </p>
+        }
+        else if (ann.Count == 0)
+        {
+            <p style="text-align:center">
+                <span>데이터가 없습니다.</span>
+            </p>
+        }
+        else
+        {
+            <table class="table table-sm table-hover" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color: ghostwhite">
+                        <th class="text-center" style="vertical-align:middle">번호</th>
+                        <th class="text-center" style="vertical-align:middle">입주자명</th>
+                        <th class="text-center" style="vertical-align:middle">동호</th>
+                        <th class="text-center" style="vertical-align:middle">접수자</th>
+                        @*<th class="text-center" style="vertical-align:middle">완료</th>*@
+                        <th class="text-center" style="vertical-align:middle">분류</th>
+                        <th class="text-center" style="vertical-align:middle">연락처</th>
+                        <th class="text-center" style="vertical-align:middle">민원내용</th>
+                        <th class="text-center" style="vertical-align:middle">접수일</th>
+                        <th class="text-center" style="vertical-align:middle">처리여부</th>
+                        <th class="text-center" style="vertical-align:middle">결재여부</th>
+                        <th class="text-center" style="vertical-align:middle">만족도</th>
+                        <th class="text-center" style="vertical-align:middle">버튼</th>
+                        @*<th class="text-center" style="width: 10%; vertical-align:middle">날짜</th>*@
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var it in ann)
+                    {
+
+                        <tr>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @string.Format("{0: ###,###.##}", it.Num)
+                                @*@string.Format("{0: ###,###.##}", (intNum--))*@
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">@it.apName</td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @it.apDongNo<span>동</span><span class="bi-arrow-right"></span>@it.apHoNo<span>호</span>
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">@it.apReciever</td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">@it.apTitle</td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">@it.apHp</td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                <span title="@it.apContent"> <a class="btn btn-link btn-sm" @onclick="() => ByAid(it)"> @Dul.StringLibrary.CutString(it.apContent, 20)</a></span>
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">@it.apYear - @it.apMonth - @it.apDay</td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @if (it.innViw == "B")
+                                {
+                                    <span style="color: blue">처리</span>
+                                }
+                                else
+                                {
+                                    <span style="color: red">미처리</span>
+                                }
+
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @if (it.Complete == "A" && PostDuty == "관리소장")
+                                {
+                                    <span style="color:red; font-size: 0.9em">미결재</span>
+                                }
+                                else
+                                {
+                                    @*<span style="color:red; font-size: 0.9em">미결재</span>*@
+                                    @DecisionResult(Apt_Code, it.Num.ToString(), "Appeal", PostDuty, User_Code, it.Complete)
+                                }
+
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">@it.apSatisfaction</td>
+                            <td class="text-center" style="vertical-align:middle">
+                                @*<input id="Button1" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByAid(it.Num)" value="상세" />&nbsp;*@
+                                <input id="Button1" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByEdit(it)" value="수정" />&nbsp;
+                                <input id="Button1" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemove(it)" value="삭제" />
+                            </td>
+                        </tr>
+
+                    }
+
+                </tbody>
+
+            </table>
+        }
+        @*</div>*@
+
+        <div class="col-md-12">
+            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+        </div>
+
+    </div>
+</div>

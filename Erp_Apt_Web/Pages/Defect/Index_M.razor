@@ -1,0 +1,192 @@
+﻿@page "/Defect/Index_M" 
+@page "/defectM"
+
+<div>
+    <div style="font-size: 1em">
+
+        <div class="input-group">
+            <div class="input-group-prepend"><span class="input-group-text"><span class="bi-file-earmark-binary"></span> 접수부서</span></div>
+            <input id="txtdfPost" name="Name" @bind="@bnn.dfPost" class="form-control" type="text" readonly="readonly" required />
+
+        </div>
+
+        <div class="input-group">
+            <div class="input-group-prepend"><span class="input-group-text"><span class="bi-file-earmark-binary"></span> 접수자</span></div>
+            <input id="txtdfApplicant" name="Name" @bind="@User_Name" class="form-control" type="text" readonly="readonly" required />
+
+        </div>
+
+        <div class="input-group">
+            <div class="input-group-prepend"><span class="input-group-text"><span class="bi-file-earmark-binary"></span> 날짜</span></div>
+            <input id="txtPeriod" name="Name" @bind="@bnn.DefectDate" class="form-control" type="date" required />
+
+        </div>
+
+        <div class="input-group">
+            <div class="input-group-prepend"><span class="input-group-text"><span class="bi-clipboard-check"></span> 구분</span></div>
+            <select id="txtPrivate" class="custom-select" @onchange="onPrivate" required>
+                <option value="공용">공용</option>
+                <option value="전용">전용</option>
+            </select>
+        </div>
+
+
+        @if (Private == "A")
+        {
+
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><span class="bi-clipboard-check"></span> 대분류</span></div>
+                <select id="Select1" class="custom-select" @onchange="onSort" required>
+                    <option value="Z">=민원 대분류 선택=</option>
+                    <option value="건축설비">건축설비</option>
+                    <option value="기계설비">기계설비</option>
+                    <option value="전기설비">전기설비</option>
+                    <option value="소방설비">소방설비</option>
+                    <option value="통신설비">통신설비</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><span class="bi-clipboard-check"></span> 소분류</span></div>
+                <select id="Select1" class="custom-select" @onchange="onAsort" required>
+                    <option value="Z">=민원 소분류 선택=</option>
+
+                    @foreach (var it in abe)
+                    {
+                        <option value="@it.Asort">@it.Asort</option>
+                    }
+                </select>
+            </div>
+
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><span class="bi-file-earmark-binary"></span> 하자보증</span></div>
+                <input id="txtPeriod" name="txtPeriod" @bind="@Period" class="form-control" type="number" readonly="readonly" />
+                <div class="input-group-append"><span class="input-group-text">년</span></div>
+            </div>
+
+            <div class="input-group">
+
+                <select id="Select1" class="custom-select text-center" @onchange="onDong" required>
+                    <option value="Z">=동선택=</option>
+                    @foreach (var it in apt_PoplesH)
+                    {
+                        <option value="@it.Dong">@it.Dong</option>
+                    }
+
+                </select>
+                <div class="input-group-prepend"><span class="input-group-text"> 동 </span></div>
+            </div>
+
+            <div class="input-group">
+
+                <select id="Select1" class="custom-select text-center" @onchange="onHo" required>
+                    <option value="Z">=호선택=</option>
+                    @foreach (var it in apt_PoplesA)
+                    {
+                        <option value="@it.Ho">@it.Ho</option>
+                    }
+                </select>
+                <div class="input-group-prepend"><span class="input-group-text"> 호 </span></div>
+            </div>
+
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><span class="bi-file-earmark-binary"></span> 이메일</span></div>
+                <input id="txtPeriod" name="Name" @bind="@apt_PoplesB.Email" class="form-control" type="text" placeholder="메일 입력" />
+            </div>
+
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><span class="bi-file-earmark-binary"></span> 모바일</span></div>
+                <input id="txtPeriod" name="Name" @bind="@apt_PoplesB.Hp" class="form-control" type="tel" placeholder="연락처 입력" />
+            </div>
+
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><span class="bi-file-earmark-binary"></span> 민원인</span></div>
+                <input id="txtPeriod" name="Name" @bind="@apt_PoplesB.InnerName" class="form-control" type="text" placeholder="하자 신청인 입력" />
+            </div>
+
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><span class="bi-file-earmark-binary"></span> 관계</span></div>
+                <input id="txtPeriod" name="Name" @bind="@bnn.Relation" class="form-control" type="text" placeholder="세대주와 관계 입력" />
+            </div>
+
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><span class="bi-file-earmark-binary"></span> 장소</span></div>
+                <input id="txtPosition" name="Name" @bind="bnn.Position" class="form-control" type="text" placeholder="하자 발생 장소" required />
+            </div>
+
+        }
+        else if (Private == "B")
+        {
+
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><span class="bi-clipboard-check"></span> 대분류</span></div>
+                <select id="Select1" class="custom-select" @onchange="onBloomA" required>
+                    <option value="Z">=공용 대분류 선택=</option>
+                    <option value="전기 설비">전기 설비</option>
+                    <option value="소방 설비">소방 설비</option>
+                    <option value="승강기 설비">승강기 설비</option>
+                    <option value="건물 외부">건물 외부</option>
+                    <option value="건물 내부">건물 내부</option>
+                    <option value="오수·배수·정화조·위생·급수 설비">오수·배수·정화조·위생·급수 설비</option>
+                    <option value="방송·통신·네트워크 설비">방송·통신·네트워크 설비</option>
+                    <option value="냉방·난방·급탕·환기·가스 설비">냉방·난방·급탕·환기·가스 설비</option>
+                    <option value="기타 설비">기타 설비</option>
+
+                </select>
+            </div>
+
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><span class="bi-clipboard-check"></span> 중분류</span></div>
+                <select id="Select1" class="custom-select" @onchange="onBloomB" required>
+                    <option value="Z">=중분류 선택=</option>
+                    @foreach (var it in boo_b)
+                    {
+                        <option value="@it.B_N_B_Name">@it.B_N_B_Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><span class="bi-clipboard-check"></span> 소분류</span></div>
+                <select id="Select1" class="custom-select" @onchange="onBloomC" required>
+                    <option value="Z">=소분류 선택=</option>
+                    @foreach (var it in boo_c)
+                    {
+                        <option value="@it.B_N_C_Name">@it.B_N_C_Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><span class="bi-clipboard-check"></span> 소분류</span></div>
+                <select id="Select1" class="custom-select" @onchange="onBloomD" required>
+                    <option value="Z">=장소 선택=</option>
+                    @foreach (var it in boo_d)
+                    {
+                        <option value="@it.Bloom">@it.Bloom</option>
+                    }
+                </select>
+            </div>
+
+            <div>
+                <label style="color:red">@bnn.Period</label>년
+
+            </div>
+
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><span class="bi-file-earmark-binary"></span> 관계</span></div>
+                <input id="txtRelation" name="txtPeriod" @bind="@bnn.Relation" class="form-control" type="text" />
+            </div>
+
+        }
+    </div>
+    <div>
+        <textarea id="txtdfContent" rows="4" class="form-control" @bind="bnn.dfContent" placeholder="하자 내용 입력" required></textarea>
+    </div>
+    <div class="text-right">
+        @bnn.Bloom_Name_A &nbsp; &nbsp;  @bnn.Bloom_Name_B &nbsp; &nbsp;  @bnn.Bloom_Name_C &nbsp; &nbsp; &nbsp;
+        <input id="Button1" class="btn btn-outline-danger btn-sm" type="button" @onclick="onbtnSave" value="저 장" />&nbsp; &nbsp;
+        @*<input id="Button1" class="btn btn-outline-primary btn-sm" type="button" @onclick="onbtnClose" value="닫 기" />*@
+    </div>
+</div>
+    

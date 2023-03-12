@@ -1,0 +1,394 @@
+﻿@page "/Complain/Details"
+@page "/Complain/Details/{Code:int}"
+
+@if (ann.Num < 1)
+{
+    <p style="text-align:center">
+        <img src="/images/loader.gif" />
+    </p>
+}
+else
+{
+    <div class="card">
+        <div class="card-header">
+
+            <h5> <span class="bi-book-half"></span> 민원 신청 정보</h5>
+
+        </div>
+        <div class="card-body">
+            <table style="width: 100%">
+                <tr>
+                    <td style="width: 50%"></td>
+                    <td class="text-right">
+                        <table align="right">
+                            <tr>
+                                @foreach (var st in app)
+                                {
+                                    <td style="width: 70px">
+                                        <table style="width: 100%; background-color: white; color: black; font-size: 0.7em">
+                                            <tr style="border-style:dotted; border-width:1px; border-color: black; ">
+                                                <td style="text-align: center" height="18px">
+                                                    @st.PostDuty
+                                                </td>
+                                            </tr>
+                                            <tr style="border-width: 1px; border-style:dotted; border-color: black; ">
+                                                <td style="text-align: center" height="50px">
+                                                    @if (FuncShowOK(st.PostDuty, st.AptCode, ann.Num) != "결재하기")
+                                                    {
+                                                        @*@Html.Raw(moo.Seal_View(st.PostDuty, st.AptCode, ViewBag.apNum, "Appeal"))*@
+                                                        <img src="data:image/jpg;base64,@Convert.ToBase64String(sealImage(st.AptCode, st.Post, st.Duty, ann.Num, "Appeal", strUserCode))" height="45" alt="" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="/images/inn.gif" alt="" />
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr style="border-width: 1px; border-style:dotted; border-color: black; ">
+                                                <td style="text-align: center; vertical-align:middle; color:black" height="25px">
+                                                    @if (decisionA != "결재하기")
+                                                    {
+                                                        @decisionA
+                                                    }
+                                                    else
+                                                    {
+                                                        if (PostDuty == st.PostDuty)
+                                                        {
+                                                            <a style="background-color: orange; color: white" @onclick="btnDecision">결재하기</a>
+                                                            @*<button type="button" style="font-size: 0.8em; background-color: blue; color: white">결재하기</button>*@
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>해당없음</span>
+                                                        }
+
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                }
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <div>
+                <table class="table table-bordered" style="font-size: 0.9em">
+                    <tr>
+                        <td style="width: 20%; vertical-align: middle"><span class="bi-book"></span>&nbsp; <span style="font-weight: bold">동호</span> : &nbsp; @ann.apDongNo<span>동</span> - @ann.apHoNo<span>호</span></td>
+                        <td style="width: 20%; vertical-align: middle"><span class="bi-book"></span>&nbsp; <span style="font-weight: bold">민원인</span> : &nbsp; @ann.apName </td>
+                        <td style="width: 20%; vertical-align: middle;"><span class="bi-book"></span>&nbsp; <span style="font-weight: bold">접수자</span> : &nbsp; @ann.apReciever </td>
+
+                        <td rowspan="3" style="width: 40%; overflow-y:scroll"><span class="bi-book"></span>&nbsp; <span style="font-weight: bold">민원내용</span> : &nbsp; <br /> @((MarkupString)lblContent)</td>
+
+                    </tr>
+                    <tr>
+
+                        <td style="width: 20%; vertical-align: middle;"><span class="bi-book"></span>&nbsp; <span style="font-weight: bold">분류</span> : &nbsp; @ann.apTitle</td>
+                        <td style="vertical-align: middle;"><span class="bi-book"></span>&nbsp; <span style="font-weight: bold">접수일</span> : &nbsp; @ann.apYear<span>년-</span>@ann.apMonth<span>월-</span>@ann.apDay<span>일</span></td>
+                        <td style="vertical-align: middle"><span class="bi-book"></span>&nbsp; <span style="font-weight: bold">연락처</span> : &nbsp; @ann.apHp </td>
+
+                    </tr>
+                    <tr>
+
+                        <td style="vertical-align: middle"><span class="bi-book"></span>&nbsp; <span style="font-weight: bold">접수부서</span> : &nbsp; @ann.apPost </td>
+                        <td style="vertical-align: middle" colspan="2">
+
+                            <span class="bi-book"></span>&nbsp; <span style="font-weight: bold">만족도</span> : &nbsp; @if (ann.apSatisfaction == "" || ann.apSatisfaction == null)
+                            {
+                                <span style="color: red">미처리</span>
+                            }
+                            else
+                            {
+                                <span style="color: blue">@ann.apSatisfaction</span>
+                            }
+                            &nbsp;&nbsp;
+                            <span class="bi-book"></span>&nbsp; <span style="font-weight: bold">처리</span> : &nbsp; @if (ann.innViw == "A")
+                            {
+                                <span style="color: red">미처리</span>
+                            }
+                            else if (ann.innViw == "C")
+                            {
+                                <span style="color: green">진행중</span>
+                            }
+                            else
+                            {
+                                <span style="color: blue">처리</span>
+                            }
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td class="text-right" style="height: 50px; vertical-align:middle" colspan="4">
+                            <button type="button" class="btn btn-outline-primary btn-sm" @onclick="() => FiledBy(ann.Num)"><span class="bi-tools"></span>&nbsp; 사진 첨부</button>&nbsp;&nbsp;&nbsp;
+                            <button type="button" class="btn btn-outline-info btn-sm" @onclick="() => CompleteBy(ann.Num)"><span class="bi-tools"></span>&nbsp; 처리완료 등록</button>&nbsp;&nbsp;&nbsp;
+
+                            @if (Files_Count > 0)
+                            {
+                                <button type="button" class="btn btn-outline-dark btn-sm" @onclick="() => FileViewsBy(ann.Num)"><span class="bi-tools"></span>&nbsp; 사진 보기</button>
+                            }
+
+
+                        </td>
+
+
+
+                    </tr>
+                </table>
+            </div>
+
+            <div>
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <img src="/images/sub/icon_step01.png" height="40" alt="" /> &nbsp; <span style="font-size: 1.1em"> 민원 처리 정보</span>
+                        </td>
+                        <td style="text-align:right">
+                            <button type="button" class="btn btn-secondary btn-sm" @onclick="() => Worked(ann.Num)"><span class="bi-tools"></span>&nbsp; 민원처리 등록</button>&nbsp;&nbsp;&nbsp;
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+            <div>
+
+                @foreach (var its in snn)
+                {
+                    <table class="table table-bordered" style="font-size: 0.9em">
+                        <tr>
+                            <td style="vertical-align:middle; height: 50px">
+                                <span class="bi-book"></span>&nbsp; <span style="font-weight: bold">처리일자</span> : &nbsp; @its.subDate.ToShortDateString()
+                            </td>
+                            <td style="vertical-align:middle;">
+                                <span class="bi-book"></span>&nbsp; <span style="font-weight: bold">처리부서</span> : &nbsp; @its.subPost
+                            </td>
+                            <td rowspan="3" style="overflow-y:scroll; width: 50%">
+                                <span class="bi-book"></span>&nbsp; <span style="font-weight: bold">처리내용</span> : &nbsp; <br />
+                                @((MarkupString)Dul.HtmlUtility.EncodeWithTabAndSpace(its.subContent))
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="vertical-align:middle; height: 50px">
+                                <span class="bi-person-plus"></span>&nbsp; <span style="font-weight: bold">민원처리자</span> : &nbsp;
+                                @its.subWorker
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right" colspan="2" style="height: 50px; vertical-align:middle">
+                                @if (ann.Complete == "A")
+                                {
+                                    <button type="button" class="btn btn-outline-dark btn-sm" @onclick="() => btnSubEdit(its)"><span class="bi-tools"></span>&nbsp; 수 정</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => btnSubRemove(its.subAid)"><span class="bi-tools"></span>&nbsp; 삭 제</button>
+                                }
+
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </div>
+
+
+
+        </div>
+        <div class="card-footer">
+
+            <div class="text-right">
+                @if (apAgoBe > 0)
+                {
+                    <button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => btnAgo(ann.Num)"><span class="bi-tools"></span>&nbsp; 이 전</button>
+                }
+                else
+                {
+                    <span style="font-weight: bold; color: red">이전 정보 없음</span>
+                }
+                &nbsp; &nbsp; &nbsp;
+                <button type="button" class="btn btn-outline-success btn-sm" @onclick="btnList"><span class="bi-tools"></span>&nbsp; 목록으로</button>&nbsp; &nbsp; &nbsp;
+                @if (apNextBe > 0)
+                {
+                    <button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => btnNext(ann.Num)"><span class="bi-tools"></span>&nbsp; 다 음</button>
+                }
+                else
+                {
+                    <span style="font-weight: bold; color: red">다음 정보 없음</span>
+                }
+                &nbsp; &nbsp; &nbsp;
+            </div>
+
+        </div>
+    </div>
+}
+
+@*민원처리 내용 입력*@
+@if (Views == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:beige">
+                    <h6 class="modal-title"><span class="bi-pen-fill"></span> 민원처리 내용 입력</h6>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+                    <div style="margin-top: 10px" class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-calendar-date"></span>날짜</span></div>
+                        <input id="txtWorker" style="font-size: 0.9em" name="Name" @bind="@bnn.subDate" class="form-control" type="date" placeholder="작업일 입력" required />
+                    </div>
+                    <div class="input-group" style="margin-top: 10px">
+                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-check2-circle"></span>부서</span></div>
+                        <select id="Select1" class="form-control" style="font-size: 0.9em" value="@PostCode" @onchange="onPost">
+                            <option value="">=부서=</option>
+                            @foreach (var it in pnn)
+                            {
+                                <option value="@it.PostCode">@it.PostName</option>
+                            }
+                        </select>
+
+                        <select id="Select1" style="font-size: 0.9em" class="form-control" @onchange="onCareer">
+                            <option>=선택=</option>
+                            @foreach (var it in wnn)
+                            {
+                                <option value="@it.User_Name">@it.User_Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div style="margin-top: 10px">
+                        <input id="txtWorker" name="Name" style="font-size: 0.9em" @bind="@Worker" class="form-control" type="text" placeholder="작업자 입력" required />
+                    </div>
+                    <div style="margin-top: 10px">
+                        <textarea id="subContent" style="font-size: 0.9em" name="subContent" @bind="@bnn.subContent" class="form-control" rows="4" placeholder="작업내용 입력" required></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button>
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="WorkClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}
+
+@*파일 첨부 올리기*@
+@if (FileInsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="bi-file-code"></span> &nbsp; 첨부파일 입력</h6>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+
+                    <div style="margin-top: 10px">
+
+                        <p>
+                            <InputFile OnChange="OnFileChage" class="custom-select" multiple accept="image/png,image/gif,image/jpeg"></InputFile>
+                        </p>
+
+                        @if (imageDataUrls.Count > 0)
+                        {
+                            <h4>Images</h4>
+                            <div style="height: 400px; overflow-y: scroll; overflow-x: hidden">
+                                @foreach (var imageDataUrl in imageDataUrls)
+                                {
+                                    <img class="img-thumbnail m-1" src="@imageDataUrl" />
+                                }
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnFileSave">저장</button>
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="FilesClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}
+
+@*파일 보기 모달품*@
+@if (FileViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-file-code"></span> &nbsp; 첨부파일 보기</h6>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+
+                    @if (Files_Count > 0)
+                    {
+                        <div style="height: 500px; overflow-y: scroll; overflow-x: hidden">
+
+                            @foreach (var files in Files_Entity)
+                            {
+                                <div class="text-center">
+                                    <img src="/Complains/@files.Sw_FileName" alt="" class="img-thumbnail" />
+                                </div>
+                            }
+                        </div>
+                    }
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="FilesViewsClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}
+
+@*민원 종결 여부 모달폼*@
+@if (CompleteViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-list-task"></span> &nbsp; 민원 종결 입력</h6>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span>&nbsp;만족도</span></div>
+                        <select id="fsfe" class="custom-select" style="font-size: 0.9em" @onchange="onSortAAA" required>
+                            <option value="Z">=업체 대분류 선택=</option>
+                            <option value="매우 만족">매우 만족 </option>
+                            <option value="만족">만족 </option>
+                            <option value="보통">보통</option>
+                            <option value="불만족">불만족 </option>
+                            <option value="매우 불만족">매우 불만족 </option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="font-size: 0.9em">
+
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnAppealCompleteSave">저장</button> &nbsp; &nbsp; &nbsp;
+
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnAppealCompleteClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}

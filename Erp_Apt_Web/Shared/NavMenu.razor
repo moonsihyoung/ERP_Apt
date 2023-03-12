@@ -1,0 +1,356 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href=""><img src="/images/favicon.ico" class="rounded" height="30" /><span style="font-weight:bold">&nbsp;신원TMC 관리전산</span></a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu" style="height: 100%; overflow-y: auto; overflow-x: hidden">
+    <div>
+        <div>
+            <ul class="nav flex-column">
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                        <span class="bi-house-fill" aria-hidden="true">&nbsp;</span> 홈으로
+                    </NavLink>
+                </li>
+
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="" @onclick="()=>expandSubMenuB= !expandSubMenuB">
+                        <span class="bi-newspaper" style="font-weight:bold" aria-hidden="true">&nbsp; 일반관리 업무</span> 
+                    </NavLink>
+                    @if (expandSubMenuB)
+                    {
+                        <ul class="nav flex-column">
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/CarInfor">
+                                    <span class="bi-car-front" style="font-size: 0.9em" aria-hidden="true">&nbsp; 입주민 차량관리</span> 
+                                </NavLink>
+                            </li>
+
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Bike">
+                                    <span class="bi-bicycle" style="font-size: 0.9em" aria-hidden="true">&nbsp; 입주민 자전거관리</span> 
+                                </NavLink>
+                            </li>
+
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Common">
+                                    <span class="bi-check2-all" style="font-size: 0.9em" aria-hidden="true">&nbsp; 입주자 카드 관리</span>
+                                </NavLink>
+                            </li>
+
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Admin/Apt_People">
+                                    <span class="bi-person-add" style="font-size: 0.9em" aria-hidden="true">&nbsp; 홈 회원 관리</span> 
+                                </NavLink>
+                            </li>
+
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Admin/CostDebit/Index_Cost">
+                                    <span class="bi-coin" style="font-size: 0.9em" aria-hidden="true">&nbsp; 관리비 정보</span> 
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Admin/CostDebit/Index_Usage">
+                                    <span class="bi-database-fill-add" style="font-size: 0.9em" aria-hidden="true">&nbsp; 사용량 정보</span> 
+                                </NavLink>
+                            </li>
+
+
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Plans/WorksPlan">
+                                    <span class="bi-list-columns-reverse" style="font-size: 0.9em" aria-hidden="true">&nbsp; 각종 계획업무</span> 
+                                </NavLink>
+                            </li>
+
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Presents">
+                                    <span class="bi-person-lock" style="font-size: 0.9em" aria-hidden="true">&nbsp; 로그 정보 관리 </span>
+                                </NavLink>
+                            </li>
+                        </ul>
+
+                    }
+                </li>
+
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="" @onclick="()=>expandSubMenuC= !expandSubMenuC">
+                        <span class="bi-tools" style="font-weight:bold" aria-hidden="true">&nbsp; 시설물관리 업무</span>
+                    </NavLink>
+                    @if (expandSubMenuC)
+                    {
+                        <ul class="nav flex-column">
+
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Stocks">
+                                    <span class="bi-key" style="font-size: 0.9em" aria-hidden="true">&nbsp; 자재관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Defect">
+                                    <span class="bi-gear-wide-connected" style="font-size: 0.9em" aria-hidden="true">&nbsp; 하자관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Facilities/Facility_Place">
+                                    <span class="bi-playstation" style="font-size: 0.9em" aria-hidden="true">&nbsp; 작업장소 관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Facilities/Informations">
+                                    <span class="bi-map" style="font-size: 0.9em" aria-hidden="true">&nbsp; 시설물 이력 관리</span>
+                                </NavLink>
+                            </li>
+                        </ul>
+
+                    }
+                </li>
+
+
+
+
+
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="" @onclick="()=>expandSubMenu= !expandSubMenu">
+                        <span class="bi-building-fill-check" style="font-weight:bold" aria-hidden="true">&nbsp; 단지 관리자 메뉴</span>
+                    </NavLink>
+                    @if (expandSubMenu)
+                    {
+                        <ul class="nav flex-column">
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Staff">
+                                    <span class="bi-person-rolodex" style="font-size: 0.9em" aria-hidden="true">&nbsp; 직원정보 관리</span>
+                                </NavLink>
+                            </li>
+                            @*<li class="nav-item px-3">
+                                    <NavLink class="nav-link" href="/Common">
+                                        <span class="oi oi-person" aria-hidden="true"></span> 입주자정보 관리
+                                    </NavLink>
+                                </li>*@
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Accountings">
+                                    <span class="bi-coin" style="font-size: 0.9em" aria-hidden="true">&nbsp; 지출결의서</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Stocks">
+                                    <span class="bi-cash-coin" style="font-size: 0.9em" aria-hidden="true">&nbsp; 자재정보 관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Company">
+                                    <span class="bi-building-fill-exclamation" style="font-size: 0.9em" aria-hidden="true">&nbsp; 업체정보 관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Contract">
+                                    <span class="bi-ui-checks" style="font-size: 0.9em" aria-hidden="true">&nbsp; 계약정보 관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Labor">
+                                    <span class="bi-ui-radios-grid" style="font-size: 0.9em" aria-hidden="true">&nbsp; 근로계약 관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/ProofReports">
+                                    <span class="bi-stack" style="font-size: 0.9em" aria-hidden="true">&nbsp; 제 증명 관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Admin/Approval">
+                                    <span class="bi-stickies" style="font-size: 0.9em" aria-hidden="true">&nbsp; 결재 관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Admin/Staff/Seal_Photo">
+                                    <span class="bi-steam" style="font-size: 0.9em" aria-hidden="true">&nbsp; 결재 도장 관리</span>
+                                </NavLink>
+                            </li>
+
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Reports/Apt_Index">
+                                    <span class="bi-receipt-cutoff" style="font-size: 0.9em" aria-hidden="true">&nbsp; 보고서 관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Community">
+                                    <span class="bi-wifi" style="font-size: 0.9em" aria-hidden="true">&nbsp; 커뮤니티 관리</span>
+                                </NavLink>
+                            </li>
+
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Admin/Checks">
+                                    <span class="bi-wrench-adjustable-circle" style="font-size: 0.9em" aria-hidden="true">&nbsp; 시설물 점검 관리</span>
+                                </NavLink>
+                            </li>
+                        </ul>
+                    }
+                </li>
+
+
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="" @onclick="()=>expandSubMenuA = !expandSubMenuA">
+                        <span class="bi-mailbox" style="font-weight:bold" aria-hidden="true">&nbsp; 관리자 메뉴</span> 
+                    </NavLink>
+                    @if (expandSubMenuA)
+                    {
+                        <ul class="nav flex-column">
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Staff/All_Staff_Index">
+                                    <span class="bi-person-lines-fill" style="font-size: 0.9em" aria-hidden="true">&nbsp; 가입자정보 관리</span>
+                                </NavLink>
+                            </li>
+
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Staff/Career_Index">
+                                    <span class="bi-shop-window" style="font-size: 0.9em" aria-hidden="true">&nbsp; 배치자정보 관리</span>
+                                </NavLink>
+                            </li>
+
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Apt">
+                                    <span class="bi-house-gear-fill" style="font-size: 0.9em" aria-hidden="true">&nbsp; 공동주택 관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Staff/Placement_Index">
+                                    <span class="bi-building-fill-check" style="font-size: 0.9em" aria-hidden="true">&nbsp; 관리자 배치 관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Reports">
+                                    <span class="bi-list-nested" style="font-size: 0.9em" aria-hidden="true">&nbsp; 보고서 관리</span>
+                                </NavLink>
+                            </li>
+
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Admin/Labor_contract">
+                                    <span class="bi-ui-checks-grid" style="font-size: 0.9em" aria-hidden="true">&nbsp; 근로계약 관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/ProofReports/Index_Admin">
+                                    <span class="bi-stack-overflow" style="font-size: 0.9em" aria-hidden="true">&nbsp; 제증명 관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Admin/Company">
+                                    <span class="bi-boxes" style="font-size: 0.9em" aria-hidden="true">&nbsp; 위탁계약 관리</span>
+                                </NavLink>
+                            </li>
+
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Community/Index_Admin">
+                                    <span class="bi-wifi" style="font-size: 0.9em" aria-hidden="true">&nbsp; 커뮤니티 관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Admin/Presents">
+                                    <span class="bi-person-lock" style="font-size: 0.9em" aria-hidden="true">&nbsp; 로그 관리</span>
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="/Admin/Labor_contract/Wge">
+                                    <span class="bi-bank2" style="font-size: 0.9em" aria-hidden="true">&nbsp; 최저임금 관리</span>
+                                </NavLink>
+                            </li>
+                            @*<li class="nav-item px-3">
+                                    <NavLink class="nav-link" href="/Admin/Bloom/">
+                                        <span class="oi oi-excerpt" aria-hidden="true"></span> 업무분류 관리
+                                    </NavLink>
+                                </li>*@
+                        </ul>
+                    }
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private bool expandSubMenu;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private bool expandMenu;
+
+
+    private bool collapseNavMenuA = true;
+    private bool collapseNavMenuB = true;
+    private bool collapseNavMenuC = true;
+
+    private bool expandSubMenuA;
+    private bool expandSubMenuB;
+    private bool expandSubMenuC;
+
+    private string NavMenuCssClassA => collapseNavMenuA ? "collapse" : null;
+    private string NavMenuCssClassB => collapseNavMenuB ? "collapse" : null;
+    private string NavMenuCssClassC => collapseNavMenuC ? "collapse" : null;
+
+    private bool expandMenuA;
+    private bool expandMenuB;
+    private bool expandMenuC;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+        expandMenu = false;
+
+        collapseNavMenuA = !collapseNavMenuA;
+        expandMenuA = false;
+
+        collapseNavMenuB = !collapseNavMenuB;
+        expandMenuB = false;
+
+        collapseNavMenuC = !collapseNavMenuC;
+        expandMenuA = false;
+    }
+
+    private void ToggleSubmenu()
+    {
+        expandMenu = !expandMenu;
+        expandMenuA = !expandMenuA;
+        expandMenuB = !expandMenuB;
+        expandMenuC = !expandMenuC;
+    }
+}
+
+
+@*<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+        <nav class="flex-column">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="counter">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Counter
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="fetchdata">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+                </NavLink>
+            </div>
+        </nav>
+    </div>*@
+
+@*@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}*@

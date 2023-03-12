@@ -1,0 +1,126 @@
+﻿@page "/Check/Object"
+
+<div class="card">
+    <div class="card-header">
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <h6> <span class="bi-check-circle"></span>&nbsp; 시설물 점검 대상 관리 </h6>
+                </td>
+                <td class="text-right">
+                    <button type="button" title="점검대상 새로등록" class="btn btn-outline-dark btn-sm" @onclick="OnInputbutton"><span class="bi-tools"> </span> 점검대상 새로등록</button>&nbsp;&nbsp;
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <table class="table table-sm" style="font-size: 0.9em">
+            <thead>
+                <tr style="background-color: ghostwhite">
+                    <th class="text-center">
+                        일련번호
+                    </th>
+                    <th class="text-center">
+                        식별코드
+                    </th>
+                    <th class="text-center">
+                        검점대상
+                    </th>
+                    <th class="text-center">
+                        점검대상 설명
+                    </th>
+                    <th class="text-center">
+                        입력일
+                    </th>
+                    <th class="text-center">
+                        사용여부
+                    </th>
+                    <th class="text-center">
+                        선택
+                    </th>
+                </tr>
+            </thead>
+
+
+            @foreach (var item in bnn)
+            {
+                <tbody>
+                    <tr>
+                        <td class="text-center">
+                            @item.CheckObjectID
+                        </td>
+                        <td class="text-center">
+                            @item.Check_Object_Code
+                        </td>
+                        <td class="text-center">
+                            @item.Check_Object_Name
+                        </td>
+                        <td class="text-center">
+                            @Dul.StringHandlerStatic.CutString(item.Check_Object_Details, 40)
+                        </td>
+                        <td class="text-center">
+                            @item.PostDate
+                        </td>
+                        <td class="text-center">
+                            @if (item.Del == "A")
+                            {
+                                <span style="color:blue">사용중</span>
+                            }
+                            else
+                            {
+                                <span style="color:red">미사용</span>
+                            }
+
+                        </td>
+                        <td class="text-center" style="vertical-align:middle">
+                            @*<input id="Button1" class="btn btn-link" style="font-size: 0.9em" type="button" @onclick="() => ByAid(item)" value="상세" />*@&nbsp;
+                            <input id="Button12" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByEdit(item)" value="수정" />&nbsp;
+                            <input id="Button13" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemove(item.CheckObjectID)" value="삭제" />
+                        </td>
+                    </tr>
+                </tbody>
+            }
+        </table>
+    </div>
+</div>
+
+@* 점검 대상 등록(수정) 모달 폼*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" id="subInput" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:beige">
+                    <h5 class="modal-title"><span class="bi-people"></span>  &nbsp; 시설물 점검 대상 등록</h5>
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="margin-bottom: 0px; margin-bottom: 0px">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span> &nbsp; 점검대상</span></div>
+                                    <input id="txtCheck_Object_Name" class="form-control" style="font-size: 0.9em" @bind="ann.Check_Object_Name" type="text" />
+                                </div>
+
+                            </td>
+                        </tr>                       
+
+
+                        <tr id="vw4">
+                            <td>
+                                <textarea id="txtIntro" class="form-control" rows="4" style="min-width: 100%; font-size: 0.9em" @bind="ann.Check_Object_Details" required></textarea>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer" style="background-color: burlywood">
+
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}

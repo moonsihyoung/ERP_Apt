@@ -1,0 +1,107 @@
+﻿@page "/Admin/Details"
+
+<div>
+
+    @if (Views == "B")
+    {
+        <table class="table" style="font-size: 0.9em">
+            <tr>
+                <td>
+                    <span style="font-weight: bold">아이디 : </span> @ann.User_Code
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span style="font-weight: bold">이름 : </span> @ann.User_Name
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span style="font-weight: bold">휴대폰번호 : </span>  @ann.Mobile
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span style="font-weight: bold">출생일 : </span> @ann.Scn.ToShortDateString()
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @ann.Dong<span>동</span> @ann.Ho<span>호</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <span style="font-weight: bold">이메일 : </span> @ann.Email
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span style="font-weight: bold">소개 : </span> @ann.Intro
+                </td>
+            </tr>
+        </table>
+        <div class="text-center">
+            <button type="button" class="btn btn-primary btn-sm" @onclick="OnPassEdit"><span class="bi-pencil-fill"></span> &nbsp; 암호 수정</button>
+        </div>
+    }
+    else
+    {
+        <div>
+
+            <div>
+                <span class="bi-compass"></span><span style="font-weight:bold"> &nbsp; 암호 변경 관리</span>
+            </div>
+            <table class="table">
+                <tr>
+                    <td>
+                        <div class="input-group">
+
+                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-lock"></span> &nbsp; 현재 암호</span></div>
+                            <input id="txtBepass" name="txtBePass" style="font-size: 0.9em" value="@strBePass" @onchange="OnBePass" class="form-control" type="password" />
+                            <div class="input-group-append"><span class="input-group-text" style="font-size: 0.9em">확인</span></div>
+
+                        </div>
+                    </td>
+                </tr>
+
+                @if (EditPass == "B")
+                {
+                    <tr>
+                        <td>
+                            <div class="input-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-shield-lock-fill"></span> &nbsp; 새 암호</span></div>
+                                    <input id="txtpass" name="txtPass" style="font-size: 0.9em" @bind="Pass" class="form-control" type="password" />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="input-group">
+
+                                <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-shield-lock-fill"></span> &nbsp; 암호확인</span></div>
+                                <input id="txtpass_confirm" name="txtpass_confirm" style="font-size: 0.9em" value="@PassComform" @onchange="OnPassConform" class="form-control" type="password" />
+                                <div class="input-group-append"><span class="input-group-text" style="font-size: 0.9em">확인</span></div>
+
+                            </div>
+                        </td>
+                    </tr>
+                }
+                <tr>
+
+                    <td class="text-right">
+                        @if (EditPass == "B")
+                        {
+                            <button type="button" class="btn btn-danger btn-sm" @onclick="OnEditSave"><span class="bi-save"></span> &nbsp; 수정</button>
+                        }
+                        &nbsp;
+                        <button type="button" class="btn btn-secondary btn-sm" @onclick="OnClose"><span class="bi-door-open-fill"></span> &nbsp; 닫기</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+</div>

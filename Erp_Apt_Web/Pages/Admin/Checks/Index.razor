@@ -1,0 +1,168 @@
+﻿@page "/Admin/Checks"
+
+<div class="card">
+    <div class="card-header">
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <h6> <span class="bi-check-circle"></span>&nbsp; 시설물 점검 사항 관리 &nbsp;&nbsp;&nbsp;&nbsp; <span style="font-size: 0.9em; color : darkcyan">점검표 갯수 : @string.Format("{0: ###,###.##}", pager.RecordCount)<span>개</span></span></h6> 
+                </td>
+                <td class="text-right">
+                    <button type="button" title="점검사항 새로등록" class="btn btn-outline-dark btn-sm" @onclick="OnInsert"><span class="bi-tools"> </span> 점검표 등록</button>&nbsp;&nbsp;
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <table class="table table-sm table-hover" style="font-size: 0.9em">
+            <thead>
+                <tr style="background-color: ghostwhite">
+                    <th class="text-center">
+                        번호
+                    </th>
+                    <th class="text-center">
+                        일련번호
+                    </th>
+                    <th class="text-center">
+                        식별코드
+                    </th>
+                    <th class="text-center">
+                        점검카드명
+                    </th>
+                    <th class="text-center">
+                        점검대상
+                    </th>
+                    <th class="text-center">
+                        점검주기
+                    </th>
+                    <th class="text-center">
+                        점검내용 수
+                    </th>
+                    <th class="text-center">
+                        입력일
+                    </th>
+                    <th class="text-center">
+                        선택
+                    </th>
+                </tr>
+            </thead>
+            @foreach (var item in ann)
+            {
+                <tbody>
+                    <tr>
+                        <td class="text-center" style="vertical-align:middle">
+                            @*@item.CheckInputID*@
+                            
+                            @string.Format("{0: ###,###.##}", (intNum--))
+                        </td>
+                        <td class="text-center" style="vertical-align:middle">
+                            @item.CheckCardID
+                        </td>
+                        <td class="text-center" style="vertical-align:middle">
+                            @item.Check_Card_Code
+                        </td>
+                        <td class="text-center" style="vertical-align:middle">
+                            @item.Check_Card_Name
+                        </td>
+                        <td class="text-center" style="vertical-align:middle">
+                            @item.Check_Object_Code
+                            @*@FuncCycle(item.Check_Cycle_Code)*@
+                        </td>
+                        <td class="text-center" style="vertical-align:middle">
+                            @item.Check_Cycle_Code
+                        </td>
+                        <td class="text-center" style="vertical-align:middle">
+                            @item.Check_Items_Code
+                        </td>
+                        <td class="text-center" style="vertical-align:middle">
+                            @item.PostDate.ToShortDateString()
+                        </td>
+                        <td class="text-center" style="vertical-align:middle">
+                            <input id="Button1" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByEdit(item)" value="수정" />&nbsp;
+                            @*<input id="Button12" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByEdit(item)" value="수정" />&nbsp;*@
+                            <input id="Button13" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemove(item.CheckCardID)" value="삭제" />
+                        </td>
+                    </tr>
+                </tbody>
+            }
+        </table>
+        <div class="col-md-12">
+            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+        </div>
+    </div>
+</div>
+
+@* 점검표 새로 등록 모달 폼*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>점검대상</span></div>
+                                    <select id="Check_Object_Code" class="custom-select" @bind="bnn.Check_Object_Code" style="font-size: 0.9em">
+                                        <option value="">::점검대상선택::</option>
+                                        @foreach (var it in obj)
+                                        {
+                                            <option value="@it.Check_Object_Code">@it.Check_Object_Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>점검주기</span></div>
+                                    <select id="Check_Object_Code" class="custom-select" value="@strCycle" @onchange="OnCycle" style="font-size: 0.9em">
+                                        <option value="">::점검주기선택::</option>
+                                        @foreach (var it in cyc)
+                                        {
+                                            <option value="@it.Check_Cycle_Code">@it.Check_Cycle_Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                               <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span> &nbsp; 점검표명</span></div>
+                                        <input id="Check_Card_Name" name="Check_Card_Name" style="font-size: 0.9em" @bind="bnn.Check_Card_Name" class="form-control" type="text" readonly="readonly" />
+                                    </div>
+                                </div>
+                            </td>
+                            @*<td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span> &nbsp; 점검표 코드</span></div>
+                                        <input id="Check_Card_Code" name="Check_Card_Code" style="font-size: 0.9em" @bind="bnn.Check_Card_Code" class="form-control" type="text" readonly="readonly" />
+                                    </div>
+                                </div>
+                            </td>*@
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                               <textarea id="Check_Card_Details" class="form-control" rows="4" style="min-width: 100%; font-size: 0.9em" @bind="bnn.Check_Card_Details" required></textarea>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,8 @@
+﻿@page "/Test"
+<h3>Index</h3>
+<div class="progress" role="progressbar" aria-label="Success example" aria-valuenow="@intTo" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar bg-success" style="width: @intTo%">@intTo%</div>
+</div>
+@code {
+    public int intTo { get; set; } = 56;
+}

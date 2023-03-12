@@ -1,0 +1,54 @@
+﻿<AuthorizeView>
+    <Authorized>
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <span style="font-size: 1em; font-weight: bold; color:teal" class="bi-building">&nbsp;@Apt_Name</span>
+                </td>
+
+
+                <td>
+                    <a class="btn btn-link btn-sm" href="/Staff/Details"><span class="bi-person-check">&nbsp;@context.User.Identity.Name</span></a>
+                </td>
+                <td>
+                    <form method="post" action="/Home/LogOut">
+                        <button type="submit" class="nav-link btn btn-link btn-sm  text-decoration-none"><span class="oi oi-account-logout" style="font-size: 0.9em">&nbsp;로그아웃</span></button>
+                    </form>
+                </td>
+
+            </tr>
+        </table>
+    </Authorized>
+    <NotAuthorized>
+        <p style="font-size: 1em; text-align:center">
+            로그인되지 않았습니다. ............
+            <a class="btn btn-link btn-sm" href="/Home/Index">로그인</a>
+        </p>
+    </NotAuthorized>
+</AuthorizeView>
+@code {
+    public string Apt_Code { get; set; }
+    public string Apt_Name { get; set; }
+    public string User_Code { get; set; }
+    public int LevelCount { get; set; } = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateRef;
+
+        if (authState.User.Identity.IsAuthenticated)
+        {
+
+            Apt_Code = authState.User.Claims.FirstOrDefault(c => c.Type == "Apt_Code")?.Value;
+            User_Code = authState.User.Claims.FirstOrDefault(c => c.Type == "User_Code")?.Value;
+            Apt_Name = authState.User.Claims.FirstOrDefault(c => c.Type == "Apt_Name")?.Value;
+            LevelCount = Convert.ToInt32(authState.User.Claims.FirstOrDefault(c => c.Type == "LevelCount")?.Value);
+        }
+        else
+        {
+
+        }
+    }
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationStateRef { get; set; }
+}

@@ -1,0 +1,1587 @@
+﻿@page "/Community"
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%" style="font-size: 0.9em">
+            <tr>
+                <td>
+                    <h6><span class="bi-journal-text"> </span>&nbsp;커뮤니티 이용 목록</h6>
+                </td>
+                <td>
+                    <span style="font-weight: bold">헬스장 : @string.Format("{0: ###,###.##}", helCount)명, </span> <span style="font-weight: bold">골프장 : @string.Format("{0: ###,###.##}", gofCount)명,</span> &nbsp;&nbsp; <span style="font-weight: bold">독서실(남) : @string.Format("{0: ###,###.##}", reWCount)명,</span> &nbsp;&nbsp; <span style="font-weight: bold">독서실(여) : @string.Format("{0: ###,###.##}", reMCount)명,</span> &nbsp;&nbsp; <span style="font-weight: bold">샤워장(남) : @string.Format("{0: ###,###.##}", swMCount)명,</span> &nbsp;&nbsp; <span style="font-weight: bold">샤워장(여) : @string.Format("{0: ###,###.##}", swWCount)명</span> &nbsp;&nbsp; <br /><span style="font-weight: bold">락커 : @string.Format("{0: ###,###.##}", lakCount)명</span>
+                    &nbsp;&nbsp;<span style="font-weight: bold">스크린골프 : @string.Format("{0: ###,###.##}", intScreen)명</span>&nbsp;&nbsp; <span style="font-weight: bold">GX룸 : @string.Format("{0: ###,###.##}", GXCount)명</span>&nbsp;&nbsp; <span style="font-weight: bold">개인PT : @string.Format("{0: ###,###.##}", PTCount)명</span>
+
+                </td>
+                <td class="text-right">
+                    <button type="button" class="btn btn-outline-primary btn-sm" @onclick="btnInsert"> <span class="bi-tools"></span>&nbsp;이용자 등록</button> &nbsp;&nbsp;
+                    <button type="button" class="btn btn-outline-dark btn-sm" @onclick="btnInsertKind"> <span class="bi-card-checklist"></span>&nbsp;이용장소</button> &nbsp;&nbsp;<button type="button" class="btn btn-outline-dark btn-sm" @onclick="btnInsertTicket"> <span class="bi-card-checklist"></span>&nbsp;이용방법</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <table style="width: 100%; font-size: 0.9em; margin-bottom: 10px; margin-top: 0px">
+            <tr>
+                <td width="50%">
+                    @if (Ho_Sum > 0)
+                    {
+                        <span style="font-weight: bold">검색된 세대 합계 : </span> @string.Format("{0: ###,###.##}", Ho_Sum)<span>원</span>
+                    }
+                </td>
+                <td style="text-align: right; vertical-align:middle">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnResert"> <span class="bi-card-checklist"></span>&nbsp;처음으로</button>
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSearch"> <span class="bi-card-checklist"></span>&nbsp;검 색</button>
+
+                    <button class="btn btn-success btn-sm" @onclick="GenerateExcel">Excel</button>
+                    <button class="btn btn-success btn-sm" @onclick="GenerateExcelView">Excel(신청자 명단)</button>
+                    <button class="btn btn-primary btn-sm" @onclick="OnMonthSave">전월저장</button>
+                    <button class="btn btn-secondary btn-sm" @onclick="OnNoneNewList">신청자 정보</button>
+                    <button class="btn btn-secondary btn-sm" @onclick="OnGolfNewList">스크린골프 신청정보</button>
+                </td>
+
+            </tr>
+        </table>
+        @if (ann == null)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" />
+            </p>
+        }
+        else if (ann.Count == 0)
+        {
+            <p style="text-align:center">
+                입력된 정보가 없습니다. ............
+            </p>
+        }
+        else
+        {
+
+            <table class="table table-sm" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color:whitesmoke;">
+                        <th style="text-align: center">
+                            번호
+                        </th>
+                        <th style="text-align: center">
+                            주민코드
+                        </th>
+                        <th style="text-align: center">
+                            이용자명
+                        </th>
+                        <th style="text-align: center">
+                            동호
+                        </th>
+                        <th style="text-align: center">
+                            연락처
+                        </th>
+                        <th style="text-align: center">
+                            관계
+                        </th>
+                        <th style="text-align: center">
+                            이용시설
+                        </th>
+                        <th style="text-align: center">
+                            이용방법
+                        </th>
+                        <th style="text-align: center">
+                            신청순서
+                        </th>
+                        <th style="text-align: center">
+                            이용금액
+                        </th>
+                        <th style="text-align: center">
+                            시작일
+                        </th>
+                        <th style="text-align: center">
+                            종료일
+                        </th>
+                        <th style="text-align: center">
+                            입력일
+                        </th>
+                        <th style="text-align: center">
+                            선택
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var st in ann)
+                    {
+                        <tr>
+                            <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                <span title="@st.Etc">@st.Aid</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                <span title="@st.Etc">@st.UserCode</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                <span title="@st.Etc">@st.UserName</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                <span title="@st.Etc">@st.Dong<span>동-</span>@st.Ho<span>호</span></span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                <span title="@st.Etc">@st.Mobile</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                <span title="@st.Etc">@st.Relation</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                <span title="@st.Etc">@st.UsingKindName</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                <span title="@st.Etc">@Method(st.Ticket_Code, st.Ticket)</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                @if (strDivision == "B")
+                                {
+                                    <span class="text-danger">@OrderBy(st.Ticket_Code, st.OrderBy)</span>
+                                }
+                                else
+                                {
+                                    <span class="text-primary">@OrderBy(st.Ticket_Code, st.OrderBy)</span>
+                                }
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                <span title="@st.Etc">@string.Format("{0: ###,###.##}", st.UseCost)</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" @onclick="() => onViews(st)">
+                                <span title="@st.Etc">@st.UserStartDate.ToShortDateString()</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                <span title="@st.Etc">@st.UserEndDate.ToShortDateString()</span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                <span title="@st.Etc">@st.PostDate.ToShortDateString()</span>
+                                @if (dateD(st.PostDate) < 3)
+                                {
+                                    <span>&nbsp;</span><img src="/images/new.gif" alt="new" />
+                                }
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+
+                                <input id="Button11" class="btn btn-warning btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByEdit(st)" value="수정" />
+                                <input id="Button12" class="btn btn-danger btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemove(st)" value="삭제" />
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        }
+        <div class="col-md-12">
+            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+        </div>
+    </div>
+    <div class="card-footer" style="text-align: right">
+        <span style="font-size: 0.9em; font-weight: bold">헬스장 :</span> <span style="font-size: 0.9em"> @string.Format("{0: ###,###.##}", helSum)원</span> &nbsp; &nbsp;
+        <span style="font-size: 0.9em; font-weight: bold">골프장 :</span> <span style="font-size: 0.9em"> @string.Format("{0: ###,###.##}", gofSum)원</span>
+        &nbsp;&nbsp;
+        <span style="font-size: 0.9em; font-weight: bold">샤워장(남) :</span> <span style="font-size: 0.9em"> @string.Format("{0: ###,###.##}", swMSum)원</span>&nbsp;&nbsp;
+        <span style="font-size: 0.9em; font-weight: bold">샤워장(여) :</span> <span style="font-size: 0.9em"> @string.Format("{0: ###,###.##}", swWSum)원</span>&nbsp;&nbsp;
+        <span style="font-size: 0.9em; font-weight: bold">독서설(남) :</span> <span style="font-size: 0.9em"> @string.Format("{0: ###,###.##}", reWSum)원</span>&nbsp;&nbsp;
+        <span style="font-size: 0.9em; font-weight: bold">독서실(여) :</span> <span style="font-size: 0.9em"> @string.Format("{0: ###,###.##}", reMSum)원</span>&nbsp;&nbsp;<br />
+        <span style="font-size: 0.9em; font-weight: bold">락커 :</span> <span style="font-size: 0.9em"> @string.Format("{0: ###,###.##}", lakSum)원</span>&nbsp;&nbsp;
+        <span style="font-size: 0.9em; font-weight: bold">스크린골프 :</span> <span style="font-size: 0.9em"> @string.Format("{0: ###,###.##}", ScreenSum)원</span>&nbsp;&nbsp;
+        <span style="font-size: 0.9em; font-weight: bold">GX룸 :</span> <span style="font-size: 0.9em"> @string.Format("{0: ###,###.##}", GxSum)원</span>&nbsp;&nbsp;
+        <span style="font-size: 0.9em; font-weight: bold">개인PT :</span> <span style="font-size: 0.9em"> @string.Format("{0: ###,###.##}", PTSum)원</span>&nbsp;&nbsp;
+        <span style="font-size: 0.9em; font-weight: bold">월 합계 :</span> <span style="font-size: 0.9em"> @string.Format("{0: ###,###.##}", monthSum)원</span>&nbsp;&nbsp;
+
+    </div>
+</div>
+
+@* 스크린 골프 신청자 목록 모달 폼*@
+@if (Golf_List_Views == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseF">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    @if (ann == null)
+                    {
+                        <p style="text-align:center">
+                            <img src="/images/loader.gif" />
+                        </p>
+                    }
+                    else if (ann.Count == 0)
+                    {
+                        <p style="text-align:center">
+                            입력된 정보가 없습니다. ............
+                        </p>
+                    }
+                    else
+                    {
+                        <table class="table table-sm" style="font-size: 0.9em">
+                            <thead>
+                                <tr style="background-color:whitesmoke;">
+                                    <th style="text-align: center">
+                                        번호
+                                    </th>
+                                    <th style="text-align: center">
+                                        주민코드
+                                    </th>
+                                    <th style="text-align: center">
+                                        이용자명
+                                    </th>
+                                    <th style="text-align: center">
+                                        동호
+                                    </th>
+                                    <th style="text-align: center">
+                                        연락처
+                                    </th>
+
+                                    <th style="text-align: center">
+                                        이용시설
+                                    </th>
+                                    <th style="text-align: center">
+                                        이용방법
+                                    </th>
+                                    <th style="text-align: center">
+                                        이용금액
+                                    </th>
+                                    <th style="text-align: center">
+                                        시작일
+                                    </th>
+                                    <th style="text-align: center">
+                                        종료일
+                                    </th>
+                                    <th style="text-align: center">
+                                        입력일
+                                    </th>
+                                    <th style="text-align: center">
+                                        선택
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var st in cnList)
+                                {
+                                    <tr>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.Aid</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.UserCode</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.UserName</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.Dong<span>동-</span>@st.Ho<span>호</span></span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.Mobile</span>
+                                        </td>
+
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.UsingKindName</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.Ticket</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@string.Format("{0: ###,###.##}", st.UseCost)</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.UserStartDate.ToShortDateString()</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.UserEndDate.ToShortDateString()</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            @st.PostDate.ToShortDateString()
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle">
+                                            <input id="Button11" class="btn btn-warning btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByApproval(st.Aid)" value="승인" />
+                                            <input id="Button12" class="btn btn-danger btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemove(st)" value="삭제" />
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    }
+                    <div class="col-md-12">
+                        <DulPager.DulPagerComponent Model="pagerB" PageIndexChanged="PageIndexChangedB"></DulPager.DulPagerComponent>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseF">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* 모바일 신청자 목록 모달 폼*@
+@if (strNewList == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</h6>  <span style="font-size: 1em">@pagerA.RecordCount</span><span style="font-size: 1em">건</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseW">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    @if (ann == null)
+                    {
+                        <p style="text-align:center">
+                            <img src="/images/loader.gif" />
+                        </p>
+                    }
+                    else if (ann.Count == 0)
+                    {
+                        <p style="text-align:center">
+                            입력된 정보가 없습니다. ............
+                        </p>
+                    }
+                    else
+                    {
+                        <table class="table table-sm" style="font-size: 0.9em">
+                            <thead>
+                                <tr style="background-color:whitesmoke;">
+                                    <th style="text-align: center">
+                                        번호
+                                    </th>
+                                    <th style="text-align: center">
+                                        주민코드
+                                    </th>
+                                    <th style="text-align: center">
+                                        이용자명
+                                    </th>
+                                    <th style="text-align: center">
+                                        동호
+                                    </th>
+                                    <th style="text-align: center">
+                                        연락처
+                                    </th>
+
+                                    <th style="text-align: center">
+                                        이용시설
+                                    </th>
+                                    <th style="text-align: center">
+                                        이용방법
+                                    </th>
+                                    <th style="text-align: center">
+                                        신청순서
+                                    </th>
+                                    <th style="text-align: center">
+                                        이용금액
+                                    </th>
+                                    <th style="text-align: center">
+                                        시작일
+                                    </th>
+                                    <th style="text-align: center">
+                                        종료일
+                                    </th>
+                                    <th style="text-align: center">
+                                        입력일
+                                    </th>
+                                    <th style="text-align: center">
+                                        선택
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var st in wnn)
+                                {
+                                    <tr>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.Aid</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.UserCode</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.UserName</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.Dong<span>동-</span>@st.Ho<span>호</span></span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.Mobile</span>
+                                        </td>
+
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.UsingKindName</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@Method(st.Ticket_Code, st.Ticket)</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.OrderBy</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@string.Format("{0: ###,###.##}", st.UseCost)</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.UserStartDate.ToShortDateString()</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            <span title="@st.Etc">@st.UserEndDate.ToShortDateString()</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle" title="@st.Etc" @onclick="() => onViews(st)">
+                                            @st.PostDate.ToShortDateString()
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle">
+                                            <input id="Button11" class="btn btn-warning btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByApproval(st.Aid)" value="승인" />
+                                            <input id="Button12" class="btn btn-danger btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemove(st)" value="삭제" />
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    }
+                    <div class="col-md-12">
+                        <DulPager.DulPagerComponent Model="pagerA" PageIndexChanged="PageIndexChangedA"></DulPager.DulPagerComponent>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="OnSearch_Views">검색</button>
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseW">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*이용자 새로 등록 모달 폼*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: coral">
+                    <h6 class="modal-title" style="color: white"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+
+                                    <select id="strDong" class="custom-select" style="font-size: 0.9em; text-align:center" value="@bnn.Dong" @onchange="OnDong">
+                                        <option value="">=동 선택=</option>
+                                        @foreach (var it in Dong)
+                                        {
+                                            <option value="@it.Dong">@it.Dong</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+
+                                    <select id="strHo" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strHo" @onchange="OnHo">
+                                        <option value="">=호 선택=</option>
+                                        @foreach (var it in Ho)
+                                        {
+                                            <option value="@it.Ho">@it.Ho</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <select id="strHo" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strName" @onchange="OnName">
+                                    <option value="">=이름선택=</option>
+                                    @foreach (var it in Name)
+                                    {
+                                        <option value="@it.Num">@it.InnerName</option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 연락처</span></div>
+                                    <input id="Mobile" style="font-size: 0.9em" name="Name" @bind="bnn.Mobile" class="form-control" type="text" />
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 아이디</span></div>
+                                    <input id="UserCode" style="font-size: 0.9em" name="UserCode" @bind="bnn.UserCode" class="form-control" type="text" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <select id="strHo" class="custom-select" style="font-size: 0.9em; text-align:center" @bind="bnn.Relation">
+                                        <option value="">=관계선택=</option>
+                                        <option value="본인">본인</option>
+                                        <option value="배우자">배우자</option>
+                                        <option value="아들">아들</option>
+                                        <option value="딸">딸</option>
+                                        <option value="부">부</option>
+                                        <option value="모">모</option>
+                                        <option value="장인">장인</option>
+                                        <option value="장모">장모</option>
+                                        <option value="형제">형제</option>
+                                        <option value="자매">자매</option>
+                                        <option value="며느리">며느리</option>
+                                        <option value="사위">사위</option>
+                                        <option value="동거인">동거인</option>
+                                        <option value="기타">기타</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 시작일</span></div>
+                                    <input id="UseStartDate" style="font-size: 0.9em" name="UseStartDate" @bind="bnn.UserStartDate" class="form-control" type="date" />
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 종료일</span></div>
+                                    <input id="UseEndDate" style="font-size: 0.9em" name="UseEndDate" value="@bnn.UserEndDate.ToShortDateString()" @onchange="OnScamDays" class="form-control" type="date" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 사용일</span></div>
+                                    <input id="ScamDays" style="font-size: 0.9em; text-align: center" name="ScamDays" @bind="bnn.ScamDays" class="form-control" type="number" readonly="readonly" />
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <select id="strDong" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strUsingKindCode" @onchange="OnKind">
+                                        <option value="">=이용시설선택=</option>
+                                        @foreach (var it in annA)
+                                        {
+                                            <option value="@it.Kind_Code">@it.Kind_Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <select id="strHo" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strUsingTicketCode" @onchange="OnTicket">
+                                        <option value="">=이용방법선택=</option>
+                                        @foreach (var it in annBB)
+                                        {
+                                            <option value="@it.Aid">@it.Ticket_Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 이용금액</span></div>
+                                    <input id="UseCost" style="font-size: 0.9em" name="Name" @bind="bnn.UseCost" class="form-control" type="number" />
+                                </div>
+                            </td>
+                        </tr>
+
+
+
+                        @if (strSlectCode == "B")
+                        {
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-hourglass-split"></span> 시작시간</span></div>
+                                        @*<input id="UseStartHour" style="font-size: 0.9em" name="UseStartHour" value="@bnn.UserStartHour" @onchange="OnStartHour" class="form-control" type="number" />*@
+                                        <select id="strUseTimeA" class="custom-select" style="font-size: 0.9em; text-align:center" value="@bnn.UserStartHour" @onchange="OnStartHour">
+                                            <option value="">::이용시작선택::</option>
+                                            <option value="5">5시</option>
+                                            <option value="6">6시</option>
+                                            <option value="7">7시</option>
+                                            <option value="8">8시</option>
+                                            <option value="9">9시</option>
+                                            <option value="10">10시</option>
+                                            <option value="11">11시</option>
+                                            <option value="12">12시</option>
+                                            <option value="13">13시</option>
+                                            <option value="14">14시</option>
+                                            <option value="15">15시</option>
+                                            <option value="16">16시</option>
+                                            <option value="17">17시</option>
+                                            <option value="18">18시</option>
+                                            <option value="19">19시</option>
+                                            <option value="20">20시</option>
+                                            <option value="21">21시</option>
+                                            <option value="22">22시</option>
+                                            <option value="23">23시</option>
+                                        </select>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-hourglass-split"></span> 종료시간</span></div>
+                                        @*<input id="UseEndHour" style="font-size: 0.9em" name="UserEndHour" value="@bnn.UserEndHour" @onchange="OnScamHours" class="form-control" type="number" />*@
+                                        <select id="strUseTimeB" class="custom-select" style="font-size: 0.9em; text-align:center" value="@bnn.UserEndHour" @onchange="OnScamHours">
+                                            <option value="">::이용종료선택::</option>
+                                            <option value="5">5시</option>
+                                            <option value="6">6시</option>
+                                            <option value="7">7시</option>
+                                            <option value="8">8시</option>
+                                            <option value="9">9시</option>
+                                            <option value="10">10시</option>
+                                            <option value="11">11시</option>
+                                            <option value="12">12시</option>
+                                            <option value="13">13시</option>
+                                            <option value="14">14시</option>
+                                            <option value="15">15시</option>
+                                            <option value="16">16시</option>
+                                            <option value="17">17시</option>
+                                            <option value="18">18시</option>
+                                            <option value="19">19시</option>
+                                            <option value="20">20시</option>
+                                            <option value="21">21시</option>
+                                            <option value="22">22시</option>
+                                            <option value="23">23시</option>
+                                            <option value="24">24시</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 사용시간</span></div>
+                                        <input id="ScamHours" style="font-size: 0.9em; text-align: center" name="ScamHours" @bind="strScamHours" class="form-control" type="number" readonly="readonly" />
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+                        <tr>
+                            <td colspan="3">
+                                <textarea id="apContent" rows="2" @bind="bnn.Etc" class="form-control" placeholder="이곳에 기타 메모를 입력해 주세요." style="min-width: 100%; font-size: 0.9em"></textarea>
+                            </td>
+                        </tr>
+
+
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*이용방법 정보 모달 폼*@
+@if (ViewsA == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseA">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm" style="font-size: 0.9em">
+                        <thead>
+                            <tr style="background-color: whitesmoke">
+                                <th style="text-align:center">
+                                    번호
+                                </th>
+                                <th style="text-align:center">
+                                    식별코드
+                                </th>
+                                <th style="text-align:center">
+                                    이용장소
+                                </th>
+                                <th style="text-align:center">
+                                    사용여부
+                                </th>
+                                <th style="text-align:center">
+                                    입력일
+                                </th>
+                                <th style="text-align:center">
+                                    선택
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var it in annA)
+                            {
+                                <tr>
+                                    <td style="text-align: center; vertical-align:middle">
+                                        @it.Aid
+                                    </td>
+                                    <td style="text-align: center; vertical-align:middle">
+                                        @it.Kind_Code
+                                    </td>
+                                    <td style="text-align: center; vertical-align:middle">
+                                        @it.Kind_Name
+                                    </td>
+
+                                    <td style="text-align: center; vertical-align:middle">
+                                        @if (it.Using == "A")
+                                        {
+                                            <span style="color: blue">사용</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: red">미사용</span>
+                                        }
+                                    </td>
+                                    <td style="text-align: center; vertical-align:middle">
+                                        @it.PostDate.ToShortDateString()
+                                    </td>
+                                    <td style="text-align: center; vertical-align:middle">
+                                        <input id="Button11" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByEditA(it)" value="수정" />
+                                        <input id="Button12" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemoveA(it)" value="삭제" />
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnOpenA"><span class="bi-box-arrow-in-up-right"></span>&nbsp; 새로등록 열기</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseA"><span class="bi-box-arrow-in-up-right"></span>&nbsp; 닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*이용방법 정보 모달 폼*@
+@if (ViewsB == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseB">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm" style="font-size: 0.9em">
+                        <thead>
+                            <tr style="background-color: whitesmoke">
+                                <th style="text-align:center">
+                                    번호
+                                </th>
+                                <th style="text-align:center">
+                                    식별코드
+                                </th>
+                                <th style="text-align:center">
+                                    이용장소
+                                </th>
+                                <th style="text-align:center">
+                                    이용방법
+                                </th>
+                                <th style="text-align:center">
+                                    이용금액
+                                </th>
+                                <th style="text-align:center">
+                                    사용여부
+                                </th>
+                                <th style="text-align:center">
+                                    입력일
+                                </th>
+                                <th style="text-align:center">
+                                    선택
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var it in annB)
+                            {
+                                <tr>
+                                    <td style="text-align: center; vertical-align:middle">
+                                        @it.Aid
+                                    </td>
+                                    <td style="text-align: center; vertical-align:middle">
+                                        @it.Ticket_Code
+                                    </td>
+                                    <td style="text-align: center; vertical-align:middle">
+                                        @it.Kind_Name
+                                    </td>
+                                    <td style="text-align: center; vertical-align:middle">
+                                        @it.Ticket_Name
+                                    </td>
+                                    <td style="text-align: center; vertical-align:middle">
+                                        @string.Format("{0: ###,###.##}", it.Ticket_Cost)
+                                    </td>
+                                    <td style="text-align: center; vertical-align:middle">
+                                        @if (it.Using == "A")
+                                        {
+                                            <span style="color: blue">사용</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: red">미사용</span>
+                                        }
+                                    </td>
+                                    <td style="text-align: center; vertical-align:middle">
+                                        @it.PostDate.ToShortDateString()
+                                    </td>
+                                    <td style="text-align: center; vertical-align:middle">
+                                        <input id="Button11" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByEditB(it)" value="수정" />
+                                        <input id="Button12" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemoveB(it)" value="삭제" />
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnOpenB"><span class="bi-box-arrow-in-up-right"></span>&nbsp; 새로등록 열기</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseB"><span class="bi-box-arrow-in-up-right"></span>&nbsp; 닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*이용장소 새로 등록 모달 폼*@
+@if (InsertViewsA == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseAA">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="font-size: 0.9em">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> &nbsp; 이용장소</span></div>
+                                    <input id="Mobile" style="font-size: 0.9em" name="Name" @bind="bnnA.Kind_Name" class="form-control" type="text" />
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSaveA">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseAA">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*이용방법 새로 등록 모달 폼*@
+@if (InsertViewsB == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseBB">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="font-size: 0.9em">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <select id="strUsingKindCode" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strUsingKindCode" @onchange="OnKind">
+                                        <option value="">=이용시설선택=</option>
+                                        @foreach (var it in annA)
+                                        {
+                                            <option value="@it.Kind_Code">@it.Kind_Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> &nbsp; 이용방법</span></div>
+                                    <input id="Ticket_Name" style="font-size: 0.9em" name="Ticket_Name" @bind="bnnB.Ticket_Name" class="form-control" type="text" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> &nbsp; 이용금액</span></div>
+                                    <input id="Ticket_Cost" style="font-size: 0.9em" name="Ticket_Cost" @bind="bnnB.Ticket_Cost" class="form-control" type="number" />
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSaveB">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseBB">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*파일 첨부 올리기*@
+@if (FileInputViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><span class="bi-file-code"></span> 첨부파일 입력</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+
+                    <div style="margin-top: 10px">
+
+                        <p>
+                            <InputFile OnChange="LoadFiles" class="custom-file" style="font-size: 0.9em" multiple></InputFile>
+                        </p>
+                        @if (isLoading)
+                        {
+                            <p style="text-align: center">
+                                <img src="/images/loader.gif" height="40" />
+                            </p>
+                        }
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary" @onclick="btnFileSave">저장</button>*@
+                    <button type="button" class="btn btn-secondary" @onclick="FilesClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*파일 보기 모달품*@
+@if (FileViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h5 class="modal-title"><span class="bi-file-code"></span> 첨부파일 보기</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+
+                    @if (Files_Count > 0)
+                    {
+                        <div style="height: 500px; overflow-y: scroll; overflow-x: hidden">
+
+                            @foreach (var files in Files_Entity)
+                            {
+                                <div class="text-center">
+                                    <img src="/UpFiles/Defect/@files.Sw_FileName" alt="" class="img-thumbnail" />
+                                </div>
+                            }
+                        </div>
+
+                        <div style="width : 100%;overflow-x: scroll">
+                            <div class="text-center">
+                                @foreach (var files in Files_Entity)
+                                {
+
+                                    @files.Sw_FileName
+                                    <a class="btn btn-link btn-sm" @onclick="() => FilesRemove(files)"><span style="color: red">삭제</span></a> <span>&nbsp;</span>
+                                    @*<button class="btn btn-link btn-sm" @onclick="() => ByFileRemove(files)">@files.Sw_FileName</button>*@
+
+                                }
+                            </div>
+                        </div>
+                    }
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="FilesViewsClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* 검색 모달 폼*@
+@if (SearchViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseS">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm" style="margin-bottom: 0px">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 년도</span></div>
+                                    <select id="strYear" class="custom-select" style="font-size: 0.9em; text-align:center" @bind="strYear">
+                                        <option value="">::년도선택::</option>
+                                        <option value="2022">2022년</option>
+                                        <option value="2023">2023년</option>
+                                        <option value="2024">2024년</option>
+                                        <option value="2025">2025년</option>
+                                        <option value="2026">2026년</option>
+                                        <option value="2027">2027년</option>
+                                        <option value="2028">2028년</option>
+                                        <option value="2029">2029년</option>
+                                        <option value="2030">2030년</option>
+                                        <option value="2031">2031년</option>
+                                        <option value="2032">2032년</option>
+                                        <option value="2033">2033년</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 해당월</span></div>
+                                    <select id="strMonth" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strMonth" @onchange="OnMonth">
+                                        <option value="">=월선택=</option>
+                                        <option value="1">1월</option>
+                                        <option value="2">2월</option>
+                                        <option value="3">3월</option>
+                                        <option value="4">4월</option>
+                                        <option value="5">5월</option>
+                                        <option value="6">6월</option>
+                                        <option value="7">7월</option>
+                                        <option value="8">8월</option>
+                                        <option value="9">9월</option>
+                                        <option value="10">10월</option>
+                                        <option value="11">11월</option>
+                                        <option value="12">12월</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <select id="strDoong" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strDoong" @onchange="OnDong">
+                                        <option value="">=동 선택=</option>
+                                        @foreach (var it in Dong)
+                                        {
+                                            <option value="@it.Dong">@it.Dong</option>
+                                        }
+                                    </select>
+                                    <div class="input-group-append"><span class="input-group-text" style="font-size: 0.9em">동</span></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <select id="strHoo" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strHoo" @onchange="OnHoo">
+                                        <option value="">=호 선택=</option>
+                                        @foreach (var it in Ho)
+                                        {
+                                            <option value="@it.Ho">@it.Ho</option>
+                                        }
+                                    </select>
+                                    <div class="input-group-append"><span class="input-group-text" style="font-size: 0.9em">호</span></div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <select id="strPlace" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strKind_Code" @onchange="OnPlaceList">
+                                        <option value="">=시설선택=</option>
+                                        @foreach (var it in annU)
+                                        {
+                                            <option value="@it.UsingKindCode">@it.UsingKindName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <select id="strTicket" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strTicket" @onchange="OnTicketList">
+                                        <option value="">=방법선택=</option>
+                                        @foreach (var it in annT)
+                                        {
+                                            <option value="@it.Ticket_Code">@it.Ticket_Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-people"></span> &nbsp; 이름검색</span></div>
+                                    <input id="strUser_Name" class="form-control" style="font-size: 0.9em" placeholder="이름 입력" value="@strUser_Name" type="text" @onchange="OnNameSearch" />
+                                </div>
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    @* <button type="button" class="btn btn-primary btn-sm" @onclick="btnCloseS"><span class="bi-search-heart"></span>&nbsp;검색</button> &nbsp; &nbsp; &nbsp;*@
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseS"><span class="bi-box-arrow-in-up-right"></span>&nbsp;닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* 전월 정보 불러오기 모달폼*@
+@if (strMonthSaveOpen == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h5 class="modal-title">@strTitle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseZ">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <table style="margin-bottom: 5px; width: 100%">
+                        <tr>
+                            <td style="width: 40%">
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 년도</span></div>
+                                    <select id="strYear" class="custom-select" style="font-size: 0.9em; text-align:center" @bind="strYearAllSave">
+                                        <option value="">::년도선택::</option>
+                                        <option value="2022">2022년</option>
+                                        <option value="2023">2023년</option>
+                                        <option value="2024">2024년</option>
+                                        <option value="2025">2025년</option>
+                                        <option value="2026">2026년</option>
+                                        <option value="2027">2027년</option>
+                                        <option value="2028">2028년</option>
+                                        <option value="2029">2029년</option>
+                                        <option value="2030">2030년</option>
+                                        <option value="2031">2031년</option>
+                                        <option value="2032">2032년</option>
+                                        <option value="2033">2033년</option>
+                                    </select>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 해당월</span></div>
+                                    <select id="strMonth" class="custom-select" style="font-size: 0.9em; text-align:center" @bind="strMonthAllSave">
+                                        <option value="">=월선택=</option>
+                                        <option value="1">1월</option>
+                                        <option value="2">2월</option>
+                                        <option value="3">3월</option>
+                                        <option value="4">4월</option>
+                                        <option value="5">5월</option>
+                                        <option value="6">6월</option>
+                                        <option value="7">7월</option>
+                                        <option value="8">8월</option>
+                                        <option value="9">9월</option>
+                                        <option value="10">10월</option>
+                                        <option value="11">11월</option>
+                                        <option value="12">12월</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <select id="strPlace" class="custom-select" style="font-size: 0.9em; text-align:center" @bind="strPlaceAllSave">
+                                        <option value="">=시설선택=</option>
+                                        @foreach (var it in annU)
+                                        {
+                                            <option value="@it.UsingKindCode">@it.UsingKindName</option>
+                                        }
+                                    </select>
+                                    <div class="input-group-append"><span class="input-group-text" style="font-size: 0.9em">호</span></div>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-primary btn-sm" @onclick="btnMonth_Save"><span class="bi-door-open-fill"></span> &nbsp; 저장</button>
+                            </td>
+                        </tr>
+                    </table>
+
+                    @if (ann == null)
+                    {
+                        <p style="text-align:center">
+                            <img src="/images/loader.gif" />
+                        </p>
+                    }
+                    else if (ann.Count == 0)
+                    {
+                        <p style="text-align:center">
+                            입력된 정보가 없습니다. ............
+                        </p>
+                    }
+                    else
+                    {
+
+                        <table class="table table-sm" style="font-size: 0.9em">
+                            <thead>
+                                <tr style="background-color:whitesmoke;">
+
+                                    <th style="text-align: center">
+                                        주민코드
+                                    </th>
+                                    <th style="text-align: center">
+                                        이용자명
+                                    </th>
+                                    <th style="text-align: center">
+                                        동호
+                                    </th>
+
+                                    <th style="text-align: center">
+                                        관계
+                                    </th>
+                                    <th style="text-align: center">
+                                        이용시설
+                                    </th>
+                                    <th style="text-align: center">
+                                        이용방법
+                                    </th>
+                                    <th style="text-align: center">
+                                        이용금액
+                                    </th>
+                                    <th style="text-align: center">
+                                        시작일
+                                    </th>
+                                    <th style="text-align: center">
+                                        종료일
+                                    </th>
+
+                                    <th style="text-align: center">
+                                        선택
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var st in cen)
+                                {
+                                    <tr>
+                                        <td style="text-align: center; vertical-align: middle">
+                                            @st.UserCode
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle">
+                                            @st.UserName
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle">
+                                            @st.Dong<span>동-</span>@st.Ho<span>호</span>
+                                        </td>
+
+                                        <td style="text-align: center; vertical-align: middle">
+                                            @st.Relation
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle">
+                                            @st.UsingKindName
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle">
+                                            @st.Ticket
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle">
+                                            @string.Format("{0: ###,###.##}", st.UseCost)
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle">
+                                            @st.UserStartDate.ToShortDateString()
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle">
+                                            @st.UserEndDate.ToShortDateString()
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle">
+
+                                            @*<input id="Button11" class="btn btn-warning btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByEditZ(st)" value="수정" />*@
+                                            <input id="Button12" class="btn btn-danger btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemoveZ(st)" value="삭제" />
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    }
+
+                    <div class="col-md-12">
+                        <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+                    </div>
+                </div>
+
+
+                <div class="modal-footer" style="font-size: 0.9em">
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseZ">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*이용정보 상세보기 모달 폼*@
+@if (Views == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseV">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="font-size: 0.9em">
+                        <tr>
+                            <td>
+                                <span style="font-weight: bold">식별코드</span> : @vnn.Aid
+                            </td>
+                            <td>
+                                <span style="font-weight: bold">입주민코드</span> : @vnn.UserCode
+                            </td>
+                            <td>
+                                <span style="font-weight: bold">성함</span> : @vnn.Dong<span>동</span> @vnn.Ho<span>호</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span style="font-weight: bold">연락처</span> : @vnn.Mobile
+                            </td>
+                            <td>
+                                <span style="font-weight: bold">관계</span> : @vnn.Relation
+                            </td>
+                            <td>
+                                <span style="font-weight: bold">공동주택 코드</span> : @vnn.AptCode
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span style="font-weight: bold">이용시설</span> : @vnn.UsingKindName
+                            </td>
+                            <td>
+                                <span style="font-weight: bold">이용방법</span> : @vnn.Ticket
+                            </td>
+                            <td>
+                                <span style="font-weight: bold">이용금액</span> : @string.Format("{0: ###,###.##}", vnn.UseCost)<span>원</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <span style="font-weight: bold">시작일</span> : @vnn.UserStartDate.ToShortDateString()
+                            </td>
+                            <td>
+                                <span style="font-weight: bold">종료일</span> : @vnn.UserEndDate.ToShortDateString()
+                            </td>
+                            <td>
+                                <span style="font-weight: bold">신청구분</span> :
+                                @if (vnn.Mobile_Use == "A")
+                                {
+                                    <span style="color: blue"> 신청서 </span>
+                                }
+                                else
+                                {
+                                    <span style="color: green"> 모바일 </span>
+                                }
+
+
+                            </td>
+                        </tr>
+                        @if (vnn.UsingKindCode == "Kd4")
+                        {
+                            <tr>
+                                <td>
+                                    <span style="font-weight: bold">시작시간</span> : @vnn.UserStartHour<span>시부터</span>
+                                </td>
+                                <td>
+                                    <span style="font-weight: bold">종료시간</span> : @vnn.UserEndHour<span>시까지</span>
+                                </td>
+                                <td>
+                                    <span style="font-weight: bold">이용시간</span> : @(vnn.UserEndHour - vnn.UserStartHour)<span>시간</span>
+                                </td>
+                            </tr>
+                        }
+
+                        <tr>
+                            <td colspan="3">
+                                @Dul.HtmlUtility.Encode(vnn.Etc)
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnEditOrderBy">신청순서 수정</button>
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseV">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* 검색 모달 폼*@
+@if (Search_Views == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseSA">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm" style="margin-bottom: 0px">
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <select id="strDoongA" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strDoongA" @onchange="OnDongA">
+                                        <option value="">=동 선택=</option>
+                                        @foreach (var it in Dong)
+                                        {
+                                            <option value="@it.Dong">@it.Dong</option>
+                                        }
+                                    </select>
+                                    <div class="input-group-append"><span class="input-group-text" style="font-size: 0.9em">동</span></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <select id="strHooA" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strHooA" @onchange="OnHooA">
+                                        <option value="">=호 선택=</option>
+                                        @foreach (var it in Ho)
+                                        {
+                                            <option value="@it.Ho">@it.Ho</option>
+                                        }
+                                    </select>
+                                    <div class="input-group-append"><span class="input-group-text" style="font-size: 0.9em">호</span></div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <select id="strPlaceA" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strPlaceA" @onchange="OnPlaceListA">
+                                        <option value="">=시설선택=</option>
+                                        @foreach (var it in annUA)
+                                        {
+                                            <option value="@it.UsingKindCode">@it.UsingKindName</option>
+                                        }
+                                    </select>
+                                    <div class="input-group-append"><span class="input-group-text" style="font-size: 0.9em">호</span></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <select id="strHo" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strUsingTicketB" @onchange="OnTicketB">
+                                        <option value="">=이용방법선택=</option>
+                                        @foreach (var it in annBC)
+                                        {
+                                            <option value="@it.Ticket_Code">@it.Ticket_Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseSA"><span class="bi-box-arrow-in-up-right"></span>&nbsp;닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* 신청순서 수정 모달 폼*@
+@if (OderBy_Edit == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitleOrderby</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseOr">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm" style="margin-bottom: 0px">
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-dash"></span>&nbsp; 신청순서</span></div>
+                                    <input id="OrderBy" style="font-size: 0.9em" name="OrderBy" @bind="strOrderby" class="form-control" type="number" placeholder="신청순서  입력" />
+                                </div>
+                            </td>
+                        </tr>
+                        
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnOrderby"><span class="bi-save"></span>&nbsp;저장</button>
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseOr"><span class="bi-box-arrow-in-up-right"></span>&nbsp;닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

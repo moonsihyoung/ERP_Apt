@@ -1,0 +1,450 @@
+﻿@page "/Staff/Placement_Index"
+
+<div class="card">
+    <div class="card-header">
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <span style="font-size: 1.1em"> <span class="bi-person-check"></span>&nbsp;관리자 배치 정보 목록</span>
+                </td>
+                <td>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                </td>
+
+                <td width="200">
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;구분</span></div>
+                        <select id="Field" style="font-size: 0.9em" class="custom-select" @bind="@strField" required>
+                            <option value="Z">=구분 선택=</option>
+                            <option value="User_Name">관리자명</option>
+                            <option value="Apt_Name">공동주택명</option>
+                        </select>
+                    </div>
+                </td>
+                <td width="200">
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;검색</span></div>
+                        <input id="Query" name="Query" style="font-size: 0.9em" @onchange="onQruery" placeholder="검색할 내용을 입력하세요." class="form-control" type="text" />
+                    </div>
+                </td>
+                <td class="text-right" width="150">
+                    <button id="btnOpen" name="btnOpen" class="btn btn-outline-primary btn-sm" @onclick="onOpen">관리자 배치 등록</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        @if (cnnA == null)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" height="100" />
+            </p>
+        }
+        else if (cnnA.Count < 1)
+        {
+            <p style="text-align:center">
+                <h4>입력된 데이터가 없습니다.</h4>
+            </p>
+        }
+        <table class="table table-sm table-hover" style="font-size: 0.9em">
+            <thead>
+                <tr style="background-color: ghostwhite">
+                    <th class="text-center">식별코드</th>
+                    <th class="text-center">공동주택명</th>
+                    <th class="text-center">관리자명</th>
+                    <th class="text-center">부서직책</th>
+                    <th class="text-center">배치일</th>
+                    <th class="text-center">퇴사일</th>
+                    <th class="text-center">근무일수</th>
+                    <th class="text-center">배치업체</th>
+                    <th class="text-center">입력일</th>
+                    <th class="text-center">버튼</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var st in cnnA)
+                {
+                    <tr>
+                        <td class="text-center" style="vertical-align: middle" @onclick="() => ByAid(st)">@st.Aid</td>
+                        <td class="text-center" style="vertical-align: middle" @onclick="() => ByAid(st)"><span title="@st.Apt_Code">@st.Apt_Name</span></td>
+                        <td class="text-center" style="vertical-align: middle" @onclick="() => ByAid(st)"><span title="@st.User_ID">@st.User_Name</span></td>
+                        <td class="text-center" style="vertical-align: middle" @onclick="() => ByAid(st)">@st.Post @st.Duty</td>
+                        <td class="text-center" style="vertical-align: middle" @onclick="() => ByAid(st)">@st.Career_Start_Date.ToShortDateString()</td>
+                        <td class="text-center" style="vertical-align: middle" @onclick="() => ByAid(st)">
+                            @if (st.Division == "A")
+                            {
+                                <span style="color: blue">근무중</span>
+                            }
+                            else
+                            {
+                                <span style="color: red">@st.Career_End_Date.ToShortDateString()</span>
+                            }
+                        </td>
+                        <td class="text-center" style="vertical-align: middle" @onclick="() => ByAid(st)">@Func_span(st.Career_Start_Date, st.Career_End_Date, st.Division)<span>일간</span></td>
+                        <td class="text-center" style="vertical-align: middle" @onclick="() => ByAid(st)">@Company_Name(st.Cor_Code)</td>
+                        <td class="text-center" style="vertical-align: middle" @onclick="() => ByAid(st)">@st.PostDatge.ToShortDateString()</td>
+                        <td class="text-center" style="vertical-align: middle">
+                            <input id="ByAid" class="btn btn-link btn-sm" @onclick="() => ByAid(st)" type="button" value="상세" />&nbsp;
+                            <input id="ByEdit" class="btn btn-link btn-sm" @onclick="() => ByEdit(st)" type="button" value="수정" />&nbsp;
+                            <input id="ByAid" class="btn btn-link btn-sm" @onclick="() => ByResignation(st)" type="button" value="퇴사" />&nbsp;
+                            <input id="ByAid" class="btn btn-link btn-sm" @onclick="() => ByRemove(st.Aid)" type="button" value="삭제" />
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+        <div class="col-md-12">
+            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+        </div>
+    </div>
+</div>
+
+@*배치정보 새로 입력*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: cornflowerblue; color: white">
+                    <h5 class="modal-title"><span class="bi-house-door"></span>&nbsp;@strTitle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-borderless" style="margin-bottom: 0px; font-size: 0.9em">
+                        <tr>
+                            <td colspan="2">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;공동주택 검색</span></div>
+                                    <input id="Apt_Name" name="Apt_Name" style="font-size: 0.9em" @onchange="Onsearch" class="form-control" placeholder="공동주택 검색" type="text" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><span title="아파트 이름을 입력하는 곳(내손 주공), 띄어쓰기를 주의하시고, 가능하면 많은 글자를 입력하면 찾기가 용이합니다.."><img src="/images/sub/icon_q.png" height="18" alt="" /></span></span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;공동주택명 선택</span></div>
+                                    <select id="Apt_Form" style="font-size: 0.9em" class="custom-select" value="@cnn.Apt_Code" @onchange="OnApt" required>
+                                        <option value="Z">=공동주택 선택=</option>
+                                        @foreach (var it in aptA)
+                                        {
+                                            <option value="@it.Apt_Code" title="@it.Apt_Adress_Sido, @it.Apt_Adress_Gun, 세대수 : @it.HouseHold_Num">@it.Apt_Name</option>
+                                        }
+                                    </select>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><span title="배치될 공동주택를 선택해 주세요. 위에 검색해야만 합니다."><img src="/images/sub/icon_q.png" height="18" alt="" /></span></span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;관리자 검색</span></div>
+                                    <input id="StaffName" name="StaffName" style="font-size: 0.9em" @onchange="onStaffName" placeholder="관리자 이름 검색" class="form-control" type="text" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><span title="관리자 이름을 입력하는 곳, 띄어쓰기를 주의하시고, 가능하면 많은 글자를 입력하면 찾기가 용이합니다.."><img src="/images/sub/icon_q.png" height="18" alt="" /></span></span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;관리자명 선택</span></div>
+                                    <select id="Apt_Form" style="font-size: 0.9em" class="custom-select" value="@cnn.User_ID" @onchange="OnUserName" required>
+                                        <option value="Z">=관리자 선택=</option>
+                                        @foreach (var it in snnA)
+                                        {
+                                            <option value="@it.User_ID" title="@it.Sido, @it.SiGunGu, 출생일 : @it.Scn">@it.User_Name</option>
+                                        }
+                                    </select>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><span title="배치될 공동주택를 선택해 주세요. 위에 검색해야만 합니다."><img src="/images/sub/icon_q.png" height="18" alt="" /></span></span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;부서명</span></div>
+                                    <select id="Apt_Form" style="font-size: 0.9em" class="custom-select" @bind="cnn.Post" required>
+                                        <option value="Z">=부서 선택=</option>
+                                        @foreach (var it in pnnA)
+                                        {
+                                            <option value="@it.PostName">@it.PostName</option>
+                                        }
+                                    </select>
+                                    @*<div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><span title="배치될 공동주택를 선택해 주세요. 위에 검색해야만 합니다."><img src="/images/sub/icon_q.png" height="18" alt="" /></span></span>
+                                        </div>*@
+                                </div>
+                            </td>
+                            @*</tr>
+
+                                <tr>*@
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;직책명</span></div>
+                                    <select id="Apt_Form" style="font-size: 0.9em" class="custom-select" @bind="cnn.Duty" required>
+                                        <option value="Z">=직책 선택=</option>
+                                        @foreach (var it in dnnA)
+                                        {
+                                            <option value="@it.DutyName">@it.DutyName</option>
+                                        }
+                                    </select>
+                                    @*<div class="input-group-append">
+                                            <span class="input-group-text" style="font-size: 0.9em"><span title="배치될 공동주택를 선택해 주세요. 위에 검색해야만 합니다."><img src="/images/sub/icon_q.png" height="18" alt="" /></span></span>
+                                        </div>*@
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;배치일</span></div>
+                                    <input id="Career_Start_Date" name="Career_Start_Date" placeholder="배치일을 입력하세요." style="font-size: 0.9em" @bind="cnn.Career_Start_Date" class="form-control text-center" type="date" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" style="font-size: 0.9em"><span title="배치일을 입력하는 곳입니다."><img src="/images/sub/icon_q.png" height="18" alt="" /></span></span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="input-group">
+                                    <textarea id="Etc" style="font-size: 0.9em" placeholder="기타 참고사항 입력하는 곳" @bind="cnn.Etc" rows="3" class="form-control"></textarea>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}
+
+@*상세보기*@
+@if (Views == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: cornflowerblue; color: white">
+                    <h5 class="modal-title"><span class="bi-house-door"></span>&nbsp;@strTitle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseA">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm table-bordered" style="margin-bottom: 0px; font-size: 0.9em">
+                        <tr>
+                            <td width="50%" style="vertical-align: middle">
+                                <span style="font-weight: bold">관리자명 : </span>@cnn.User_Name
+                            </td>
+
+                            <td style="vertical-align: middle">
+                                <span style="font-weight: bold">관리자 주소 : </span>@bnn.st_Sido @bnn.st_GunGu @bnn.st_Adress_Rest
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align: middle">
+                                <span style="font-weight: bold">공동주택명 : </span>@apt.Apt_Name
+                            </td>
+
+                            <td style="vertical-align: middle">
+                                <span style="font-weight: bold">공동주택 주소 : </span>@apt.Apt_Adress_Sido @apt.Apt_Adress_Gun @apt.Apt_Adress_Rest
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style="vertical-align: middle">
+                                <span style="font-weight: bold">세대수 : </span>@string.Format("{0: ###,###}", apt.HouseHold_Num)<span>세대</span>
+                            </td>
+
+                            <td style="vertical-align: middle">
+                                <span style="font-weight: bold">동수 : </span>@apt.Dong_Num<span>개동</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align: middle">
+                                <span style="font-weight: bold">공동주택 형태 : </span>@apt.Apt_Form
+                            </td>
+
+                            <td style="vertical-align: middle">
+                                <span style="font-weight: bold">사용검사일 : </span>@apt.AcceptancedOfWork_Date.ToShortDateString()
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align: middle">
+                                <span style="font-weight: bold">출생일 : </span>@snn.Scn
+                            </td>
+
+                            <td style="vertical-align: middle">
+                                <span style="font-weight: bold">모바일 :</span> @bnn.Mobile_Number
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <span style="font-weight: bold">배치일 : </span>@cnn.Career_Start_Date.ToShortDateString()
+                            </td>
+                            <td>
+                                <span style="font-weight: bold">퇴사일 : </span>@if (cnn.Division == "A")
+                                {
+                                    <span style="color: blue">근무중</span>
+                                }
+                                else
+                                {
+                                    <span style="color: red">@cnn.Career_End_Date.ToShortDateString()</span>
+                                }
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                <span style="font-weight:bold">@cnn.User_Name 의 배치정보</span>
+                                @if (cnnB.Count < 1)
+                                {
+                                    <span style="color: red">입력된 데이터가 없습니다.</span>
+                                }
+                                else
+                                {
+                                    <table width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" width="40%">공동주택</th>
+                                                <th class="text-center">배치일</th>
+                                                <th class="text-center">퇴사일</th>
+                                                <th class="text-center">근무일</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            @foreach (var st in cnnB)
+                                            {
+                                                <tr>
+                                                    <td class="text-center" style="vertical-align:middle">@st.Apt_Name</td>
+                                                    <td class="text-center" style="vertical-align:middle">@st.Career_Start_Date.ToShortDateString()</td>
+                                                    <td class="text-center" style="vertical-align:middle">
+                                                        @if (st.Division == "A")
+                                                        {
+                                                            <span style="color: blue">근무중</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="color: red">@st.Career_End_Date.ToShortDateString()</span>
+                                                        }
+                                                    </td>
+                                                    <td class="text-center" style="vertical-align:middle">@Func_span(st.Career_Start_Date, st.Career_End_Date, st.Division)<span>일</span></td>
+                                                </tr>
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                }
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                <span style="font-weight: bold">상세 설명 : </span> @cnn.Etc
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;*@
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseA">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}
+
+
+@*퇴사처리*@
+@if (ResignViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: cornflowerblue; color: white">
+                    <h5 class="modal-title"><span class="bi-house-door"></span>&nbsp;@strTitle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseB">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-borderless" style="margin-bottom: 0px; font-size: 0.9em">
+                        <tr>
+                            <td width="50%" style="vertical-align: middle">
+                                <span style="font-weight: bold">관리자명 : </span>@cnn.User_Name
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="50%" style="vertical-align: middle">
+                                <span style="font-weight: bold">공동주택명: </span>@cnn.Apt_Name
+                            </td>
+                        </tr>
+
+                        @*<tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;구분</span></div>
+                                        <select id="Division" style="font-size: 0.9em" class="custom-select" @bind="@cnn.Division" required>
+                                            <option value="Z">=구분 선택=</option>
+                                            <option value="B">퇴사</option>
+                                            <option value="A">배치</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>*@
+
+                        <tr>
+                            <td colspan="2">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;퇴사일</span></div>
+                                    <input id="Career_End_Date" name="Career_End_Date" placeholder="퇴사일을 입력하세요." style="font-size: 0.9em" @bind="cnn.Career_End_Date" class="form-control text-center" type="date" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="input-group">
+                                    <textarea id="Etc" style="font-size: 0.9em" placeholder="기타 참고사항 입력하는 곳" @bind="cnn.Etc" rows="3" class="form-control"></textarea>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSaveB">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseB">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}

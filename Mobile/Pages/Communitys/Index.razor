@@ -1,0 +1,858 @@
+﻿@page "/Communitys"
+
+<div>
+    <table style="width:100%; margin-bottom: 5px">
+        <tr>
+            <td style="text-align: right;">
+                <button type="button" class="btn btn-primary btn-sm" @onclick="OnInsert"><span class="bi-pen"></span> &nbsp; 주민공동시설 이용 신청</button>
+            </td>
+        </tr>
+    </table>
+
+    <span style="font-size: 1em; font-weight: bold"><span class="bi-calendar-check">&nbsp;</span><span style="color:darkcyan">@User_Name</span><span>님</span> 이용 목록</span>
+    <table class="table table-sm" style="font-size: 0.9em">
+        <thead>
+            <tr style="background-color: whitesmoke">
+                <th style="text-align: center">
+                    시설명
+                </th>
+                <th style="text-align: center">
+                    순서
+                </th>
+                <th style="text-align: center">
+                    금액
+                </th>
+                <th style="text-align: center">
+                    이용월
+                </th>
+                <th style="text-align: center">
+                    승인
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var st in annP)
+            {
+                <tr style="border-bottom-color: silver; border-bottom-style:solid; border-block-width: 1px">
+                    <td style="text-align: center; vertical-align: middle">
+                        @st.UsingKindName <br> @Method(st.Ticket_Code, st.Ticket)
+                    </td>
+                    <td style="text-align: center; vertical-align: middle">
+                        @if (strDivision == "B")
+                        {
+                            <span class="text-danger">@OrderBy(st.Ticket_Code, st.OrderBy)</span>
+                        }
+                        else
+                        {
+                            <span class="text-primary">@OrderBy(st.Ticket_Code, st.OrderBy)</span>
+                        }
+                    </td>
+                    <td style="text-align: center; vertical-align: middle">
+                        @string.Format("{0: ###,###.##}", st.UseCost)<span>원</span>
+                    </td>
+                    <td style="text-align: center; vertical-align: middle">
+                        @st.UserEndDate.Month.ToString()<span>월</span>
+                    </td>
+                    <td style="text-align: center; vertical-align: middle">
+                        @if (st.Approval == "A")
+                        {
+                            <span style="color: red">미승인</span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">승인</span>
+                        }
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+    <span style="font-size: 1em; font-weight: bold"><span class="bi-view-list">&nbsp;</span>@Dong<span>동</span> - @Ho<span>호</span> 전체 이용 목록</span>
+    <table class="table table-sm" style="font-size: 0.9em">
+        <thead>
+            <tr style="background-color: whitesmoke">
+                <th style="text-align: center">
+                    시설명
+                </th>
+                <th style="text-align: center">
+                    금액
+                </th>
+                <th style="text-align: center">
+                    이용월
+                </th>
+                <th style="text-align: center">
+                    승인
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var st in ann)
+            {
+                <tr style="border-bottom-color: silver; border-bottom-style:solid; border-block-width: 1px">
+                    <td style="text-align: center; vertical-align: middle">
+                        @st.UsingKindName <br>@Method(st.Ticket_Code, st.Ticket)
+                    </td>
+                    <td style="text-align: center; vertical-align: middle">
+                        @string.Format("{0: ###,###.##}", st.UseCost)<span>원</span>
+                    </td>
+                    <td style="text-align: center; vertical-align: middle">
+                        @st.UserEndDate.Month.ToString()<span>월</span>
+                    </td>
+                    <td style="text-align: center; vertical-align: middle">
+                        @if (st.Approval == "A")
+                        {
+                            <span style="color: red">미승인</span>
+                        }
+                        else
+                        {
+                            <span style="color: blue">승인</span>
+                        }
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+
+@*이용수칙 모달 폼*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="margin-bottom: 0px">
+                        <tr>
+                            <td>
+                                <textarea id="Intro" class="form-control" rows="4" style="min-width: 100%; height: 200px; overflow-y: scroll; font-size: 0.9em; background-color:aliceblue">
+    제6조 【이용자의 의무와 책임】
+    ① ‘입주자등’은 공동생활의 질서유지와 원활하고 편리한 시설이용을 위하여 다음 각호의 사항 및 시설별 이용 방법을 준수하여야 한다.
+     1. 각 ‘주민공동시설’의 이용방법 및 주의사항을 준수하여야 할 의무
+     2. 타 이용자에게 혐오감 또는 불쾌감을 주는 행위를 금지하여야 할 의무
+     3. 각 ‘주민공동시설’을 용도에 맞게 사용하고, 보전 및 유지할 의무4. 관리자의 정당한 요청에 따라야 할 의무
+     5. 이 규정 제7조를 위반하거나 사용상 부주의로 인적 피해 및 시설물 파손 등 피해가 발생할 경우, 본인 부담으로 배상(보상) 또는 원상회복하여야 할 의무
+     6. 음식물을 섭취 금지 의무(생수 등 플라스틱으로 밀봉된 뚜껑이 있는 식음료 제외)
+     7. 음주 후 이용금지 의무
+
+    ② 이 규정 제6조제1항 및 제7조의 규정을 위반할 경우에는 이용을 금지할 수 있다.
+    ③ ‘주민공동시설’ 이용 중에 타인의 행위로 손해를 입은 경우에 관리사무소나 입주자대표회의에 보상이나 배상을 요구할 수 없다. 
+    ④ ‘주민공동시설’에 기재된 이용수칙을 준수하지 않았거나 개인의 부주의로 인한 사고나 손해는 관리사무소나 입주자대표회의에 보상이나 배상을 요구할 수 없다.
+    ⑤ ‘주민공동시설’ 이용자는 이 규정에 따라 이용료를 납부하여야 한다. 
+    ⑥ ‘주민공동시설’ 이용자는 우리 아파트에 거주하는 ‘입주자등’이어야 하고, ‘입주자등’의 지위를 상실한 경우에는 ‘주민공동시설’의 이용할 권한도 상실한다.
+    ⑦ 개인이 소지하거나 보관하고 있는 물건과 보관함에 보관 물건을 각자 이용자가 관리하여야 하며, 분실이나 훼손에 대해서 관리사무소나 입주자대표회의에 보상이나 배상을 요구할 수 없다. 
+    ⑧ 이용자가 이 규정에 위반하여 타인을 출입하여 이용하게 한 경우에는 이용을 금지할 수 있다.
+
+    제7조 【이용방법】
+    ① ‘주민공동시설’을 이용하기 위해서는 이 규정에 의하여만 이용이 가능하며, 그 외 방법으로는 이용할 수 없다.
+    ② ‘주민공동시설’을 출입하기 위해서는 다음 각호의 방법에 의한다. 다만, 입주자대표회의에서 정하거나 결정이 있는 경우에 그 방법으로 출입할 수 있다.
+     1. 헬스장, 골프장, 스크린 골프장, 샤워장(남, 여), 독서실(남, 여)을 출입하기 위해 지문인식에 의한 인증받은 자
+     2. 작은 도서관을 이용하는 ‘입주자등’
+     3. 키즈카페는 ‘입주자등’의 만 5세 이하 어린이와 그 어린이의 부모
+     4. 유지•관리 목적을 위한 관리사무소의 직원(위탁인 경우 그 직원)
+     5. 의사결정을 위한 입주자대표회의 구성원
+     6. 관리주체가 출입을 허락한 자
+
+    ③ 관리주체는 헬스장, 골프장, 스크린 골프장, 샤워장(남, 여), 독서실(남, 여)을 이용할 자격을 부여하는 경우에 1인에 한하여 이용할 수 있도록 등록하여야 한다.
+
+    ④ 헬스장 이용방법
+     1. 헬스장을 이용하려면 이용신청서를 제출하여야 하며, 이 규정 [별표 1]에서 규정한 이용료를 납부하여야 한다.
+     2. 헬스장 이용방법을 준수하여야 하며, 헬스장 용도 이외의 방법으로는 사용할 수 없다.
+     3. 헬스장에 설치된 [THE G/X CLUB]는 요가, 줌바댄스, 에어로빅, 발레교습, 방송댄스, 건전 사교댄스 관리주체가 동의한 교습 등 입주자대표회의나 관리주체가 인원을 정하여 허용하는 경우에 사용할 수 있으며, 이 경우에는 헬스장 이용을 할 수 없고, 헬스장과 동시에 이용하려면 헬스장 이용료를 납부하여야 한다.
+     4. [강사실]은 헬스장 및 [THE G/X CLUB]의 트레이닝(교습) 강사가 있는 경우만 사용할 수 있다. 다만, 주민공동시설의 운영직원으로 지정된 자도 사용할 수 있다.
+     5. 헬스장 이용하실 때에는 운동복에 실내런닝화를 착용해야 한다.
+     6. 운동 시작 전에 사전준비 운동을 충분히 한 다음 기구 작동 여부를 확인한 후 안전사고에 대비하여야 한다.
+     7. 안전사고 예방을 위하여 유아부터 초등학교 등 만 14세까지는 동행 및 출입을 금지하여야 한다.
+     8. 헬스장 이용은 이용자가 직접 이용하며, 이용한 기구나 물건은 이용자가 원래 보관 장소에 위치시켜야 한다.
+     9. 헬스장 이용자는 798명 범위에서 입주자대표회의에서 시설 및 이용현황을 고려하여 정한다.
+     10. 이 규정 제7조 제10호의 이용자 수보다 많은 인원이 신청한 경우에는 관리주체가 매월 5일 전까지, 신청자 중에 추첨으로 정한다. 다만, 신청자가 제10호의 규정에 따라 정한 수를 넘을 때는 당월 이용자는 다음 달 신청에서 제외하고, 신청자가 제10호의 규정에 정한 수를 넘지 않을 때는 부족한 수 만큼을 당월 이용자 중에서 추첨으로 정한다.
+
+    ⑤ 골프장 이용방법
+     1. 골프장을 이용하려면 이용신청서를 제출하여야 하며, 이 규정 [별표 1]에서 규정한 이용료를 납부하여야 한다.
+     2. 골프장 이용방법을 준수하여야 하며, 골프장 용도 이외의 방법으로는 사용할 수 없다.
+     3. 골프장 내에 설치된 스크린 골프장을 이용하기 위해서는 이용신청서를 제출하여야 하며, [별표 1]에서 규정한 이용료를 납부하여야 한다.
+     4. 골프장 내에 설치된 라커룸을 이용하기 위해서는 이용신청서를 제출하여야 하며, [별표 1]에서 규정한 이용료를 납부하여야 한다.
+     5. 골프장 이용할 때에는 골프장에 적합한 운동복과 실내화를 착용해야 한다.
+     6. 운동 시작 전에 사전준비 운동을 충분히 한 다음 기구 작동 여부를 확인한 후 안전사고에 대비하여야 한다.
+     7. 안전사고 예방을 위하여 유아부터 초등학교 등 만 14세까지는 동행 및 출입을 금지하여야 한다.
+     8. 골프장 이용은 이용자가 직접 이용하며, 이용한 기구나 물건은 이용자가 원래 보관 장소에 위치시켜야 한다.
+     9. 골프장 이용자는 200명 범위에서 입주자대표회의에서 시설 및 이용현황을 고려하여 정한다.
+     10. 이 규정 제7조 제10호의 이용자수 보다 많은 인원이 신청한 경우에는 관리주체가 매월 5일 전까지, 신청자들 중에 추첨으로 정한다. 다만, 신청자가 제10호의 규정에 따라 정한 수를 넘을 때는 당월 이용자는 다음 달 신청에서 제외하고, 신청자가 제10호의 규정에 정한 수를 넘지 않을 때는 부족한 수 만큼을 당월 이용자 중에서 추첨으로 정한다. 
+     11. 스크린 골프장 이용자는 이용신청서를 제출한 골프장 이용자 중에서 이 규정 제7조제5항 제11호에 규정한 방법과 동일한 법으로 정한다.
+     12. 라커룸 이용자는 이용신청서를 제출한 골프장 이용자 중에서 이 규정 제7조제5항제11호 규정한 방법과 동일한 방법으로 정한다.
+
+    ⑥ 샤워장 이용방법
+     1. 샤워장을 이용하려면 이용신청서를 제출하여야 하며, 이 규정 [별표 1]에서 규정한 이용료를 납부하여야 한다.
+     2. 샤워장 이용방법을 준수하여야 하며, 샤워장 용도 이외의 방법으로는 사용할 수 없다.
+     3. 헬스장과 골프장 이용자 중에서 이용자에 한하여 선착순으로 이용신청서를 제출한 순서에 따라 샤워장을 이용할 수 있다. 
+     4. 샤워장 이용자가 많아 제한이 필요한 경우에 관리주체는 이용자 수를 제한할 수 있다.
+
+    ⑦ 독서실 이용방법
+     1. 독서실을 이용한 경우에는 이용신청서를 제출하여야 하며, 이 규정 [별표 1]에서 규정한 이용료를 납부하여야 한다.
+     2. 독서실 이용방법을 준수하여야 하며, 독서실 용도 이외의 방법으로는 사용할 수 없다.
+     3. 독서실은 남녀 표시된 용도에 따라야 한다.
+     4. 독서실에서는 타 이용자를 위해 노트북과 컴퓨터는 사용할 수 없다. 다만, 키보드를 사용하지 않는 터치와 같은 방법을 이용하는 태블릿과 이와 유사한 전산기기 등은 사용할 수 있다.
+     5. 독서실 남, 여 좌석 수 보다 많은 인원이 신청한 경우에는 관리주체가 매월 5일 전까지, 남녀 각각 정원(남 19석, 여 24석)만큼 신청자 중에서 추첨으로 정한다. 다만, 신청자가 남여 각각 정원을 넘을 때는 당월 이용자는 다음 달 신청에서 제외하고, 신청자가 남여 각각 정원을 넘지 않을 때는 부족한 수 만큼을 당월 이용자 중에서 추첨으로 정한다.
+     6. 제7조 제7항 제5호 규정에 따라 추첨된 이용자 중에서 추첨을 통하여 좌석을 지정한다.
+     7. 지정된 좌석 이외 다른 좌석을 사용할 수 없다.  
+     8. 독서실 이용은 이용자가 직접 이용하며, 이용한 기구나 물건은 이용자가 원래 보관 장소에 위치시켜야 한다. 
+
+    ⑧ 작은 도서관 이용방법
+     1. 작은 도서관 이용자는 무료로 사용한다.
+     2. 작은 도서관의 도서는 외부 대출은 가능하지 않으며, 작은 도서관에서만 독서가 가능하다.
+     3. 관리주체 혹은 입주자대표회의, 자생단체 등이 주체하는 경우에 ‘입주자등’에게 도움이 되는 강의나 강좌를 위해 강의장으로 사용할 수 있다. 
+     4. 강의장으로 사용하기 위해서는 관리주체의 동의를 받아야 한다. 관리주체는 ‘입주자등’의 전체 이익에 반하거나, 종교적 목적, 정치적 목적 혹은 일부 입주민의 이해가 상반되는 강의나 강좌는 동의할 수 없다.
+     5. 작은 도서관에서 행하는 강의나 강좌를 위해 필요한 비용은 [별표 2]를 적용한다. 
+     6. 작은 도서관 이용은 이용자가 직접 이용하며, 이용한 기구나 물건, 도서는 이용자가 원래 보관 장소에 위치시켜야 한다.
+
+    ⑨ 키즈카페 이용방법
+     1. 키즈카페는 무료로 사용한다. 
+     2. ‘입주자등’의 만 5세의 어린이와 그 어린이와 동반된 부모가 자유롭게 사용할 수 있다. 그 외 다른 목적으로는 사용할 수 없다.
+     3. 키즈카페 이용은 이용자가 직접 이용하며, 이용한 기구나 물건은 이용자가 원래 보관 장소에 위치시켜야 한다.
+
+    ⑩ 주민회의실 이용방법
+     1. 주민회의실은 이용자는 무료로 사용한다. 다만, 입주자대표회의와 선거관리위원회, 층간소음 관리위원회가 소집된 경우에는 우선 사용한다. 
+     2. 주민회의실을 ‘입주자등’과 외부인이 회의나 회합을 위하여 관리주체에게 동의를 받아, 이용을 할 수 있다. 이 경우에는 [별표1]에 따라 비용을 납부하여야 한다.
+     3. 주민회의실 이용은 이용자가 직접 이용하며, 이용한 기구나 물건은 이용자가 원래 보관 장소에 위치시켜야 한다.
+
+    ⑪ 패밀리룸 이용방법
+     1. 패밀리룸은 이용자는 무료로 사용한다.
+     2. 패밀리룸을 ‘입주자등’과 외부인이 회의나 회합을 위하여 관리주체에게 동의를 받아 이용할 수 있다. 이 경우에는 [별표 1]에 따라 비용을 납부하여야 한다.
+     3. 패밀리룸 이용은 이용자가 직접 이용하며, 이용한 기구나 물건은 이용자가 원래 보관 장소에 위치시켜야 한다. 
+     . 패밀리룸은 음료를 판매할 수 있는 시설물을 설치할 수 있다. 이 경우 관리주체가 관리하여야 하며, 그 비용이나 수입은 제8조에 의한다.
+                                    </textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right">
+                                <table style="width: 100%">
+                                    <tr>
+                                        <td style="text-align:center; vertical-align:middle">
+                                            @*</td>
+                                        <td style="width: 30%; text-align: right">*@
+                                            <label style="font-weight:bold; font-size: 0.9em"> 이용자의 의무와 책임 및 이용방법을 확인하고, 준수할 것을 확인합니다. </label>
+                                        </td>
+                                        <td style="text-align:center; vertical-align:middle">
+                                            <input type="checkbox" @onchange="OnCheck" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+
+@* 이용 등록 모달 폼*@
+@if (InsertViewsA == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;<span style="font-weight:bold">@strTitle</span></h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseA">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="height: 400px; overflow-y:scroll">
+
+                    @if (strMon == "A")
+                    {
+                        <span class="bi-calendar-check" style="font-size: 1em; font-weight: bold; color:royalblue"> 주민공동시설 이용 월 선택</span>
+                        <table class="table">
+                            <tr>
+                                <td class="text-center" @onclick="() => OnMonth(1)"><img src="/images/1.png" class="img-thumbnail" /></td>
+                                <td class="text-center" @onclick="() => OnMonth(2)"><img src="/images/2.png" class="img-thumbnail" /></td>
+                                <td class="text-center" @onclick="() => OnMonth(3)"><img src="/images/3.png" class="img-thumbnail" /></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center" @onclick="() => OnMonth(4)"><img src="/images/4.png" class="img-thumbnail" /></td>
+                                <td class="text-center" @onclick="() => OnMonth(5)"><img src="/images/5.png" class="img-thumbnail" /></td>
+                                <td class="text-center" @onclick="() => OnMonth(6)"><img src="/images/6.png" class="img-thumbnail" /></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center" @onclick="() => OnMonth(7)"><img src="/images/7.png" class="img-thumbnail" /></td>
+                                <td class="text-center" @onclick="() => OnMonth(8)"><img src="/images/8.png" class="img-thumbnail" /></td>
+                                <td class="text-center" @onclick="() => OnMonth(9)"><img src="/images/9.png" class="img-thumbnail" /></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center" @onclick="() => OnMonth(10)"><img src="/images/10.png" class="img-thumbnail" /></td>
+                                <td class="text-center" @onclick="() => OnMonth(11)"><img src="/images/11.png" class="img-thumbnail" /></td>
+                                <td class="text-center" @onclick="() => OnMonth(12)"><img src="/images/12.png" class="img-thumbnail" /></td>
+                            </tr>
+                        </table>
+                    }
+
+
+                    @if (strMon == "B")
+                    {
+                        <table class="table" style="margin-bottom: 0px">
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-tools"></span>&nbsp; 이용시설</span></div>
+                                        <select id="strDong" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strUsingKindCode" @onchange="OnKind">
+                                            <option value="">::시설선택::</option>
+                                            @foreach (var it in annA)
+                                            {
+                                                <option value="@it.Kind_Code">@it.Kind_Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp; 이용방법</span></div>
+                                        <select id="strHo" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strUsingTicketCode" @onchange="OnTicket">
+                                            <option value="">::방법선택::</option>
+                                            @foreach (var it in annB)
+                                            {
+                                                <option value="@it.Aid">@it.Ticket_Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+
+
+
+
+
+
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp; 이용금액</span></div>
+                                        <input id="UseCost" style="font-size: 0.9em; text-align: right" name="Name" @bind="bnn.UseCost" class="form-control" type="number" readonly="readonly" />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp; 사용일</span></div>
+                                        <input id="ScamDays" style="font-size: 0.9em; text-align: center" name="ScamDays" @bind="bnn.ScamDays" class="form-control" type="number" readonly="readonly" />
+                                    </div>
+                                </td>
+                            </tr>
+                            @if (strTime == "B")
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-alarm-fill"></span>&nbsp; 시작시간</span></div>
+                                            <select id="strUseTimeA" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strUseTimeA" @onchange="OnUseTimeA">
+                                                <option value="">::이용시작선택::</option>
+                                                <option value="5">5시</option>
+                                                <option value="6">6시</option>
+                                                <option value="7">7시</option>
+                                                <option value="8">8시</option>
+                                                <option value="9">9시</option>
+                                                <option value="10">10시</option>
+                                                <option value="11">11시</option>
+                                                <option value="12">12시</option>
+                                                <option value="13">13시</option>
+                                                <option value="14">14시</option>
+                                                <option value="15">15시</option>
+                                                <option value="16">16시</option>
+                                                <option value="17">17시</option>
+                                                <option value="18">18시</option>
+                                                <option value="19">19시</option>
+                                                <option value="20">20시</option>
+                                                <option value="21">21시</option>
+                                                <option value="22">22시</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-alarm-fill"></span> &nbsp; 종료시간</span></div>
+                                            <select id="strUseTimeB" class="custom-select" style="font-size: 0.9em; text-align:center" value="@strUseTimeB" @onchange="OnUseTimeB">
+                                                <option value="">::이용종료선택::</option>
+                                                <option value="5">5시</option>
+                                                <option value="6">6시</option>
+                                                <option value="7">7시</option>
+                                                <option value="8">8시</option>
+                                                <option value="9">9시</option>
+                                                <option value="10">10시</option>
+                                                <option value="11">11시</option>
+                                                <option value="12">12시</option>
+                                                <option value="13">13시</option>
+                                                <option value="14">14시</option>
+                                                <option value="15">15시</option>
+                                                <option value="16">16시</option>
+                                                <option value="17">17시</option>
+                                                <option value="18">18시</option>
+                                                <option value="19">19시</option>
+                                                <option value="20">20시</option>
+                                                <option value="21">21시</option>
+                                                <option value="21">22시</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            <tr style="border-bottom-style:solid; border-bottom-color:silver; border-bottom-width: 1px">
+                                <td>
+                                    <textarea id="apContent" rows="4" @bind="bnn.Etc" class="form-control" placeholder="이곳에 기타 메모를 입력해 주세요." style="min-width: 100%; font-size: 0.9em"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <span>신청자 : </span> @intCountA   &nbsp;&nbsp; <span class="text-danger">대기자 : </span> <span class="text-danger">@intCountB</span>@*<span class="text-danger">번째</span>*@
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseA">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (InsertViewsC == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;<span style="font-weight:bold">스크린 골프 신청서</span></h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseC">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="height: 400px; overflow-y:scroll">
+
+                    <table class="table table-bordered" style="font-size: 0.9em">
+                        <tr>
+                            <td colspan="5">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp; 신청일자</span></div>
+                                    <input id="UseStartDate" style="font-size: 0.9em" name="UseStartDate" value="@bnn.UserStartDate.ToShortDateString()" @onchange="OnStartDate" class="form-control" type="date" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(7)">
+                                @if (intHour == 7 && OnHour(7) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered" class="bi-alarm">7시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">7시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(7) == 0)
+                                {
+                                    <span style="color: green" class="bi bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(8)">
+                                @if (intHour == 8 && OnHour(8) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered">8시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">8시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(8) == 0)
+                                {
+                                    <span style="color: green" class="bi bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(9)">
+                                @if (intHour == 9 && OnHour(9) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered">9시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">9시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(9) == 0)
+                                {
+                                    <span style="color: green" class="bi bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(10)">
+                                @if (intHour == 10 && OnHour(10) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered">10시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">10시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(10) == 0)
+                                {
+                                    <span style="color: green" class="bi bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(11)">
+                                @if (intHour == 11 && OnHour(11) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered">11시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">11시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(11) == 0)
+                                {
+                                    <span style="color: green" class="bi bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(12)">
+                                @if (intHour == 12 && OnHour(12) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered">12시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">12시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(12) == 0)
+                                {
+                                    <span style="color: green" class="bi bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(13)">
+                                @if (intHour == 13 && OnHour(13) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered">13시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">13시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(13) == 0)
+                                {
+                                    <span style="color: green" class="bi bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(14)">
+                                @if (intHour == 14 && OnHour(14) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered">14시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">14시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(14) == 0)
+                                {
+                                    <span style="color: green" class="bi bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(15)">
+                                @if (intHour == 15 && OnHour(15) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered">15시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">15시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(15) == 0)
+                                {
+                                    <span style="color: green" class="bi bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(16)">
+                                @if (intHour == 16 && OnHour(16) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered" class="bi bi-alarm">16시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">16시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(16) == 0)
+                                {
+                                    <span style="color: green" class="bi bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(17)">
+                                @if (intHour == 17 && OnHour(17) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered" class="bi bi-alarm">17시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">17시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(17) == 0)
+                                {
+                                    <span style="color: green" class="bi bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(18)">
+                                @if (intHour == 18 && OnHour(18) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered">18시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">18시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(18) == 0)
+                                {
+                                    <span style="color: green" class="bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(19)">
+                                @if (intHour == 19 && OnHour(19) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered">19시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">19시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(19) == 0)
+                                {
+                                    <span style="color: green" class="bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(20)">
+                                @if (intHour == 20 && OnHour(20) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered">20시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">20시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(20) == 0)
+                                {
+                                    <span style="color: green" class="bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(21)">
+                                @if (intHour == 21 && OnHour(21) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered">21시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">21시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(21) == 0)
+                                {
+                                    <span style="color: green" class="bi bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            @*<td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(22)">*@
+                            <td style="text-align:center; vertical-align:middle" @onclick="() => onSaving(22)">
+                                @if (intHour == 22 && OnHour(22) == 0)
+                                {
+                                    <span style="font-weight: bold; color: orangered">22시</span>
+                                }
+                                else
+                                {
+                                    <span style="font-weight: bold;">22시</span>
+                                }
+
+                                <br />
+                                @if (OnHour(22) == 0)
+                                {
+                                    <span style="color: green" class="bi bi-clipboard-x">미등록</span>
+                                }
+                                else
+                                {
+                                    <span style="color:red" class="bi bi-clipboard-check">등록됨</span>
+                                }
+                            </td>
+                            <td style="text-align:center; vertical-align:middle">
+                                <span style="font-weight: bold; color: lightsteelblue">없음</span>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle">
+                                <span style="font-weight: bold; color: lightsteelblue">없음</span>
+                            </td>
+                            @*
+                        <td style="text-align:center; vertical-align:middle">
+                        <span style="font-weight: bold; color: lightsteelblue">없음</span>
+                        </td>
+                        <td style="text-align:center; vertical-align:middle">
+                        <span style="font-weight: bold; color: lightsteelblue">없음</span>
+                        </td>*@
+                        </tr>
+                    </table>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-sm table-bordered" style="font-size: 0.9em">
+                                <tr>
+                                    <td style="text-align:right; vertical-align: middle; background-color: whitesmoke; width: 150px">
+                                        <span style="font-weight: bold">
+                                            이용시설물 :
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @bnn.UsingKindName
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:right; background-color: whitesmoke; vertical-align: middle">
+                                        <span style="font-weight: bold">
+                                            이용방법 :
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @bnn.Ticket
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:right; vertical-align:middle; background-color: whitesmoke">
+                                        <span style="font-weight: bold">
+                                            이용일자 :
+                                        </span>
+                                    </td>
+                                    <td style="vertical-align:middle">
+                                        @bnn.UserStartDate.ToShortDateString()
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:right; vertical-align: middle; background-color: whitesmoke">
+                                        <span style="font-weight: bold">
+                                            이용시간 :
+                                        </span>
+                                    </td>
+                                    <td style="vertical-align:middle">
+                                        @bnn.UserStartHour<span>시</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseC">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

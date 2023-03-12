@@ -1,0 +1,68 @@
+﻿@page "/CarInfor"
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td><span class="text-primary bi-car-front-fill" style="font-size: 1em; font-weight: bold">&nbsp; 자동차 등록 현황</span></td>                
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <table class="table" style="font-size: 0.9em">
+            <thead>
+                <tr style="background-color:aliceblue">
+                    <th style="text-align : center">
+                        자동차 번호
+                    </th>
+                    <th style="text-align : center">
+                        차종
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ann.Count == 0)
+                {
+                    <tr>
+                        <td colspan="2">
+                            <p style="text-align:center">
+                                등록된 차량이 없습니다. ............
+                            </p>
+                        </td>
+                    </tr>
+                }
+                else if (ann == null)
+                {
+                    <tr>
+                        <td colspan="2">
+                            <p style="text-align:center">
+                                <img src="/images/loader.gif" height="100" />
+                            </p>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var st in ann)
+                    {
+                        <tr>
+                            <td style="text-align : center; vertical-align:middle">
+                                @st.Car_Num
+                            </td>
+                            <td style="text-align : center; vertical-align:middle">
+                                @if (st.Move == "A")
+                                {
+                                    @st.Car_Name
+                                }else
+                                {
+                                    @st.Car_Name <span style="color: red">(등록 취소)</span>
+                                }
+                                
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,105 @@
+﻿@page "/Check/Input"
+
+<div class="card">
+    <div class="card-header">
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <h6> <span class="bi-check-circle"></span>&nbsp; 시설물 점검 사항 관리 &nbsp;&nbsp;&nbsp;&nbsp; <span style="font-size: 0.9em; color : darkcyan">점검 갯수 : @string.Format("{0: ###,###.##}", pager.RecordCount)<span>개</span></span></h6> 
+                </td>
+                <td class="text-right">
+                    <button type="button" title="점검사항 새로등록" class="btn btn-outline-dark btn-sm" @onclick="OnInputbutton"><span class="bi-tools"> </span> 점검 등록</button>&nbsp;&nbsp;
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <table class="table table-sm table-hover" style="font-size: 0.9em">
+            <thead>
+                <tr style="background-color: ghostwhite">
+                    <th class="text-center">
+                        일련번호
+                    </th>
+                    <th class="text-center">
+                        점검일
+                    </th>
+                    <th class="text-center">
+                        점검대상
+                    </th>
+                    <th class="text-center">
+                        점검주기
+                    </th>
+                    <th class="text-center">
+                        점검수
+                    </th>
+                    <th class="text-center">
+                        점검부서
+                    </th>
+                    <th class="text-center">
+                        점검자
+                    </th>
+                    <th class="text-center">
+                        결재 여부
+                    </th>
+                    <th class="text-center">
+                        선택
+                    </th>
+                </tr>
+            </thead>
+            @foreach (var item in ann)
+            {
+                <tbody>
+                    <tr>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(item.CheckInputID)">
+                            @*@item.CheckInputID*@
+                            @string.Format("{0: ###,###.##}", (intNum--))
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(item.CheckInputID)">
+                            @item.Check_Year<span>년</span>@item.Check_Month<span>월</span>@item.Check_Day<span>일</span>
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(item.CheckInputID)">
+                            @item.Check_Object_Name
+                            @*@FuncObject(item.Check_Object_Code)*@
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(item.CheckInputID)">
+                            @item.Check_Cycle_Name
+                            @*@FuncCycle(item.Check_Cycle_Code)*@
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(item.CheckInputID)">
+                            @item.Check_Count.ToString()
+                            @*@FuncItems(item.Check_Object_Code, item.Check_Cycle_Code, item.Check_Year, item.Check_Month, item.Check_Day, Apt_Code)*@
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(item.CheckInputID)">
+                            @*@FuncPost(item.Check_Object_Code, item.Check_Cycle_Code, item.Check_Year, item.Check_Month, item.Check_Day, Apt_Code)*@
+                            @item.User_Post@item.User_Duty
+
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(item.CheckInputID)">
+                            @*@FuncName(item.Check_Object_Code, item.Check_Cycle_Code, item.Check_Year, item.Check_Month, item.Check_Day, Apt_Code)*@
+                            @item.User_Name
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(item.CheckInputID)">
+                            @if (item.Complete == "B")
+                            {
+                                <span style="color: blue">결재완료</span>
+                            }
+                            else
+                            {
+                                <span style="color: red">미결재</span>
+                            }
+                        </td>
+                        
+                        <td class="text-center" style="vertical-align:middle">
+                            <input id="Button1" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByAid(item.CheckInputID)" value="상세" />&nbsp;
+                            @*<input id="Button12" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByEdit(item)" value="수정" />&nbsp;*@
+                            <input id="Button13" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemove(item.CheckInputID)" value="삭제" />
+                        </td>
+                    </tr>
+                </tbody>
+            }
+        </table>
+        <div class="col-md-12">
+            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,87 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    ViewData["Title"] = "Index";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    @*<title>공동주택 관리전산</title>
+        <link href="~/css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+        <link href="~/bootstrap-icons.css" rel="stylesheet" />
+        <script src="~/lib/MobileScript.js"></script>*@
+    @if (TempData["message"] != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                alert("@TempData["message"]");
+            };
+        </script>
+
+    }
+</head>
+<body>
+
+
+    <div class="row">
+        <div class="container">
+
+            <div class="card">
+                <div class="card-header" style="vertical-align:middle">
+                    <i class="bi bi-shield-lock"></i> 공동주택관리전산 로그인
+                </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-6">
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <img src="~/images/sub/key_login.gif" height="30" /> <span style="font-size: 1.2em; font-weight: bold">로그인</span>
+                                </div>
+                                <div class="card-body">
+                                    <form action="/Home/Index" method="post">
+                                        <div class="input-group">
+                                            <div class="input-group-append">
+
+                                                <span class="input-group-text"><i class="bi bi-person-fill"></i>&nbsp; 아이디</span>
+                                            </div>
+                                            <input id="User_Code" name="User_Code" type="text" class="form-control" />
+                                        </div>
+                                        <br />
+                                        <div class="input-group">
+                                            <div class="input-group-append">
+
+                                                <span class="input-group-text">&nbsp;<i class="bi bi-eye-slash-fill"></i>&nbsp; 암 &nbsp; 호</span>
+                                            </div>
+                                            <input id="sw_Pass" name="sw_Pass" type="password" class="form-control" />
+                                        </div>
+                                        <br />
+                                        <input type="submit" class="btn btn-success btn-block" value="로그인" />
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class=" card">
+                                <div class="card-body">
+                                    <img src="/images/Login_1.png" width="335" alt="" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,222 @@
+﻿@page "/Facilities/Facility_Place"
+
+
+<div class="card">
+    <div class="card-header">
+        <table width=100%>
+            <tr>
+                <td>
+                    <span class=bi-search style="font-size: 1em; font-weight: bold"> &nbsp; 업무일지 장소 정보 관리</span>
+                </td>
+                <td>
+                    <span style="font-size: 1em; font-weight: bold">입력된 장소 수</span> : @intNum<span>개</span>
+                </td>
+                <td style="text-align: right">
+                    @*<input id="Button1" class="btn btn-outline-primary btn-sm" type="button" @onclick="OnOpen" value="새로 입력" />*@
+                    <button type="button" @onclick="OnOpen" class=" btn btn-primary btn-sm"><span class="bi-box-arrow-in-right"></span> &nbsp; 새로 등록</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class=card-body>
+        @if (ann == null)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" height="100" />
+            </p>
+        }
+        else if (ann.Count == 0)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" height="100" />
+            </p>
+        }
+        else
+        {
+            <table style="width: 100%">
+                <tr>
+                    <td></td>
+                    <td width="300px">
+                        <div class="input-group">
+                            <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;대분류</span></div>
+                            <select id="Sort_A_Code" class="custom-select" value="@strSortA" style="font-size: 0.9em" @onchange="onSortAA" required>
+                                <option value="Z">=대분류 선택=</option>
+                                @foreach (var it in bloom_A)
+                                {
+                                    <option value="@it.B_N_A_Name">@it.B_N_A_Name</option>
+                                }
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+
+            </table>
+            <table class="table table-sm table-hover" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color:ghostwhite">
+                        <th class="text-center">
+                            번호
+                        </th>
+                        <th class="text-center">
+                            대분류
+                        </th>
+                        <th class="text-center">
+                            중분류
+                        </th>
+                        <th class="text-center">
+                            세분류
+                        </th>
+                        <th class="text-center">
+                            작업장소
+                        </th>
+                        <th class="text-center">
+                            식별코드
+                        </th>
+                        <th class="text-center">
+                            구분
+                        </th>
+                        <th class="text-center">
+                            설명
+                        </th>
+                        <th class="text-center">
+                            입력일
+                        </th>
+
+                        <th class="text-center">
+                            선택
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var it in ann)
+                    {
+                        <tr>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @it.Num
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @it.B_N_A_Name
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @it.B_N_B_Name
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @it.B_N_C_Name
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @it.Bloom
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @it.B_N_Code
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @it.Bloom_Code
+                            </td>
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @Dul.StringLibrary.CutString(it.Intro, 20)
+                            </td>
+
+                            <td class="text-center" style="vertical-align:middle" @onclick="() => ByAid(it)">
+                                @it.PostDate.ToShortDateString()
+                            </td>
+                            <td class="text-center" style="vertical-align:middle">
+                                <input id="Button1" class="btn btn-link btn-sm" @onclick="() => ByAid(it)" type="button" value="상세" />&nbsp;&nbsp;
+                                <input id="Button1" class="btn btn-link btn-sm" @onclick="() => ByEdit(it)" type="button" value="수정" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+            <div class="col-md-12">
+                <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+            </div>
+        }
+    </div>
+</div>
+    
+@*수선항목 입력*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: cornflowerblue; color: white">
+                    <h6 class="modal-title"><span class="bi-house-door"></span>&nbsp;@strTitle</h6>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>*@
+                </div>
+                <div class="modal-body">
+
+                    <table class="table" width="100%" style="margin-bottom: 5px">
+                        <tr>
+
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;대분류</span></div>
+                                    <select id="Sort_A_Code" class="custom-select" value="@strSortA" style="font-size: 0.9em" @onchange="onSortA" required>
+                                        <option value="Z">=대분류 선택=</option>
+                                        @foreach (var it in bloom_A)
+                                        {
+                                            <option value="@it.B_N_A_Name">@it.B_N_A_Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;중분류</span></div>
+                                    <select id="Sort_B_Code" class="custom-select" value="@strSortB" style="font-size: 0.9em" @onchange="onSortB" required>
+                                        <option value="Z">=중분류 선택=</option>
+                                        @foreach (var it in bloom_B)
+                                        {
+                                            <option value="@it.B_N_B_Name">@it.B_N_B_Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp;소분류</span></div>
+                                    <select id="Sort_C_Code" class="custom-select" value="@strSortC" style="font-size: 0.9em" @onchange="onSortC" required>
+                                        <option value="Z">=소분류 선택=</option>
+                                        @foreach (var it in bloom_C)
+                                        {
+                                            <option value="@it.B_N_C_Name">@it.B_N_C_Name</option>
+                                        }
+                                        <option value="예외지출">예외지출</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-pencil-square"></span>&nbsp; 장소</span></div>
+                                    <input id="Bloom" name="Bloom" style="font-size: 0.9em;" @bind="bnn.Bloom" class="form-control" type="text" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>                                
+                                <input id="Intro" name="Intro" style="font-size: 0.9em;" @bind="bnn.Intro" placeholder="장소 설명" class="form-control" type="text" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}
+
+

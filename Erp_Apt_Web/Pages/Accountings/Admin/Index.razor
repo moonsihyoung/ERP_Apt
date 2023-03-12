@@ -1,0 +1,208 @@
+﻿@page "/Accountings/Admin"
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <h6><span class="bi-journal-text"> </span>&nbsp;지출결의서 계정과목 정보 목록</h6>
+                </td>
+                <td>
+                </td>
+                <td class="text-right">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnInsert"> <span class="bi-tools"></span>&nbsp;계정 등록</button> &nbsp;&nbsp;<button type="button" class="btn btn-outline-dark btn-sm" @onclick="btnSortMove"> <span class="bi-box-arrow-right"></span>&nbsp;계정과목 분류로 이동</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        @if (ann == null)
+        {
+            <p style="text-align:center">
+                <img src="/images/loader.gif" />
+            </p>
+        }
+        else if (ann.Count == 0)
+        {
+            <p style="text-align:center">
+                입력된 정보가 없습니다. ............
+            </p>
+        }
+        else
+        {
+            <table class="table table-sm" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color:whitesmoke;">
+                        <th style="text-align: center">
+                            식별코드
+                        </th>
+                        <th style="text-align: center">
+                            계정구분
+                        </th>
+                        <th style="text-align: center">
+                            대분류
+                        </th>
+                        <th style="text-align: center">
+                            코드
+                        </th>
+                        <th style="text-align: center">
+                            중분류
+                        </th>
+                        <th style="text-align: center">
+                            코드
+                        </th>
+                        <th style="text-align: center">
+                            계정과목
+                        </th>
+                        <th style="text-align: center">
+                            사용여부
+                        </th>
+                        <th style="text-align: center">
+                            입력일
+                        </th>
+                        <th style="text-align: center">
+                            입력자
+                        </th>
+                        <th style="text-align: center">
+                            설명
+                        </th>
+                        <th style="text-align: center">
+                          선택
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                   @foreach (var st in ann)
+                   {
+                        <tr>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.Aid
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.AccountType
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.SortA
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.SortA_Code
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.SortB
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.SortB_Code
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.AccountName
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @if (@st.del == "A")
+                                {
+                                    <span style="color:blue">사용</span>
+                                }
+                                else
+                                {
+                                   <span style="color:red">미사용</span> 
+                                }
+
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @st.PostDate.ToShortDateString()
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                @staff_Lib.UsersName(st.User_Code)
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                               <span title="@st.Details">@Dul.StringLibrary.CutString(st.Details, 20)</span> 
+                            </td>
+                            <td style="text-align: center; vertical-align: middle">
+                                 <input id="Button11" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByEdit(st)" value="수정" />
+                                 <input id="Button12" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemove(st)" value="삭제" />
+                            </td>
+                        </tr>
+                    }
+                    
+                </tbody>
+            </table>
+            <div class="col-md-12">
+                <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+            </div>
+        }
+    </div>
+    <div class="card-footer" style="text-align: right">
+        @Apt_Name  &nbsp;&nbsp;  @User_Name
+    </div>
+</div>
+
+@*..... 새로 등록 모달 폼*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>대분류</span></div>
+                                    <select id="intAid" class="custom-select" value="@intAid" @onchange="OnSort" style="font-size: 0.9em" required>
+                                        <option value="">=대분류선택=</option>
+
+                                        @foreach (var it in SortA)
+                                        {
+                                            <option value="@it.Aid">@it.SortName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-person-check-fill"></span>중분류</span></div>
+                                    <select id="SortB_Code" class="custom-select" value="@bnn.SortB_Code" @onchange="OnSortB" style="font-size: 0.9em" required>
+                                        <option value="">=중분류선택=</option>
+
+                                        @foreach (var it in SortB)
+                                        {
+                                            <option value="@it.Aid">@it.SortName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span> &nbsp; 계정명</span></div>
+                                        <input id="AccountName" name="AccountName" style="font-size: 0.9em" @bind="bnn.AccountName" class="form-control" type="text" placeholder="계정과목 입력하는 곳" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <textarea id="Details" name="Details" class="form-control" rows="3" style="min-width: 100%" @bind="bnn.Details" required></textarea>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,280 @@
+﻿@page "/Accountings"
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <span style="font-size: 1.0em"><span class="bi-tools"></span>&nbsp;지출결의서 목록</span>
+                </td>
+                <td class="text-right">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnInsert"> <span class="bi-box-arrow-in-right"></span>&nbsp;지출결의서 등록</button>
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSortInsert"> <span class="bi-box-arrow-in-right"></span>&nbsp;지출결의서 구분 등록</button>
+                </td>
+          </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <table class="table table-sm table-hover" style="font-size: 0.9em">
+            <thead>
+                <tr style="background-color: whitesmoke;">
+                    <th style="text-align: center; vertical-align: middle">
+                        식별코드
+                    </th>
+                    <th style="text-align: center; vertical-align: middle">
+                        지출명
+                    </th>
+                    <th style="text-align: center; vertical-align: middle">
+                        결재일
+                    </th>
+                    <th style="text-align: center; vertical-align: middle">
+                        집행일
+                    </th>
+                    <th style="text-align: center; vertical-align: middle">
+                        집행금액
+                    </th>
+                    <th style="text-align: center; vertical-align: middle">
+                        집행자
+                    </th>
+                    <th style="text-align: center; vertical-align: middle">
+                        결재여부
+                    </th>
+                    <th style="text-align: center; vertical-align: middle">
+                        입력일
+                    </th>
+                    <th style="text-align: center; vertical-align: middle">
+                        버튼
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+               @foreach (var st in ann)
+               {
+                   <tr>
+                       <td style="text-align: center; vertical-align: middle" @onclick="() => btnDetails(st.Aid)">
+                           @st.Aid
+                       </td>
+                       <td style="text-align: center; vertical-align: middle" @onclick="() => btnDetails(st.Aid)">
+                           @st.DisbursementName
+                       </td>
+                       <td style="text-align: center; vertical-align: middle" @onclick="() => btnDetails(st.Aid)">
+                           @st.DraftDate.ToShortDateString()
+                       </td>
+                       <td style="text-align: center; vertical-align: middle" @onclick="() => btnDetails(st.Aid)">
+                           @st.InputDate.ToShortDateString()
+                       </td>
+                       <td style="text-align: center; vertical-align: middle" @onclick="() => btnDetails(st.Aid)">
+                           @if (st.InputSum > 0)
+                           {
+                               @string.Format("{0: ###,###}", @st.InputSum)<span>원</span>
+                           }
+                           else
+                           {
+                               <span>0원</span>
+                           }
+                           
+                       </td>
+                       <td style="text-align: center; vertical-align: middle" @onclick="() => btnDetails(st.Aid)">
+                           @st.User_Name
+                       </td>
+                       <td style="text-align: center; vertical-align: middle" @onclick="() => btnDetails(st.Aid)">
+                           @if (st.Approval == "B")
+                           {
+                                <span>결재</span>
+                            }
+                            else
+                            {
+                                <span>미결재</span>
+                            }
+                            
+                       </td>
+                       <td style="text-align: center; vertical-align: middle" @onclick="() => btnDetails(st.Aid)">
+                           @st.PostDate.ToShortDateString()
+                       </td>
+                       <td style="text-align: center; vertical-align: middle">
+                           <input id="Button1" class="btn btn-link btn-sm" @onclick="() => btnEdit(st)" type="button" value="수정" />
+                           <input id="Button2" class="btn btn-link btn-sm" @onclick="() => ByRemove(st)" type="button" value="삭제" />
+                       </td>
+                </tr>
+               }
+                
+            </tbody>
+        </table>
+        <div class="col-md-12">
+                <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+        </div>
+    </div>
+</div>
+
+
+@*지출결의서 기본 등록 모달 폼*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h6 class="modal-title"><span class="bi-pencil-square"></span>&nbsp; @strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <table class="table" style="margin-bottom: 0px;">
+                        <tr>
+                            
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span>&nbsp; 지출분류</span></div>
+                                    <select id="DisbursementName" class="custom-select" @bind="bnn.DisbursementName" style="font-size: 0.9em">
+                                        <option value="">::지출분류선택::</option>
+                                        @foreach (var st in annA)
+                                        {
+                                            <option value="@st.Aid">@st.DisbursementName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-calendar-check"></span> &nbsp; 결재일자</span></div>
+                                    <input id="DraftDate" name="DraftDate" style="font-size: 0.9em" @bind="bnn.DraftDate" class="form-control" type="date" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="50%">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-calendar-check"></span> &nbsp; 집행일자</span></div>
+                                    <input id="InputDate" name="InputDate" style="font-size: 0.9em" @bind="bnn.InputDate" class="form-control" type="date" />
+                                </div>
+                            </td>
+                            
+                        </tr>
+                        <tr>
+                            <td>
+                                <textarea id="Details" name="Details" style="font-size: 0.9em" @bind="bnn.Details" class="form-control" type="text" placeholder="기타 자세한 설명" />
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnClose">닫기</button> 
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@*..... 새로 등록 모달 폼*@
+@if (SortInsert == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue;">
+                    <h6 class="modal-title"><span class="bi-alarm"></span>&nbsp;@strTitle</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnCloseA">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td width="30%">
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span> &nbsp; 구분명</span></div>
+                                        <input id="DisbursementName" name="DisbursementName" style="font-size: 0.9em" @bind="bnnA.DisbursementName" class="form-control" type="text" placeholder="지출결의서 구분명 입력" />
+                                    </div>
+                                </div>
+                            </td>
+                        
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-eject"></span> &nbsp; 설명</span></div>
+                                        <input id="Details" name="Details" style="font-size: 0.9em" @bind="bnnA.Details" class="form-control" type="text" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    @if (ann == null)
+                    {
+                        <p style="text-align:center">
+                            <img src="/images/loader.gif" />
+                        </p>
+                    }
+                    else if (ann.Count == 0)
+                    {
+                        <p style="text-align:center">
+                            입력된 정보가 없습니다. ............
+                        </p>
+                    }
+                    else
+                    {
+                        <table class="table table-sm" style="font-size: 0.9em">
+                            <thead>
+                                <tr style="background-color:whitesmoke;">
+                                    <th style="text-align: center">
+                                        번호
+                                    </th>
+                                    <th style="text-align: center">
+                                        분류명
+                                    </th>
+                                    <th style="text-align: center">
+                                        설명
+                                    </th>
+                                    <th style="text-align: center">
+                                        입력일
+                                    </th>
+                                    <th style="text-align: center">
+                                        버튼
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               @foreach (var st in annA)
+                               {
+                                    <tr>
+                                        <td style="text-align: center; vertical-align: middle">
+                                            @st.Aid
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle">
+                                            @st.DisbursementName
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle">
+                                            <span>@Dul.StringLibrary.CutString(st.Details, 18)</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle">
+                                            @st.PostDate.ToShortDateString()
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle">
+                                            <input id="Button1" class="btn btn-link btn-sm" @onclick="() => btnEditA(st)" type="button" value="수정" />
+                                            <input id="Button2" class="btn btn-link btn-sm" @onclick="() => ByRemoveA(st)" type="button" value="삭제" />
+                                        </td>
+                                    </tr>
+                                }
+                    
+                            </tbody>
+                        </table>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnSaveA">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnCloseA">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

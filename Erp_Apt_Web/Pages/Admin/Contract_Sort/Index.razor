@@ -1,0 +1,91 @@
+﻿@page "/Admin/Contract_Sort" 
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <span class="bi bi-file-earmark-easel"> &nbsp; 업체 정보 목록</span>
+                </td>
+                <td class="text-right">
+                    <button id="fileRemove" class="btn btn-link" @onclick="OnCompnayInput"><span class="bi-check-square"></span>&nbsp;업체 등록</button>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    <div class="card-body">
+        <div>
+            <table class="table table-sm" style="font-size: 0.9em">
+                <thead>
+                    <tr style="background-color: ghostwhite">
+                        <th class="text-center">식별코드</th>
+                        <th class="text-center">분류코드</th>
+                        <th class="text-center">분류명</th>
+                        <th class="text-center">입력자아이디</th>
+                        <th class="text-center">상위분류코드</th>
+                        <th class="text-center">상위분류명</th>
+                        <th class="text-center">분류단계</th>
+                        <th class="text-center">설명</th>
+                        <th class="text-center">입력일</th>
+                        <th class="text-center">선택</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var it in ann)
+                    {
+                        <tr>
+                            <td class="text-center" style="vertical-align: middle">
+                                @it.Aid
+                            </td>
+                            <td class="text-center" style="vertical-align: middle">
+                                @it.ContractSort_Code
+                            </td>
+                            <td class="text-center" style="vertical-align: middle">
+                                @it.ContractSort_Name
+                            </td>
+                            <td class="text-center" style="vertical-align: middle">
+                                @it.Staff_Code
+                            </td>
+                            <td class="text-center" style="vertical-align: middle">
+                                @if (it.Up_Code == "Aa")
+                                {
+                                    <span>대분류</span>
+                                }
+                                else
+                                {
+                                    @contract_Sort_Lib._Name(it.Up_Code)
+                                }
+                            </td>
+                            <td class="text-center" style="vertical-align: middle">
+                                @if (it.ContractSort_Step == "A")
+                                {
+                                    <span>대분류</span>
+                                }
+                                else
+                                {
+                                    <span style="color:blue">소분류</span>
+                                }
+                            </td>
+                            <td class="text-center" style="vertical-align: middle">
+                                <span title="@it.ContractSort_Etc"> @Dul.StringLibrary.CutString(it.ContractSort_Etc, 26)</span>
+                            </td>
+                           
+                            <td class="text-center" style="vertical-align: middle">
+                                @it.PostDate.ToShortDateString()
+                            </td>
+                            <td class="text-center" style="vertical-align: middle">
+                                <input id="Button11" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByDetails(it)" value="상세" />&nbsp;
+                                <input id="Button12" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByEdit(it)" value="수정" />&nbsp;
+                                <input id="Button13" class="btn btn-link btn-sm" style="font-size: 0.9em" type="button" @onclick="() => ByRemove(it.Aid)" value="삭제" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="col-md-12">
+                <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+            </div>
+        </div>
+    </div>
+</div>

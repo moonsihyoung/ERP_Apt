@@ -1,0 +1,750 @@
+﻿@page "/Contract"
+
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <h6><span class="bi-journal-text"> </span>&nbsp;계약정보 목록</h6>
+                </td>
+                <td>
+                </td>
+                <td class="text-right">
+                    <button type="button" class="btn btn-outline-primary btn-sm" @onclick="btnInsertContract"> <span class="bi-tools"></span>&nbsp;계약등록</button> &nbsp;&nbsp;<button type="button" class="btn btn-outline-dark btn-sm" @onclick="btnInsertCompany"> <span class="bi-tools"></span>&nbsp;업체등록</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card-body">
+        <table class="table table-sm table-hover" style="font-size: 0.9em">
+            <thead>
+                <tr style="background-color: ghostwhite">
+                    <th class="text-center">
+                        번호
+                    </th>
+                    <th class="text-center">
+                        계약분류
+                    </th>
+                    <th class="text-center">
+                        업체명
+                    </th>
+                    <th class="text-center">
+                        입찰방식
+                    </th>
+                    <th class="text-center">
+                        낙찰방식
+                    </th>
+                    <th class="text-center">
+                        계약주체
+                    </th>
+                    <th class="text-center">
+                        계약일
+                    </th>
+                    <th class="text-center">
+                        계약시작일
+                    </th>
+                    <th class="text-center">
+                        계약종료일
+                    </th>
+                    <th class="text-center">
+                        계약금액
+                    </th>
+                    <th class="text-center">
+                        선택
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var it in ann)
+                {
+                    <tr>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByDetails(it)">
+                            @*@it.Aid*@
+                            @string.Format("{0: ###,###.##}", (intNum--))
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByDetails(it)">
+                            @contract_Sort_Lib._Name(it.ContractSort)
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByDetails(it)">
+                            @it.Company_Name
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByDetails(it)">
+                            @it.Tender
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByDetails(it)">
+                            @it.Bid
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByDetails(it)">
+                            @it.ContractMainAgent
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByDetails(it)">
+                            @it.Contract_date.ToShortDateString()
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByDetails(it)">
+                            @it.Contract_start_date.ToShortDateString()
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByDetails(it)">
+                            @it.Contract_end_date.ToShortDateString()
+                        </td>
+                        <td class="text-center" style="vertical-align:middle" @onclick="() => ByDetails(it)">
+                            @string.Format("{0: ###,###}", it.Contract_Sum)<span>원</span>
+                        </td>
+
+                        <td class="text-center" style="vertical-align:middle">
+                            @*<input id="Button11" class="btn btn-link" style="font-size: 0.9em" type="button" @onclick="() => ByDetails(it)" value="상세" />*@
+                            <input id="Button12" class="btn btn-link" style="font-size: 0.9em" type="button" @onclick="() => ByEdit(it)" value="수정" />&nbsp;
+                            <input id="Button13" class="btn btn-link" style="font-size: 0.9em" type="button" @onclick="() => ByRemove(it.Aid)" value="퇴사" />
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+        <div class="col-md-12">
+            <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+        </div>
+    </div>
+
+</div>
+
+@*계약 새로 등록 모달 폼*@
+@if (InsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h5 class="modal-title">계약 등록 입력(수정)</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="margin-bottom: 0px">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span>&nbsp; 대분류<span style="color: red">*</span></span></div>
+                                    <select id="Select1" class="custom-select" style="font-size: 0.9em" value="@SortA" @onchange="onSortA" required>
+                                        <option value="">=계약분류 선택=</option>
+                                        @foreach (var ite in listA)
+                                        {
+                                            <option value="@ite.ContractSort_Code">@ite.ContractSort_Name</option>
+                                        }
+
+                                    </select>
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span>&nbsp; 소분류<span style="color: red">*</span></span></div>
+                                    <select id="Select1" class="custom-select" style="font-size: 0.9em" @bind="cce.ContractSort" required>
+                                        <option value="">=계약분류 선택=</option>
+
+                                        @foreach (var it in listB)
+                                        {
+                                            <option value="@it.ContractSort_Code">@it.ContractSort_Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+
+                                    @*<div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 사업자번호</span></div>*@
+                                    <input id="txtCorporateResistration_Num" name="txtCorporateResistration_Num" value="@CorporateResistration_Num" placeholder="사업자 등록 번호 입력" style="font-size: 0.9em" class="form-control" type="text" @onchange="OnRepeatCheck" />
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-danger btn-sm"><span class="bi-tools"></span>&nbsp;<span style="color:red">검색*</span></button>
+                                    </div>
+
+
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp;업체명<span style="color: red">*</span></span></div>
+                                        <input id="txtCor_Name" name="txtCor_Name" style="font-size: 0.9em" @bind="cce.Company_Name" class="form-control" type="text" />
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+
+
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp;시작일<span style="color: red">*</span></span></div>
+                                        <input id="txtContract_start_date" name="txtContract_start_date" style="font-size: 0.9em" @bind="cce.Contract_start_date" class="form-control" type="date" />
+                                    </div>
+                                </div>
+
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp;종료일<span style="color: red">*</span></span></div>
+                                        <input id="txtContract_end_date" name="txtContract_end_date" style="font-size: 0.9em" @bind="cce.Contract_end_date" class="form-control" type="date" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span>&nbsp;입찰방법<span style="color: red">*</span></span></div>
+                                    <select id="Select1" class="custom-select" style="font-size: 0.9em" @bind="cce.Tender" required>
+                                        <option value="">=입찰방법 선택=</option>
+                                        <option value="일반경쟁">일반경쟁</option>
+                                        <option value="제한경쟁">제한경쟁</option>
+                                        <option value="부대입찰">부대입찰</option>
+                                        <option value="수의계약">수의계약</option>
+                                        <option value="기타">기타</option>
+                                    </select>
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span>&nbsp;낙찰방법<span style="color: red">*</span></span></div>
+                                    <select id="Select1" class="custom-select" style="font-size: 0.9em" @bind="cce.Bid" required>
+                                        <option value="Z">=낙찰방법 선택=</option>
+                                        <option value="최저가">최저가</option>
+                                        <option value="최고가">최고가</option>
+                                        <option value="적격심사">적격심사</option>
+                                        <option value="재계약">재계약</option>
+                                        <option value="기타">기타</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span> &nbsp;계약주체<span style="color: red">*</span></span></div>
+                                    <select id="Select2" class="custom-select" style="font-size: 0.9em" @bind="cce.ContractMainAgent" required>
+                                        <option value="">=계약주체 선택=</option>
+                                        <option value="관리주체">관리주체</option>
+                                        <option value="입주자대표회의">입주자대표회의</option>
+                                        <option value="임대사업자">임대사업자</option>
+                                        <option value="관리사장">관리소장</option>
+                                        <option value="기타">기타</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span>&nbsp;계약금액<span style="color: red">*</span></span></div>
+                                        <input id="txtContract_Sum" name="txtContract_Sum" style="font-size: 0.9em" @bind="cce.Contract_Sum" class="form-control" type="number" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr id="vw4">
+
+                            <td colspan="2">
+                                <textarea id="Intro" class="form-control" rows="4" style="min-width: 100%" @bind="cce.Intro" required></textarea>
+
+                            </td>
+                        </tr>
+                        @*<tr>
+                                <td style="text-align: right; vertical-align:middle" colspan="2">
+                                    <input id="btnSave" type="submit" value="등 록" class="btn btn-danger btn-sm" />
+                                </td>
+                            </tr>*@
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="btnContractSave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary" @onclick="btnContractClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*업체 새로 등록 모달 폼*@
+@if (ComInsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h5 class="modal-title">업체 등록 입력</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="margin-bottom: 0px">
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span> &nbsp; 대분류<span style="color: red">*</span></span></div>
+                                    <select id="Select1" class="custom-select" style="font-size: 0.9em" @onchange="onSortA" required>
+                                        <option value="">=업체분류 선택=</option>
+                                        @foreach (var ite in listA)
+                                        {
+                                            <option value="@ite.ContractSort_Code">@ite.ContractSort_Name</option>
+                                        }
+
+                                    </select>
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span> 소분류<span style="color: red">*</span></span></div>
+                                    <select id="Select1" class="custom-select" style="font-size: 0.9em" @bind="LstC.Company_Sort" required>
+                                        <option value="">=업체 소분류 선택=</option>
+
+                                        @foreach (var it in listB)
+                                        {
+                                            <option value="@it.ContractSort_Code">@it.ContractSort_Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 사업자번호<span style="color: red">*</span></span></div>
+                                        <input id="txtCorporateResistration_Num" name="txtCorporateResistration_Num" @bind="lstB.CorporateResistration_Num" style="font-size: 0.9em" class="form-control" @ref="myref" type="text" />
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-danger btn-sm" @onclick="OnRepeatCheckA"><span class="bi-tools"></span>&nbsp;<span style="color:red">중복 *</span></button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 업체명<span style="color: red">*</span></span></div>
+                                        <input id="txtCor_Name" name="txtCor_Name" style="font-size: 0.9em" @bind="lstB.Cor_Name" class="form-control" type="text" />
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 시도<span style="color: red">*</span></span></div>
+                                    <select id="txtAdress_Sido" style="font-size: 0.9em" class="custom-select" @onchange="OnSido">
+                                        <option value="">::시도선택::</option>
+                                        <option value="A">서울특별시</option>
+                                        <option value="B">경기도</option>
+                                        <option value="C">부산광역시</option>
+                                        <option value="D">대구광역시</option>
+                                        <option value="E">인천광역시</option>
+                                        <option value="F">광주광역시</option>
+                                        <option value="G">대전광역시</option>
+                                        <option value="H">울산광역시</option>
+                                        <option value="I">세종특별자치시</option>
+                                        <option value="J">충청남도</option>
+                                        <option value="K">충청북도</option>
+                                        <option value="L">경상남도</option>
+                                        <option value="M">경상북도</option>
+                                        <option value="N">전라남도</option>
+                                        <option value="O">전라북도</option>
+                                        <option value="P">강원도</option>
+                                        <option value="Q">제주특별자치도</option>
+                                    </select>
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-clipboard-check"></span> 시군구<span style="color: red">*</span></span></div>
+                                    <select id="Select1" class="custom-select" @onchange="onGunGu" style="font-size: 0.9em" required>
+                                        <option value="">=시군구 선택=</option>
+
+                                        @foreach (var it in sidos)
+                                        {
+                                            <option value="@it.Region">@it.Region</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 상세주소</span></div>
+                                        <input id="txtAdress_Rest" name="txtAdress_Rest" style="font-size: 0.9em" @bind="lstB.Adress_Rest" class="form-control" type="text" />
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 대표자<span style="color: red">*</span></span></div>
+                                        <input id="txtCeo_Name" name="txtCeo_Name" @bind="lstB.Ceo_Name" style="font-size: 0.9em" class="form-control" type="text" />
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 대표전화</span></div>
+                                        <input id="txtTelhpone" name="txtTelphone" style="font-size: 0.9em" @bind="lstB.Telephone" class="form-control" type="tel" />
+                                    </div>
+
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 휴대전화<span style="color: red">*</span></span></div>
+                                        <input id="txtMobile" name="txtMobile" style="font-size: 0.9em" @bind="lstB.Mobile" class="form-control" type="tel" />
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 팩스전화</span></div>
+                                        <input id="txtFax" name="txtFax" style="font-size: 0.9em" @bind="LstC.Fax" class="form-control" type="tel" />
+                                    </div>
+
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 메일</span></div>
+                                        <input id="txtEmail" name="txtEmail" style="font-size: 0.9em" @bind="LstC.Email" class="form-control" type="text" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 담당자<span style="color: red">*</span></span></div>
+                                        <input id="txtChargeMan" name="txtChargeMan" style="font-size: 0.9em" @bind="LstC.ChargeMan" class="form-control" type="text" />
+                                    </div>
+                                </div>
+
+
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 담당자연락처<span style="color: red">*</span></span></div>
+                                        <input id="txtChargeMan_Mobile" name="txtChargeMan_Mobile" style="font-size: 0.9em" @bind="LstC.ChargeMan_Mobile" class="form-control" type="text" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 업종<span style="color: red">*</span></span></div>
+                                        <input id="TypeOfBusiness" name="TypeOfBusiness" style="font-size: 0.9em" @bind="LstC.TypeOfBusiness" class="form-control" type="text" />
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 업태<span style="color: red">*</span></span></div>
+                                        <input id="BusinessConditions" name="BusinessConditions" style="font-size: 0.9em" @bind="LstC.BusinessConditions" class="form-control" type="text" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 자본금</span></div>
+                                        <input id="CapitalStock" name="CapitalStock" style="font-size: 0.9em" @bind="LstC.CapitalStock" class="form-control" type="text" />
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text" style="font-size: 0.9em"><span class="bi-file-earmark-binary"></span> 신용등급</span></div>
+                                        <input id="CraditRating" name="CraditRating" style="font-size: 0.9em" @bind="LstC.CraditRating" class="form-control" type="text" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr id="vw4">
+
+                            <td colspan="2">
+                                <textarea id="Intro" class="form-control" rows="4" style="min-width: 100%" @bind="LstC.Etc" required></textarea>
+
+                            </td>
+                        </tr>
+                        @*<tr>
+                                <td style="text-align: right; vertical-align:middle" colspan="2">
+                                    <input id="btnSave" type="submit" value="등 록" class="btn btn-danger btn-sm" />
+                                </td>
+                            </tr>*@
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="btnCompanySave">저장</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary" @onclick="btnClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*계약 상세 등록 모달 폼*@
+@if (Views == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h5 class="modal-title"><span class="bi-book-fill"></span>&nbsp; 등록 정보</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="margin-bottom: 0px; font-size: 0.9em">
+                        <tr>
+                            <td>
+                                <span class="bi-pencil-square"></span>&nbsp; 계약 대분류 : @cce.ContractSort
+
+                            </td>
+                            <td>
+                                <span class="bi-pencil-square"></span>&nbsp; 계약 소분류 : @cce.ContractSort
+                            </td>
+
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <span class="bi-pencil-square"></span>&nbsp; 업체 코드 : @cce.CC_Code
+                            </td>
+
+                            <td>
+                                업체명 : @cce.Company_Name
+                            </td>
+                        </tr>
+
+
+
+                        <tr>
+                            <td>
+                                <span class="bi-pencil-square"></span>&nbsp; 계약 시작일 : @cce.Contract_start_date.ToLongDateString()
+
+                            </td>
+
+                            <td>
+                                계약 종료일 : @cce.Contract_end_date.ToLongDateString()
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <span class="bi-pencil-square"></span>&nbsp; 입찰방법 : @cce.Bid
+
+                            </td>
+                            <td>
+                                <span class="bi-pencil-square"></span>&nbsp; 낙찰방법 : @cce.Tender
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <span class="bi-pencil-square"></span>&nbsp; 계약주체 : @cce.ContractMainAgent
+                            </td>
+                            <td>
+                                <span class="bi-pencil-square"></span>&nbsp; 계약코드 : @cce.CC_Code
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="bi-pencil-square"></span>&nbsp; 계약기간 : @string.Format("{0: ###,###.##}", cce.Contract_Period)<span>일</span>
+                            </td>
+                            <td>
+                                <span class="bi-pencil-square"></span>&nbsp; 계약금액 : @string.Format("{0: ###,###.##}", cce.Contract_Sum)<span>원</span>
+                            </td>
+                        </tr>
+
+                        <tr id="vw4">
+
+                            <td colspan="2">
+                                <textarea id="Intro" class="form-control" rows="4" style="min-width: 100%" @bind="cce.Intro" readonly="readonly"></textarea>
+
+                            </td>
+                        </tr>
+                        @*<tr>
+                                <td style="text-align: right; vertical-align:middle" colspan="2">
+                                    <input id="btnSave" type="submit" value="등 록" class="btn btn-danger btn-sm" />
+                                </td>
+                            </tr>*@
+                    </table>
+
+                </div>
+                <div class="modal-footer" style="background-color: whitesmoke">
+                    @if (cce.FileCount > 0)
+                   {
+                       <button type="button" class="btn btn-primary btn-sm" @onclick="() => FileViewsBy(cce.Aid)">파일 보기</button>
+                   }
+                     &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="btnFilesInsert">파일 첨부</button> &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="btnViewsClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@*파일 첨부 올리기*@
+@if (FileInsertViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><span class="bi-images"></span> 첨부파일 입력</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+
+                    <div style="margin-top: 10px">
+
+                        <p>
+                            <InputFile OnChange="LoadFiles" class="custom-file" style="font-size: 0.9em" multiple></InputFile>
+                        </p>
+                        @if (isLoading)
+                        {
+                            <p style="text-align: center">
+                                <img src="/images/loader.gif" height="40" />
+                            </p>
+                        }
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    
+                    <button type="button" class="btn btn-secondary" @onclick="FilesClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*파일 보기 모달품*@
+@if (FileViews == "B")
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aliceblue">
+                    <h5 class="modal-title"><span class="bi-file-code"></span> 첨부파일 보기</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>*@
+                </div>
+                <div class="modal-body">
+
+                    @if (Files_Count > 0)
+                    {
+                        <div style="height: 500px; overflow-y: scroll; overflow-x: hidden">
+
+                            @foreach (var files in Files_Entity)
+                            {
+                                @*<div class="text-center">
+                                    <img src="/Upfiles/Contract/@files.Sw_FileName" alt="" class="img-thumbnail" />
+                                </div>*@
+
+                                if (OnExtension(files.Sw_FileName) == ".pdf")
+                                {
+                                    <div>
+                                        <embed src="/Upfiles/Contract/@files.Sw_FileName" type="application/pdf" style="width: 100%; height: 500px" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    if (Dul.BoardLibrary.IsPhoto(files.Sw_FileName))
+                                    {
+                                        <div>
+                                            <img src="/Upfiles/Contract/@files.Sw_FileName" style="width: 900px;" class="img-thumbnail" />
+                                        </div>
+                                    }
+                                }
+                            }
+
+
+                            @foreach (var item in Files_Entity)
+                            {
+                                <div>
+                                    @item.Sw_FileName <span>&nbsp;</span> <button id="fileRemove" class="btn btn-link" @onclick="() => ByFileRemove(item)">삭제</button>
+                                </div>
+                            }
+
+                        </div>
+                    }
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="FilesViewsClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
